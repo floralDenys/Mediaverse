@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 
 namespace Mediaverse.Domain.JointContentConsumption.Entities
 {
-    public class Room
+    public class Room : Entity
     {
         private string _name;
 
@@ -13,7 +14,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         private IList<Viewer> _viewers;
         private int _maxViewersQuantity;
 
-        public Guid Id { get; }
         public string Name
         {
             get => _name;
@@ -50,16 +50,10 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
         }
 
-        public Room(Guid id, string name, Host host)
+        public Room(Guid id, string name, Host host) : base(id)
         {
             try
             {
-                if (id == default)
-                {
-                    throw new ArgumentException("Given ID is invalid");
-                }
-                
-                Id = id;
                 Name = name;
                 Host = host;
                 
@@ -72,7 +66,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
         }
 
-        public void UpdatePlaylist(Playlist playlist)
+        public void UpdateSelectedPlaylist(Playlist playlist)
         {
             try
             {
@@ -80,7 +74,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 
                 if (!playlist.IsTemporary)
                 {
-                    if (playlist.Owner != _host)
+                    if (playlist.Owner.Equals(_host))
                     {
                         throw new InvalidOperationException($"Playlist {playlist} does not belong to host {_host}");
                     }
