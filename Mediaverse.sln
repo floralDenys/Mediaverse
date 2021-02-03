@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mediaverse.Domain", "Mediaverse.Domain\Mediaverse.Domain.csproj", "{6A60CF81-F7BE-4324-B4D8-464E32EABD89}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mediaverse.Infrastructure", "Mediaverse.Infrastructure\Mediaverse.Infrastructure.csproj", "{2896EC02-4A5C-4DB6-843E-97EEAD2A2577}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{6A60CF81-F7BE-4324-B4D8-464E32EABD89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A60CF81-F7BE-4324-B4D8-464E32EABD89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A60CF81-F7BE-4324-B4D8-464E32EABD89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2896EC02-4A5C-4DB6-843E-97EEAD2A2577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2896EC02-4A5C-4DB6-843E-97EEAD2A2577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2896EC02-4A5C-4DB6-843E-97EEAD2A2577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2896EC02-4A5C-4DB6-843E-97EEAD2A2577}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
