@@ -4,4 +4,8 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Google.Apis.YouTube.v3" Version="1.49.0.2217" />
+    </ItemGroup>
+
 </Project>
