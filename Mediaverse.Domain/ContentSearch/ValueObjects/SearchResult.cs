@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
-using Mediaverse.Domain.JointContentConsumption.Entities;
+using Mediaverse.Domain.ContentSearch.Entities;
 
 namespace Mediaverse.Domain.ContentSearch.ValueObjects
 {
     public class SearchResult
     {
-        public Content SpecificContent { get; }
-        public IList<Content> ContentList { get; }
+        public Preview Preview { get; }
+        public IList<Preview> PreviewList { get; }
 
         public SearchResult(
-            Content specificContent = null,
-            IList<Content> contentList = null)
+            Preview preview = null,
+            IList<Preview> previewList = null)
         {
-            SpecificContent = specificContent;
-            ContentList = contentList;
+            Preview = preview;
+            PreviewList = previewList;
         }
     }
 }
