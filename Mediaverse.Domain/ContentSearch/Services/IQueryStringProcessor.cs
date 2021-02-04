@@ -4,6 +4,6 @@ namespace Mediaverse.Domain.ContentSearch.Services
 {
     public interface IQueryStringProcessor
     {
-        QueryStringType DefineQueryStringType(MediaContentSource source, string queryString);
+        ContentQueryType DefineQueryStringType(MediaContentSource source, string queryString);
     }
 }

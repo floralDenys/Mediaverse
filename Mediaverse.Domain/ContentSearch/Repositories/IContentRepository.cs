@@ -6,6 +6,6 @@ namespace Mediaverse.Domain.ContentSearch.Repositories
 {
     public interface IContentRepository
     {
-        IList<Preview> SearchForContent(MediaContentSource source, string queryString);
+        IList<Preview> SearchForContent(MediaContentSource source, ContentQueryType contentQueryType, string queryString);
     }
 }

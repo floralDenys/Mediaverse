@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mediaverse.Domain.ContentSearch.Enums;
-using Mediaverse.Domain.ContentSearch.Services;
 
-namespace Mediaverse.Infrastructure.Common.Services.Implementation
+namespace Mediaverse.Domain.ContentSearch.Services.Implementation
 {
     public class QueryStringProcessor : IQueryStringProcessor
     {
@@ -13,7 +12,7 @@ namespace Mediaverse.Infrastructure.Common.Services.Implementation
                 { MediaContentSource.YouTube, "youtube.com/watch"}
             };
 
-        public QueryStringType DefineQueryStringType(MediaContentSource source, string queryString)
+        public ContentQueryType DefineQueryStringType(MediaContentSource source, string queryString)
         {
             if (!MediaContentSourceDomains.Keys.Contains(source))
             {
@@ -22,8 +21,8 @@ namespace Mediaverse.Infrastructure.Common.Services.Implementation
 
             string selectedSourceDomain = MediaContentSourceDomains[source];
             return queryString.Contains(selectedSourceDomain)
-                ? QueryStringType.Link
-                : QueryStringType.Keywords;
+                ? ContentQueryType.Link
+                : ContentQueryType.Keywords;
         }
     }
 }

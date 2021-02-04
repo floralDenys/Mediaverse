@@ -4,7 +4,6 @@ using Mediaverse.Domain.ContentSearch.Entities;
 using Mediaverse.Domain.ContentSearch.Enums;
 using Mediaverse.Domain.ContentSearch.Repositories;
 using Mediaverse.Domain.ContentSearch.Services;
-using Mediaverse.Domain.ContentSearch.ValueObjects;
 using Mediaverse.Infrastructure.YouTube;
 
 namespace Mediaverse.Infrastructure.ContentSearch.Repositories
@@ -22,16 +21,17 @@ namespace Mediaverse.Infrastructure.ContentSearch.Repositories
             _youTubeRepository = youTubeRepository;
         }
         
-        public IList<Preview> SearchForContent(MediaContentSource source, string queryString)
+        public IList<Preview> SearchForContent(
+            MediaContentSource source,
+            ContentQueryType contentQueryType,
+            string queryString)
         {
             try
             {
-                var queryStringType = _queryStringProcessor.DefineQueryStringType(source, queryString);
-                
                 switch (source)
                 {
                     case MediaContentSource.YouTube:
-                        if (queryStringType == QueryStringType.Keywords)
+                        if (contentQueryType == ContentQueryType.Keywords)
                         {
                             _youTubeRepository.SearchForVideosByKeywords(queryString);
                         }
