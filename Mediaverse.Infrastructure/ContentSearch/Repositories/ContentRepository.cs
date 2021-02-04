@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Mediaverse.Domain.ContentSearch.Entities;
 using Mediaverse.Domain.ContentSearch.Enums;
 using Mediaverse.Domain.ContentSearch.Repositories;
 using Mediaverse.Domain.ContentSearch.Services;
@@ -20,7 +22,7 @@ namespace Mediaverse.Infrastructure.ContentSearch.Repositories
             _youTubeRepository = youTubeRepository;
         }
         
-        public SearchResult SearchForContent(MediaContentSource source, string queryString)
+        public IList<Preview> SearchForContent(MediaContentSource source, string queryString)
         {
             try
             {

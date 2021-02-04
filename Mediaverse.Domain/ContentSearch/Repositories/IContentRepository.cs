@@ -1,11 +1,11 @@
-﻿using Mediaverse.Domain.ContentSearch.Enums;
-using Mediaverse.Domain.ContentSearch.ValueObjects;
-using Mediaverse.Domain.JointContentConsumption.Entities;
+﻿using System.Collections.Generic;
+using Mediaverse.Domain.ContentSearch.Entities;
+using Mediaverse.Domain.ContentSearch.Enums;
 
 namespace Mediaverse.Domain.ContentSearch.Repositories
 {
     public interface IContentRepository
     {
-        SearchResult SearchForContent(MediaContentSource source, string queryString);
+        IList<Preview> SearchForContent(MediaContentSource source, string queryString);
     }
 }
