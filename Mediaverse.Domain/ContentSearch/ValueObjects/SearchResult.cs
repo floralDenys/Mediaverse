@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Mediaverse.Domain.JointContentConsumption.Entities;
 
-namespace Mediaverse.Domain.JointContentConsumption.ValueObjects
+namespace Mediaverse.Domain.ContentSearch.ValueObjects
 {
     public class SearchResult
     {

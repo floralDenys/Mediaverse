@@ -1,12 +1,11 @@
 ﻿using System;
-using Mediaverse.Domain.JointContentConsumption.Entities;
-using Mediaverse.Domain.JointContentConsumption.Enums;
-using Mediaverse.Domain.JointContentConsumption.Repositories;
-using Mediaverse.Infrastructure.Common.Enums;
-using Mediaverse.Infrastructure.Common.Services;
+using Mediaverse.Domain.ContentSearch.Enums;
+using Mediaverse.Domain.ContentSearch.Repositories;
+using Mediaverse.Domain.ContentSearch.Services;
+using Mediaverse.Domain.ContentSearch.ValueObjects;
 using Mediaverse.Infrastructure.YouTube;
 
-namespace Mediaverse.Infrastructure.JoinContentConsumption.Repositories
+namespace Mediaverse.Infrastructure.ContentSearch.Repositories
 {
     public class ContentRepository : IContentRepository
     {
@@ -21,7 +20,7 @@ namespace Mediaverse.Infrastructure.JoinContentConsumption.Repositories
             _youTubeRepository = youTubeRepository;
         }
         
-        public Content SearchForContent(MediaContentSource source, string queryString)
+        public SearchResult SearchForContent(MediaContentSource source, string queryString)
         {
             try
             {

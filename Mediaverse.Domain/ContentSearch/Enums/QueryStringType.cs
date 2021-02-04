@@ -1,4 +1,4 @@
-﻿namespace Mediaverse.Infrastructure.Common.Enums
+﻿namespace Mediaverse.Domain.ContentSearch.Enums
 {
     public enum QueryStringType
     {

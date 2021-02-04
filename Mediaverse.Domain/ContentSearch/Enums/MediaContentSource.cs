@@ -1,4 +1,4 @@
-﻿namespace Mediaverse.Domain.JointContentConsumption.Enums
+﻿namespace Mediaverse.Domain.ContentSearch.Enums
 {
     public enum MediaContentSource
     {

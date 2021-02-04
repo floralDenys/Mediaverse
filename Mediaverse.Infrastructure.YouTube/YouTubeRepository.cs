@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Google.Apis.YouTube.v3;
+using Mediaverse.Domain.ContentSearch.Entities;
 using Mediaverse.Domain.JointContentConsumption.Entities;
 
 namespace Mediaverse.Infrastructure.YouTube

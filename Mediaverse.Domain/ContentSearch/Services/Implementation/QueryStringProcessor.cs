@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Mediaverse.Domain.JointContentConsumption.Enums;
-using Mediaverse.Infrastructure.Common.Enums;
+using Mediaverse.Domain.ContentSearch.Enums;
+using Mediaverse.Domain.ContentSearch.Services;
 
 namespace Mediaverse.Infrastructure.Common.Services.Implementation
 {

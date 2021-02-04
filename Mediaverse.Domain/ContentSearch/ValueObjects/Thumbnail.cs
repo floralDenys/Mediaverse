@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mediaverse.Domain.JointContentConsumption.ValueObjects
+namespace Mediaverse.Domain.ContentSearch.ValueObjects
 {
     public class Thumbnail
     {

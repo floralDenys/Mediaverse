@@ -1,7 +1,9 @@
 ﻿using System;
+using Mediaverse.Domain.ContentSearch.ValueObjects;
+using Mediaverse.Domain.JointContentConsumption.Entities;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 
-namespace Mediaverse.Domain.JointContentConsumption.Entities
+namespace Mediaverse.Domain.ContentSearch.Entities
 {
     public class Preview : Content
     {
