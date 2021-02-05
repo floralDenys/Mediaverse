@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using AutoMapper;
 using Google.Apis.YouTube.v3;
 using Mediaverse.Domain.ContentSearch.ValueObjects;
@@ -22,7 +23,7 @@ namespace Mediaverse.Infrastructure.ContentSearch.Repositories.YouTube
             _mapper = mapper;
         }
         
-        public async Task<SearchResult> SearchForVideosByKeywords(string keywords)
+        public async Task<SearchResult> SearchForVideosByKeywords(string keywords, CancellationToken cancellationToken)
         {
             var searchRequest = _youTubeService.Search.List(SearchParts);
             searchRequest.Q = keywords;
@@ -30,16 +31,16 @@ namespace Mediaverse.Infrastructure.ContentSearch.Repositories.YouTube
             searchRequest.MaxResults = MaxSearchResultQuantity;
             searchRequest.VideoEmbeddable = SearchResource.ListRequest.VideoEmbeddableEnum.True__;
 
-            var searchResult = await searchRequest.ExecuteAsync();
+            var searchResult = await searchRequest.ExecuteAsync(cancellationToken);
             return _mapper.Map<SearchResult>(searchResult);
         }
 
-        public async Task<SearchResult> SearchForVideoById(string videoId)
+        public async Task<SearchResult> SearchForVideoById(string videoId, CancellationToken cancellationToken)
         {
             var searchRequest = _youTubeService.Videos.List(SearchParts);
             searchRequest.Id = videoId;
 
-            var searchResult = await searchRequest.ExecuteAsync();
+            var searchResult = await searchRequest.ExecuteAsync(cancellationToken);
             return _mapper.Map<SearchResult>(searchResult);
         }
     }
