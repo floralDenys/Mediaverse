@@ -1,19 +1,19 @@
 ﻿using System;
+using Mediaverse.Domain.ContentSearch.Entities;
 using Mediaverse.Domain.ContentSearch.Enums;
-using Mediaverse.Domain.ContentSearch.ValueObjects;
 
-namespace Mediaverse.Domain.ContentSearch.Entities
+namespace Mediaverse.Domain.ContentSearch.ValueObjects
 {
     public class Preview
     {
-        public Guid ContentId { get; }
-        public ContentType ContentType { get; }
+        public ExternalId ExternalId { get; }
         public string ContentTitle { get; }
         public string ContentDescription { get; }
         public Thumbnail Thumbnail { get; set; }
         
         public Preview(
-            Guid contentId,
+            string externalId,
+            MediaContentSource contentSource,
             ContentType contentType,
             string contentTitle,
             string contentDescription,
@@ -21,18 +21,12 @@ namespace Mediaverse.Domain.ContentSearch.Entities
         {
             try
             {
-                if (contentId == default)
-                {
-                    throw new ArgumentException("Given ID is invalid");    
-                }
-
                 if (string.IsNullOrEmpty(contentTitle))
                 {
                     throw new ArgumentException("Given title is null or empty");
                 }
-
-                ContentId = contentId;
-                ContentType = contentType;
+                
+                ExternalId = new ExternalId(externalId, contentSource, contentType);
                 ContentTitle = contentTitle;
                 ContentDescription = contentDescription;
                 Thumbnail = thumbnail ?? throw new ArgumentNullException(nameof(thumbnail));
