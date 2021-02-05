@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Mediaverse.Domain.ContentSearch.Enums;
 using Mediaverse.Domain.ContentSearch.Repositories;
@@ -17,10 +18,11 @@ namespace Mediaverse.Infrastructure.ContentSearch.Repositories
             _youTubeRepository = youTubeRepository;
         }
         
-        public Task<SearchResult> SearchForContent(
+        public Task<SearchResult> SearchForContentAsync(
             MediaContentSource source,
             ContentQueryType contentQueryType,
-            string queryString)
+            string queryString,
+            CancellationToken cancellationToken)
         {
             try
             {
@@ -30,8 +32,8 @@ namespace Mediaverse.Infrastructure.ContentSearch.Repositories
                 {
                     case MediaContentSource.YouTube:
                         searchResult = contentQueryType == ContentQueryType.Keywords 
-                            ? _youTubeRepository.SearchForVideosByKeywords(queryString) 
-                            : _youTubeRepository.SearchForVideoById(queryString);
+                            ? _youTubeRepository.SearchForVideosByKeywords(queryString, cancellationToken) 
+                            : _youTubeRepository.SearchForVideoById(queryString, cancellationToken);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(MediaContentSource));
