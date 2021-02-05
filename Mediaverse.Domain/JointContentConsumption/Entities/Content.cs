@@ -1,6 +1,5 @@
 ﻿using System;
 using Mediaverse.Domain.Common;
-using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 
 namespace Mediaverse.Domain.JointContentConsumption.Entities
 {
@@ -9,9 +8,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public string Title { get; }
         public string Description { get; }
         
-        public ContentPlayer Player { get; }
-
-        public Content(Guid id, string title, string description, ContentPlayer player) : base(id)
+        public Content(Guid id, string title, string description) : base(id)
         {
             try
             {
@@ -22,7 +19,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
 
                 Title = title;
                 Description = description;
-                Player = player ?? throw new ArgumentException("Given player is invalid");
             }
             catch (Exception exception)
             {
