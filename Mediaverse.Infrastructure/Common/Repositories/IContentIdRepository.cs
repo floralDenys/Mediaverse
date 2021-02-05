@@ -5,7 +5,7 @@ namespace Mediaverse.Infrastructure.Common.Repositories
 {
     public interface IContentIdRepository
     {
-        ContentIdProvider.ContentId GetContentId(string externalId, MediaContentSource source);
-        void SaveContentId(ContentIdProvider.ContentId contentId);
+        ContentIdProvider.ContentId Get(string externalId, MediaContentSource source);
+        void Save(ContentIdProvider.ContentId contentId);
     }
 }
