@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using AutoMapper;
-using Mediaverse.Domain.ContentSearch.Entities;
 using Mediaverse.Domain.ContentSearch.Enums;
+using Mediaverse.Domain.ContentSearch.ValueObjects;
 using Mediaverse.Infrastructure.Common.Services;
 using SearchResult = Mediaverse.Domain.ContentSearch.ValueObjects.SearchResult;
 using Thumbnail = Mediaverse.Domain.ContentSearch.ValueObjects.Thumbnail;
@@ -11,17 +11,12 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
 {
     public class YouTubeProfile : Profile
     {
-        private readonly IContentIdProvider _contentIdProvider;
-
         private readonly Dictionary<string, ContentType> _contentTypeMappings = new Dictionary<string, ContentType>
         {
             { "youtube#video", ContentType.Video }
         };
 
-        public YouTubeProfile(IContentIdProvider contentIdProvider)
-        {
-            _contentIdProvider = contentIdProvider;
-        }
+        public YouTubeProfile() => ConfigureMappings();
 
         private void ConfigureMappings()
         {
@@ -33,7 +28,8 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
             
             CreateMap<YouTubeData.SearchResult, Preview>()
                 .ConstructUsing(x => new Preview(
-                    _contentIdProvider.GetOrCreateInternalId(x.Id.VideoId, MediaContentSource.YouTube),
+                    x.Id.VideoId,
+                    MediaContentSource.YouTube,
                     _contentTypeMappings[x.Id.Kind],
                     x.Snippet.Title,
                     x.Snippet.Description,
@@ -44,8 +40,9 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
 
             CreateMap<YouTubeData.Video, Preview>()
                 .ConstructUsing(x => new Preview(
-                    _contentIdProvider.GetOrCreateInternalId(x.Id, MediaContentSource.YouTube),
-                    ContentType.Video,
+                    x.Id,
+                    MediaContentSource.YouTube,
+                    _contentTypeMappings[x.Kind],
                     x.Snippet.Title,
                     x.Snippet.Description,
                     new Thumbnail(
