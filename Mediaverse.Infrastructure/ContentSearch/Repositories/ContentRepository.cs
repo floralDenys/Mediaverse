@@ -1,50 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using Mediaverse.Domain.ContentSearch.Entities;
+using System.Threading.Tasks;
 using Mediaverse.Domain.ContentSearch.Enums;
 using Mediaverse.Domain.ContentSearch.Repositories;
-using Mediaverse.Domain.ContentSearch.Services;
-using Mediaverse.Infrastructure.YouTube;
+using Mediaverse.Domain.ContentSearch.ValueObjects;
+using YouTubeRepository = Mediaverse.Infrastructure.ContentSearch.Repositories.YouTube.YouTubeRepository;
 
 namespace Mediaverse.Infrastructure.ContentSearch.Repositories
 {
     public class ContentRepository : IContentRepository
     {
-        private readonly IQueryStringProcessor _queryStringProcessor;
         private readonly YouTubeRepository _youTubeRepository;
 
         public ContentRepository(
-            IQueryStringProcessor queryStringProcessor,
             YouTubeRepository youTubeRepository)
         {
-            _queryStringProcessor = queryStringProcessor;
             _youTubeRepository = youTubeRepository;
         }
         
-        public IList<Preview> SearchForContent(
+        public Task<SearchResult> SearchForContent(
             MediaContentSource source,
             ContentQueryType contentQueryType,
             string queryString)
         {
             try
             {
+                Task<SearchResult> searchResult;
+                
                 switch (source)
                 {
                     case MediaContentSource.YouTube:
-                        if (contentQueryType == ContentQueryType.Keywords)
-                        {
-                            _youTubeRepository.SearchForVideosByKeywords(queryString);
-                        }
+                        searchResult = contentQueryType == ContentQueryType.Keywords 
+                            ? _youTubeRepository.SearchForVideosByKeywords(queryString) 
+                            : _youTubeRepository.SearchForVideoById(queryString);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(MediaContentSource));
                 }
-                
-                throw new NotImplementedException();
+
+                return searchResult;
             }
             catch (Exception exception)
             {
-                throw new NotImplementedException();
+                throw new InvalidOperationException($"An exception occured on attempt to search the content for " +
+                                                    $"{source} by {contentQueryType} (query string: {queryString})", exception);
             }
         }
     }
