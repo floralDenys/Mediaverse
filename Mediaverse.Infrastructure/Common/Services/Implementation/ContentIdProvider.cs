@@ -1,5 +1,6 @@
 ﻿using System;
 using Mediaverse.Domain.ContentSearch.Enums;
+using Mediaverse.Domain.ContentSearch.Repositories;
 using Mediaverse.Infrastructure.Common.Repositories;
 
 namespace Mediaverse.Infrastructure.Common.Services.Implementation
@@ -26,13 +27,17 @@ namespace Mediaverse.Infrastructure.Common.Services.Implementation
         
         public Guid GetOrCreateInternalId(string externalId, MediaContentSource source)
         {
-            var contentId = _contentIdRepository.GetContentId(externalId, source) 
-                            ?? new ContentId
-                            {
-                                ExternalId = externalId,
-                                Source = source,
-                                InternalId = _guidProvider.GetNewGuid()
-                            };
+            var contentId = _contentIdRepository.Get(externalId, source);
+            if (contentId == null)
+            {
+                contentId = new ContentId
+                {
+                    ExternalId = externalId,
+                    Source = source,
+                    InternalId = _guidProvider.GetNewGuid()
+                };
+                _contentIdRepository.Save(contentId);
+            }
 
             return contentId.InternalId;
         }
