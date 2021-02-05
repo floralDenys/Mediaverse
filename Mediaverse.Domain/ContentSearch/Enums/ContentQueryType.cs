@@ -3,6 +3,6 @@
     public enum ContentQueryType
     {
         Keywords = 1,
-        Link = 2
+        ContentId = 2
     }
 }
