@@ -6,7 +6,7 @@ namespace Mediaverse.Domain.ContentSearch.Services.Implementation
 {
     public class QueryStringProcessor : IQueryStringProcessor
     {
-        private readonly IDictionary<MediaContentSource, string> MediaContentSourceDomains =
+        private readonly IDictionary<MediaContentSource, string> _mediaContentSourceDomains =
             new Dictionary<MediaContentSource, string>
             {
                 { MediaContentSource.YouTube, "youtube.com/watch"}
@@ -14,14 +14,14 @@ namespace Mediaverse.Domain.ContentSearch.Services.Implementation
 
         public ContentQueryType DefineQueryStringType(MediaContentSource source, string queryString)
         {
-            if (!MediaContentSourceDomains.Keys.Contains(source))
+            if (!_mediaContentSourceDomains.Keys.Contains(source))
             {
                 throw new InvalidOperationException("Request domain is not specified for selected content source");
             }
 
-            string selectedSourceDomain = MediaContentSourceDomains[source];
+            string selectedSourceDomain = _mediaContentSourceDomains[source];
             return queryString.Contains(selectedSourceDomain)
-                ? ContentQueryType.Link
+                ? ContentQueryType.ContentId
                 : ContentQueryType.Keywords;
         }
     }
