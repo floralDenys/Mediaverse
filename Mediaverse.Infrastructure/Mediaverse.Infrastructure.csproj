@@ -9,4 +9,12 @@
       <ProjectReference Include="..\Mediaverse.Infrastructure.YouTube\Mediaverse.Infrastructure.YouTube.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Google.Apis.YouTube.v3" Version="1.49.0.2225" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\Repositories\Implementation" />
+    </ItemGroup>
+
 </Project>
