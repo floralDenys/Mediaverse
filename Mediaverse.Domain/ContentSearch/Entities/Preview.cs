@@ -14,7 +14,7 @@ namespace Mediaverse.Domain.ContentSearch.Entities
         public Preview(
             string externalId,
             MediaContentSource contentSource,
-            MediaContentType mediaContentType,
+            MediaContentType contentType,
             string contentTitle,
             string contentDescription,
             Thumbnail thumbnail)
@@ -26,7 +26,7 @@ namespace Mediaverse.Domain.ContentSearch.Entities
                     throw new ArgumentException("Given title is null or empty");
                 }
                 
-                ContentId = new ContentId(externalId, contentSource, mediaContentType);
+                ContentId = new ContentId(externalId, contentSource, contentType);
                 ContentTitle = contentTitle;
                 ContentDescription = contentDescription;
                 Thumbnail = thumbnail ?? throw new ArgumentNullException(nameof(thumbnail));
