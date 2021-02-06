@@ -6,7 +6,7 @@ namespace Mediaverse.Domain.ContentSearch.ValueObjects
 {
     public class Preview
     {
-        public ExternalId ExternalId { get; }
+        public ContentId ContentId { get; }
         public string ContentTitle { get; }
         public string ContentDescription { get; }
         public Thumbnail Thumbnail { get; set; }
@@ -26,7 +26,7 @@ namespace Mediaverse.Domain.ContentSearch.ValueObjects
                     throw new ArgumentException("Given title is null or empty");
                 }
                 
-                ExternalId = new ExternalId(externalId, contentSource, mediaContentType);
+                ContentId = new ContentId(externalId, contentSource, mediaContentType);
                 ContentTitle = contentTitle;
                 ContentDescription = contentDescription;
                 Thumbnail = thumbnail ?? throw new ArgumentNullException(nameof(thumbnail));

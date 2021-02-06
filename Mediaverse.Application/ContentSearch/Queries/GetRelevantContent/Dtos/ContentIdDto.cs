@@ -2,7 +2,7 @@
 
 namespace Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos
 {
-    public class ExternalIdDto
+    public class ContentIdDto
     {
         public string Id { get; set; }
         public MediaContentSource ContentSource { get; set; }

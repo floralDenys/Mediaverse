@@ -15,7 +15,7 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
         private void ConfigureMappings()
         {
             CreateMap<Preview, PreviewDto>();
-            CreateMap<ExternalId, ExternalIdDto>();
+            CreateMap<ContentId, ContentIdDto>();
             CreateMap<Thumbnail, ThumbnailDto>();
         }
     }

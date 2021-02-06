@@ -3,16 +3,16 @@ using Mediaverse.Domain.ContentSearch.Enums;
 
 namespace Mediaverse.Domain.ContentSearch.Entities
 {
-    public class ExternalId
+    public class ContentId
     {
-        public string Id { get; }
+        public string ExternalId { get; }
         public MediaContentSource ContentSource { get; }
-        public ContentType ContentType { get; }
+        public MediaContentType MediaContentType { get; }
 
-        public ExternalId(
+        public ContentId(
             string id,
             MediaContentSource contentSource,
-            ContentType contentType)
+            MediaContentType mediaContentType)
         {
             try
             {
@@ -21,9 +21,9 @@ namespace Mediaverse.Domain.ContentSearch.Entities
                     throw new ArgumentException("External ID is null or empty");
                 }
                 
-                Id = id;
+                ExternalId = id;
                 ContentSource = contentSource;
-                ContentType = contentType;
+                MediaContentType = mediaContentType;
             }
             catch (Exception exception)
             {
