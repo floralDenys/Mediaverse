@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using AutoMapper;
+using Mediaverse.Domain.ContentSearch.Entities;
 using Mediaverse.Domain.ContentSearch.Enums;
-using Mediaverse.Domain.ContentSearch.ValueObjects;
-using Mediaverse.Infrastructure.Common.Services;
 using SearchResult = Mediaverse.Domain.ContentSearch.ValueObjects.SearchResult;
 using Thumbnail = Mediaverse.Domain.ContentSearch.ValueObjects.Thumbnail;
 using YouTubeData = Google.Apis.YouTube.v3.Data;

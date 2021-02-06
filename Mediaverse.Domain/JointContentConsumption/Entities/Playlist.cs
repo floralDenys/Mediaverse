@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using Mediaverse.Domain.Common;
@@ -6,7 +7,7 @@ using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 
 namespace Mediaverse.Domain.JointContentConsumption.Entities
 {
-    public class Playlist : Entity
+    public class Playlist : Entity, IEnumerable<Content>
     {
         private readonly IList<Content> _contents;
         
@@ -29,6 +30,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         }
 
         public IEnumerator<Content> GetEnumerator() => _contents.GetEnumerator();
+        
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public void Add(Content content)
         {

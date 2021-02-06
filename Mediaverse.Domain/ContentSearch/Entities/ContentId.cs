@@ -7,12 +7,12 @@ namespace Mediaverse.Domain.ContentSearch.Entities
     {
         public string ExternalId { get; }
         public MediaContentSource ContentSource { get; }
-        public MediaContentType MediaContentType { get; }
+        public MediaContentType ContentType { get; }
 
         public ContentId(
             string id,
             MediaContentSource contentSource,
-            MediaContentType mediaContentType)
+            MediaContentType contentType)
         {
             try
             {
@@ -23,7 +23,7 @@ namespace Mediaverse.Domain.ContentSearch.Entities
                 
                 ExternalId = id;
                 ContentSource = contentSource;
-                MediaContentType = mediaContentType;
+                ContentType = contentType;
             }
             catch (Exception exception)
             {
