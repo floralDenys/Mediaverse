@@ -14,4 +14,8 @@
       <ProjectReference Include="..\Mediaverse.Domain\Mediaverse.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="JointContentConjumption" />
+    </ItemGroup>
+
 </Project>
