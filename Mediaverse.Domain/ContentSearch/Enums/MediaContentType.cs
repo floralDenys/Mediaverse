@@ -1,6 +1,6 @@
 ﻿namespace Mediaverse.Domain.ContentSearch.Enums
 {
-    public enum ContentType
+    public enum MediaContentType
     {
         Video = 1
     }

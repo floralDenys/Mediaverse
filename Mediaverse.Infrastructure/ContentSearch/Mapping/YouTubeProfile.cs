@@ -11,9 +11,9 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
 {
     public class YouTubeProfile : Profile
     {
-        private readonly Dictionary<string, ContentType> _contentTypeMappings = new Dictionary<string, ContentType>
+        private readonly Dictionary<string, MediaContentType> _contentTypeMappings = new Dictionary<string, MediaContentType>
         {
-            { "youtube#video", ContentType.Video }
+            { "youtube#video", MediaContentType.Video }
         };
 
         public YouTubeProfile() => ConfigureMappings();

@@ -6,6 +6,6 @@ namespace Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos
     {
         public string Id { get; set; }
         public MediaContentSource ContentSource { get; set; }
-        public ContentType ContentType { get; set; }
+        public MediaContentType MediaContentType { get; set; }
     }
 }
