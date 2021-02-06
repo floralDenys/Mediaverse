@@ -7,7 +7,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
     {
         public ContentPlayer Player { get; }
 
-        public Video(Guid id, string title, string description, ContentPlayer player) 
+        public Video(ContentId id, string title, string description, ContentPlayer player) 
             : base(id, title, description)
         {
             try
@@ -19,5 +19,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 throw new InvalidOperationException("Could not create video", exception);
             }
         }
+
+        public Video(ContentId id) : base(id) { }
     }
 }
