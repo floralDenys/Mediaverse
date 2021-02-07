@@ -6,5 +6,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
     {
         public string ExternalId { get; }
         public MediaContentSource ContentSource { get; } 
+        public MediaContentType ContentType { get; set; }
     }
 }
