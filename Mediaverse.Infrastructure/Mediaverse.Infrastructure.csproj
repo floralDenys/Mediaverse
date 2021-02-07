@@ -7,7 +7,6 @@
     <ItemGroup>
       <ProjectReference Include="..\Mediaverse.Application\Mediaverse.Application.csproj" />
       <ProjectReference Include="..\Mediaverse.Domain\Mediaverse.Domain.csproj" />
-      <ProjectReference Include="..\Mediaverse.Infrastructure.YouTube\Mediaverse.Infrastructure.YouTube.csproj" />
     </ItemGroup>
 
     <ItemGroup>
