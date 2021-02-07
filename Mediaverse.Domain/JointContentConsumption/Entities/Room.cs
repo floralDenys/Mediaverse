@@ -33,7 +33,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             get => _host;
             set => _host = value ?? throw new ArgumentException("Given host is null");
         }
-        public Guid SelectedPlaylistId { get; private set; }
+        public Guid ActivePlaylistId { get; private set; }
         
         public IReadOnlyList<Viewer> Viewers => (IReadOnlyList<Viewer>)_viewers;
         public int MaxViewersQuantity
@@ -80,7 +80,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                     }
                 }
 
-                SelectedPlaylistId = playlist.Id;
+                ActivePlaylistId = playlist.Id;
             }
             catch (Exception exception)
             {
