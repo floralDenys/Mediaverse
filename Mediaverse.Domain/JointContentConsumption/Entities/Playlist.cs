@@ -15,6 +15,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public bool IsTemporary => Owner == null;
         
         public int Count => _contents.Count;
+
+        private int? _currentlyPlayingContentIndex;
         
         public Playlist(Guid id, IEnumerable<Content> contents = null, Host owner = null) : base(id)
         {
@@ -22,6 +24,11 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             {
                 _contents = contents?.ToList() ?? new List<Content>();
                 Owner = owner ?? throw new ArgumentNullException(nameof(owner));
+
+                if (_contents.Any())
+                {
+                    _currentlyPlayingContentIndex = 0;
+                }
             }
             catch (Exception exception)
             {
@@ -45,6 +52,11 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 }
                 
                 _contents.Add(content);
+
+                if (_contents.Count == 1)
+                {
+                    _currentlyPlayingContentIndex = 0;
+                }
             }
             catch (Exception exception)
             {
@@ -67,6 +79,11 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 {
                     throw new InvalidOperationException("Something went wrong");
                 }
+
+                if (!_contents.Any())
+                {
+                    _currentlyPlayingContentIndex = null;
+                }
             }
             catch (Exception exception)
             {
@@ -74,8 +91,52 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
         }
 
-        public bool Contains(Content content) => _contents.Contains(content);
+        public Content PlayNextContent()
+        {
+            try
+            {
+                if (!_contents.Any())
+                {
+                    throw new InvalidOperationException("Playlist is empty");
+                }
 
-        public Content this[int index] => _contents[index];
+                if (_contents.Count == _currentlyPlayingContentIndex + 1)
+                {
+                    throw new InvalidOperationException("The end of the playlist is reached already");
+                }
+
+                ++_currentlyPlayingContentIndex;
+                return _contents[_currentlyPlayingContentIndex.Value];
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException($"Could not play next content from the playlist {this}", exception);
+            }
+        }
+
+        public Content PlayPreviousContent()
+        {
+            try
+            {
+                if (!_contents.Any())
+                {
+                    throw new InvalidOperationException("Playlist is empty");
+                }
+
+                if (_currentlyPlayingContentIndex == 0)
+                {
+                    throw new InvalidOperationException("The start of the playlist is reached already");
+                }
+
+                --_currentlyPlayingContentIndex;
+                return _contents[_currentlyPlayingContentIndex.Value];
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException($"Could not play previous content from the playlist {this}", exception);
+            }
+        }
+        
+        public bool Contains(Content content) => _contents.Contains(content);
     }
 }
