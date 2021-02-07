@@ -11,19 +11,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.AddContentToPlaylist
 {
-    public class AddContentToPlaylistQueryHandler : IRequestHandler<AddContentToPlaylistQuery, PlaylistDto>
+    public class AddContentToPlaylistCommandHandler : IRequestHandler<AddContentToPlaylistCommand, PlaylistDto>
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IPlaylistRepository _playlistRepository;
         private readonly ContentFactory _contentFactory;
-        private readonly ILogger<AddContentToPlaylistQueryHandler> _logger;
+        private readonly ILogger<AddContentToPlaylistCommandHandler> _logger;
         private readonly IMapper _mapper;
 
-        public AddContentToPlaylistQueryHandler(
+        public AddContentToPlaylistCommandHandler(
             IRoomRepository roomRepository,
             IPlaylistRepository playlistRepository,
             ContentFactory contentFactory,
-            ILogger<AddContentToPlaylistQueryHandler> logger,
+            ILogger<AddContentToPlaylistCommandHandler> logger,
             IMapper mapper)
         {
             _roomRepository = roomRepository;
@@ -33,19 +33,20 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.AddContentToPl
             _mapper = mapper;
         }
         
-        public async Task<PlaylistDto> Handle(AddContentToPlaylistQuery request, CancellationToken cancellationToken)
+        public async Task<PlaylistDto> Handle(AddContentToPlaylistCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 var room = await _roomRepository.GetAsync(request.CurrentRoomId, cancellationToken)
                     ?? throw new ArgumentException($"Room {request.CurrentRoomId.ToString()} could not be found");
-
-                Guid activePlaylistId = room.SelectedPlaylistId;
-                var playlist = await _playlistRepository.GetAsync(activePlaylistId, cancellationToken)
-                    ?? throw new InvalidOperationException($"Playlist {activePlaylistId.ToString()} could not be found");
+                
+                var playlist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken)
+                    ?? throw new InvalidOperationException($"Playlist {room.ActivePlaylistId.ToString()} " +
+                                                           $"could not be found");
                 
                 var contentId = _mapper.Map<ContentId>(request.ContentId);
-                playlist.Add(_contentFactory.CreateContent(contentId, request.ContentType));
+                var content = _contentFactory.CreateContent(contentId, request.ContentType);
+                playlist.Add(content);
                 await _playlistRepository.SaveAsync(playlist, cancellationToken);
 
                 return _mapper.Map<PlaylistDto>(playlist);
