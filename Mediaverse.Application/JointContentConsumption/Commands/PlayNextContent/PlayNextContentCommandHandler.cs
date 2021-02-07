@@ -47,6 +47,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.PlayNextConten
             }
             catch (Exception exception)
             {
+                _logger.LogError($"Could not play next next content from active playlist of " +
+                                 $"room {request.RoomId.ToString()}", exception);
                 throw new InvalidOperationException("Could not play next content from the playlist. Please retry");
             }
         }
