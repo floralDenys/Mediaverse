@@ -2,7 +2,7 @@
 
 namespace Mediaverse.Domain.Common
 {
-    public abstract class Entity : IEquatable<Entity>
+    public abstract class Entity
     {
         public Guid Id { get; }
 
@@ -15,28 +15,6 @@ namespace Mediaverse.Domain.Common
 
             Id = id;
         }
-
-        public bool Equals(Entity other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Id == other.Id;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is Entity other)
-            {
-                return Equals(other);
-            }
-            
-            return false;
-        }
-
-        public override int GetHashCode() => Id.GetHashCode();
 
         public override string ToString() => $"{Id.ToString()}";
     }

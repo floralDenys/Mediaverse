@@ -1,5 +1,5 @@
 ﻿using System;
-using Mediaverse.Domain.Common;
+using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 
 namespace Mediaverse.Domain.JointContentConsumption.Entities
 {
@@ -9,7 +9,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public string Title { get; }
         public string Description { get; }
         
-        public Content(ContentId id, string title, string description)
+        protected Content(ContentId id, string title, string description = "")
         {
             try
             {
@@ -21,18 +21,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 Id = id ?? throw new ArgumentNullException(nameof(id));
                 Title = title;
                 Description = description;
-            }
-            catch (Exception exception)
-            {
-                throw new InvalidOperationException("Could not create content", exception);
-            }
-        }
-
-        public Content(ContentId id)
-        {
-            try
-            {
-                Id = id ?? throw new ArgumentNullException(nameof(id));
             }
             catch (Exception exception)
             {

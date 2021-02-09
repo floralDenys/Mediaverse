@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
-using Mediaverse.Domain.JointContentConsumption.Entities;
-using Mediaverse.Domain.JointContentConsumption.Factories;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
+using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.RemoveContentFromPlaylist
@@ -15,20 +14,17 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.RemoveContentF
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IPlaylistRepository _playlistRepository;
-        private readonly ContentFactory _contentFactory;
         private readonly ILogger<RemoveContentFromPlaylistCommandHandler> _logger;
         private readonly IMapper _mapper;
 
         public RemoveContentFromPlaylistCommandHandler(
             IRoomRepository roomRepository,
             IPlaylistRepository playlistRepository,
-            ContentFactory contentFactory,
             ILogger<RemoveContentFromPlaylistCommandHandler> logger,
             IMapper mapper)
         {
             _roomRepository = roomRepository;
             _playlistRepository = playlistRepository;
-            _contentFactory = contentFactory;
             _logger = logger;
             _mapper = mapper;
         }
@@ -45,8 +41,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.RemoveContentF
                                                            $"could not be found");
 
                 var contentId = _mapper.Map<ContentId>(request.ContentId);
-                var content = _contentFactory.CreateContent(contentId, request.ContentType);
-                activePlaylist.Remove(content);
+                activePlaylist.Remove(contentId);
                 await _playlistRepository.SaveAsync(activePlaylist, cancellationToken);
 
                 return _mapper.Map<PlaylistDto>(activePlaylist);
