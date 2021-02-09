@@ -1,4 +1,5 @@
 ﻿using System;
+using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 
 namespace Mediaverse.Domain.JointContentConsumption.Entities
@@ -7,8 +8,13 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
     {
         public ContentPlayer Player { get; }
 
-        public Video(ContentId id, string title, string description, ContentPlayer player) 
-            : base(id, title, description)
+        public Video(
+            string externalId,
+            MediaContentSource contentSource,
+            ContentPlayer player,
+            string title,
+            string description = ""
+            ) : base(new ContentId(externalId, contentSource, MediaContentType.Video), title, description)
         {
             try
             {
@@ -19,7 +25,5 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 throw new InvalidOperationException("Could not create video", exception);
             }
         }
-
-        public Video(ContentId id) : base(id) { }
     }
 }
