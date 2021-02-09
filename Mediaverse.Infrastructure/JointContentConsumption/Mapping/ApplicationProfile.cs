@@ -2,6 +2,7 @@
 using AutoMapper;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
 using Mediaverse.Domain.JointContentConsumption.Entities;
+using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 
 namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
 {
@@ -11,7 +12,11 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
 
         private void ConfigureMappings()
         {
-            CreateMap<ContentIdDto, ContentId>();
+            CreateMap<ContentIdDto, ContentId>()
+                .ConstructUsing(x => new ContentId(
+                    x.ExternalId,
+                    x.ContentSource,
+                    x.ContentType));
 
             CreateMap<Playlist, PlaylistDto>()
                 .ForMember(dest => dest.Items, o => o.MapFrom(src => src.ToList()));
