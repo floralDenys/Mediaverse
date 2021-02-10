@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mediaverse.Infrastructure.Common.Services
+namespace Mediaverse.Application.Common.Services
 {
     public interface IGuidProvider
     {
