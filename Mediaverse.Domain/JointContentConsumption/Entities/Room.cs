@@ -34,6 +34,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             set => _host = value ?? throw new ArgumentException("Given host is null");
         }
         public Guid ActivePlaylistId { get; private set; }
+        public bool IsPlaylistSelected => ActivePlaylistId != default;
+
         
         public IReadOnlyList<Viewer> Viewers => (IReadOnlyList<Viewer>)_viewers;
         public int MaxViewersQuantity
@@ -74,7 +76,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 
                 if (!playlist.IsTemporary)
                 {
-                    if (playlist.Owner.Equals(_host))
+                    if (!playlist.Owner.Equals(_host))
                     {
                         throw new InvalidOperationException($"Playlist {playlist} does not belong to host {_host}");
                     }
