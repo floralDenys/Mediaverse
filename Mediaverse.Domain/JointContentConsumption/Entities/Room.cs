@@ -8,12 +8,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
     public class Room : Entity
     {
         private string _name;
-
-        private Host _host;
-        
-        private IList<Viewer> _viewers;
-        private int _maxViewersQuantity;
-
         public string Name
         {
             get => _name;
@@ -27,15 +21,15 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 _name = value;
             }
         }
-
-        public Host Host
-        {
-            get => _host;
-            set => _host = value ?? throw new ArgumentException("Given host is null");
-        }
+        
+        private int _hostViewerIndex = 0;
+        public Viewer Host => Viewers[_hostViewerIndex];
+        
+        private IList<Viewer> _viewers;
+        private int _maxViewersQuantity = int.MaxValue;
+        
         public Guid ActivePlaylistId { get; private set; }
         public bool IsPlaylistSelected => ActivePlaylistId != default;
-
         
         public IReadOnlyList<Viewer> Viewers => (IReadOnlyList<Viewer>)_viewers;
         public int MaxViewersQuantity
@@ -52,15 +46,17 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
         }
 
-        public Room(Guid id, string name, Host host) : base(id)
+        public Room(Guid id, string name, Viewer host) : base(id)
         {
             try
             {
-                Name = name;
-                Host = host;
+                if (string.IsNullOrEmpty(name))
+                {
+                    throw new ArgumentException("Name could not be null or empty");
+                }
                 
-                _maxViewersQuantity = int.MaxValue;
-                _viewers = new List<Viewer>();
+                Name = name;
+                _viewers = new List<Viewer>() { host };
             }
             catch (Exception exception)
             {
@@ -74,12 +70,9 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             {
                 _ = playlist ?? throw new ArgumentNullException(nameof(playlist));
                 
-                if (!playlist.IsTemporary)
+                if (!playlist.Owner.Equals(Host))
                 {
-                    if (!playlist.Owner.Equals(_host))
-                    {
-                        throw new InvalidOperationException($"Playlist {playlist} does not belong to host {_host}");
-                    }
+                    throw new InvalidOperationException($"Playlist {playlist} does not belong to host {Host}");
                 }
 
                 ActivePlaylistId = playlist.Id;
