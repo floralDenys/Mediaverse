@@ -11,12 +11,12 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
     {
         private readonly IList<ContentId> _contentIds;
         
-        public Host Owner { get; }
+        public Viewer Owner { get; }
         public bool IsTemporary => Owner == null;
         
         private int? _currentlyPlayingContentIndex;
         
-        public Playlist(Guid id, IEnumerable<ContentId> contentIds = null, Host owner = null) : base(id)
+        public Playlist(Guid id, Viewer owner, IEnumerable<ContentId> contentIds = null) : base(id)
         {
             try
             {
