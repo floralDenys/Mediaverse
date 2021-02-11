@@ -3,25 +3,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
-using Mediaverse.Application.JointContentConsumption.Commands.PlayNextContent.Dtos;
+using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos;
+using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Microsoft.Extensions.Logging;
 
-namespace Mediaverse.Application.JointContentConsumption.Commands.PlayNextContent
+namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
 {
-    public class PlayNextContentCommandHandler : IRequestHandler<PlayNextContentCommand, ContentDto>
+    public class SwitchContentCommandHandler : IRequestHandler<SwitchContentCommand, ContentDto>
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IPlaylistRepository _playlistRepository;
         private readonly IContentRepository _contentRepository;
-        private readonly ILogger<PlayNextContentCommandHandler> _logger;
+        private readonly ILogger<SwitchContentCommandHandler> _logger;
         private readonly IMapper _mapper;
 
-        public PlayNextContentCommandHandler(
+        public SwitchContentCommandHandler(
             IRoomRepository roomRepository,
             IPlaylistRepository playlistRepository,
             IContentRepository contentRepository,
-            ILogger<PlayNextContentCommandHandler> logger,
+            ILogger<SwitchContentCommandHandler> logger,
             IMapper mapper)
         {
             _roomRepository = roomRepository;
@@ -31,7 +32,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.PlayNextConten
             _mapper = mapper;
         }
 
-        public async Task<ContentDto> Handle(PlayNextContentCommand request, CancellationToken cancellationToken)
+        public async Task<ContentDto> Handle(SwitchContentCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -42,12 +43,16 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.PlayNextConten
                                ?? throw new InvalidOperationException($"Playlist {room.ActivePlaylistId.ToString()} " +
                                                                       $"does not exist");
 
-                var content = playlist.PlayNextContent();
+                var contentId = request.Direction == SwitchContentDirection.Next
+                    ? playlist.PlayNextContent()
+                    : playlist.PlayPreviousContent();
+
+                var content = await _contentRepository.GetAsync(contentId, cancellationToken);
                 return _mapper.Map<ContentDto>(content);
             }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not play next next content from active playlist of " +
+                _logger.LogError($"Could not play next content from active playlist of " +
                                  $"room {request.RoomId.ToString()}", exception);
                 throw new InvalidOperationException("Could not play next content from the playlist. Please retry");
             }
