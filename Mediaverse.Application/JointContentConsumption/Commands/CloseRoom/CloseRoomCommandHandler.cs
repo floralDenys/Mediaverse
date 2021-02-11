@@ -10,13 +10,16 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CloseRoom
     public class CloseRoomCommandHandler : IRequestHandler<CloseRoomCommand>
     {
         private readonly IRoomRepository _roomRepository;
+        private readonly IPlaylistRepository _playlistRepository;
         private readonly ILogger<CloseRoomCommandHandler> _logger;
 
         public CloseRoomCommandHandler(
             IRoomRepository roomRepository,
+            IPlaylistRepository playlistRepository,
             ILogger<CloseRoomCommandHandler> logger)
         {
             _roomRepository = roomRepository;
+            _playlistRepository = playlistRepository;
             _logger = logger;
         }
         
@@ -32,6 +35,17 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CloseRoom
                     throw new InvalidOperationException("Member does not have permission");
                 }
 
+                if (room.IsPlaylistSelected)
+                {
+                    var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken)
+                        ?? throw new ArgumentException("Active playlist could not be found");
+
+                    if (activePlaylist.IsTemporary)
+                    {
+                        await _playlistRepository.DeleteAsync(activePlaylist, cancellationToken);
+                    }
+                }
+                
                 await _roomRepository.DeleteAsync(request.RoomId, cancellationToken);
                 
                 return Unit.Value;
