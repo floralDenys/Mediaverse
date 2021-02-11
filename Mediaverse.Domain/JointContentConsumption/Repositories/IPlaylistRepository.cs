@@ -9,5 +9,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Repositories
     {
         Task<Playlist> GetAsync(Guid playlistId, CancellationToken cancellationToken);
         Task SaveAsync(Playlist playlist, CancellationToken cancellationToken);
+        Task DeleteAsync(Playlist playlist, CancellationToken cancellationToken);
     }
 }
