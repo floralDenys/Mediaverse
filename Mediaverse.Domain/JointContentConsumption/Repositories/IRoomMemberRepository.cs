@@ -7,6 +7,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Repositories
 {
     public interface IRoomMemberRepository
     {
-        Task<Host> GetHostAsync(Guid memberId, CancellationToken cancellationToken);
+        Task<Viewer> GetViewerAsync(Guid memberId, CancellationToken cancellationToken);
     }
 }
