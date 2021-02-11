@@ -1,6 +1,6 @@
 ﻿using Mediaverse.Application.JointContentConsumption.Common.Dtos;
 
-namespace Mediaverse.Application.JointContentConsumption.Commands.PlayNextContent.Dtos
+namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos
 {
     public class ContentDto
     {
