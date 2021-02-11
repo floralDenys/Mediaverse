@@ -70,12 +70,9 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             {
                 _ = playlist ?? throw new ArgumentNullException(nameof(playlist));
                 
-                if (!playlist.IsTemporary)
+                if (!playlist.Owner.Equals(Host))
                 {
-                    if (!playlist.Owner.Equals(Host))
-                    {
-                        throw new InvalidOperationException($"Playlist {playlist} does not belong to host {Host}");
-                    }
+                    throw new InvalidOperationException($"Playlist {playlist} does not belong to host {Host}");
                 }
 
                 ActivePlaylistId = playlist.Id;
