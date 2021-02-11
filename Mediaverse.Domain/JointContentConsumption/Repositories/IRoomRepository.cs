@@ -9,6 +9,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Repositories
     {
         Task<Room> GetAsync(Guid roomId, CancellationToken cancellationToken);
         Task SaveAsync(Room room, CancellationToken cancellationToken);
-        Task DeleteAsync(Guid roomId, CancellationToken cancellationToken);
+        Task DeleteAsync(Room room, CancellationToken cancellationToken);
     }
 }
