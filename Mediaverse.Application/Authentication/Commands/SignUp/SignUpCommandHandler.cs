@@ -35,7 +35,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
         {
             try
             {
-                var user = await _userRepository.GetUserAsync(request.Email);
+                var user = await _userRepository.GetUserAsync(request.Email, cancellationToken);
                 if (user != null)
                 {
                     throw new ArgumentException("User with given email exists already");
@@ -54,13 +54,13 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
                     Password = request.Password
                 };
 
-                await _userRepository.SaveUserAsync(user);
+                await _userRepository.SaveUserAsync(user, cancellationToken);
 
                 return _mapper.Map<UserDto>(user);
             }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not sign up user {request.Nickname}",exception);
+                _logger.LogError($"Could not sign up user {request.Email}",exception);
                 throw new InvalidOperationException("Could not sign up user. Please retry");
             }
         }
