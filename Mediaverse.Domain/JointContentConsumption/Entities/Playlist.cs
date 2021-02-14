@@ -12,7 +12,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         private readonly IList<ContentId> _contentIds;
         
         public Viewer Owner { get; }
-        public bool IsTemporary => Owner == null;
+        public bool IsTemporary { get; set; }
         
         private int? _currentlyPlayingContentIndex;
         
