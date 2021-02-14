@@ -14,20 +14,20 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
     public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, RoomDto>
     {
         private readonly IRoomRepository _roomRepository;
-        private readonly IRoomMemberRepository _roomMemberRepository;
+        private readonly IViewerRepository _viewerRepository;
         private readonly IGuidProvider _guidProvider;
         private readonly ILogger<CreateRoomCommandHandler> _logger;
         private readonly IMapper _mapper;
 
         public CreateRoomCommandHandler(
             IRoomRepository roomRepository,
-            IRoomMemberRepository roomMemberRepository,
+            IViewerRepository viewerRepository,
             IGuidProvider guidProvider,
             ILogger<CreateRoomCommandHandler> logger,
             IMapper mapper)
         {
             _roomRepository = roomRepository;
-            _roomMemberRepository = roomMemberRepository;
+            _viewerRepository = viewerRepository;
             _guidProvider = guidProvider;
             _logger = logger;
             _mapper = mapper;
@@ -42,7 +42,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
                     throw new ArgumentException("Name is null or empty");
                 }
                 
-                var host = await _roomMemberRepository.GetViewerAsync(request.HostId, cancellationToken)
+                var host = await _viewerRepository.GetViewerAsync(request.HostId, cancellationToken)
                            ?? throw new ArgumentException($"Host {request.HostId.ToString()} could not be found");
 
                 Guid generatedRoomId = _guidProvider.GetNewGuid();
