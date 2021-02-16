@@ -36,7 +36,7 @@ namespace Mediaverse.Application.JointContentConsumption.Queries.GetAvailablePla
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken) 
                            ?? throw new ArgumentException("Room could not be found");
 
-                var availablePlaylists = await _playlistRepository.GetAllByHost(room.Host.Profile.Id, cancellationToken);
+                var availablePlaylists = await _playlistRepository.GetAllByViewer(room.Host.Profile.Id, cancellationToken);
                 return _mapper.Map<IList<PlaylistDto>>(availablePlaylists);
             }
             catch (Exception exception)

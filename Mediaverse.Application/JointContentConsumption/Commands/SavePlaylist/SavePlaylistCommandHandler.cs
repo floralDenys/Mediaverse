@@ -44,7 +44,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SavePlaylist
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                            ?? throw new ArgumentException("Room could not be found");
 
-                var viewer = await _viewerRepository.GetViewerAsync(request.ViewerId, cancellationToken)
+                var viewer = await _viewerRepository.GetAsync(request.ViewerId, cancellationToken)
                              ?? throw new ArgumentException("Viewer could not be found");
 
                 if (!room.Viewers.Contains(viewer))

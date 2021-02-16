@@ -7,6 +7,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Repositories
 {
     public interface IViewerRepository
     {
-        Task<Viewer> GetViewerAsync(Guid memberId, CancellationToken cancellationToken);
+        Task<Viewer> GetAsync(Guid memberId, CancellationToken cancellationToken);
     }
 }
