@@ -114,7 +114,14 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                     throw new InvalidOperationException("Viewer is not in the room");
                 }
 
+                bool isHostLeavingTheRoom = Host.Equals(viewer);
+                
                 _viewers.Remove(viewer);
+
+                if (isHostLeavingTheRoom)
+                {
+                    SelectNewHost();
+                }
             }
             catch (Exception exception)
             {
@@ -124,5 +131,11 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         }
         
         public bool IsSpotAvailable => _viewers.Count < _maxViewersQuantity;
+
+        private void SelectNewHost()
+        {
+            var random = new Random();
+            _hostViewerIndex = random.Next(0, _viewers.Count - 1);
+        }
     }
 }
