@@ -4,34 +4,40 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Mediaverse.Application.Common.Services;
+using Mediaverse.Domain.JointContentConsumption.Entities;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
+using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 using Microsoft.Extensions.Logging;
 
-namespace Mediaverse.Application.JointContentConsumption.Commands.AddPlaylist
+namespace Mediaverse.Application.JointContentConsumption.Commands.SavePlaylist
 {
-    public class AddPlaylistCommandHandler : IRequestHandler<AddPlaylistCommand>
+    public class SavePlaylistCommandHandler : IRequestHandler<SavePlaylistCommand>
     {
         private readonly IPlaylistRepository _playlistRepository;
         private readonly IViewerRepository _viewerRepository;
         private readonly IRoomRepository _roomRepository;
-        private readonly ILogger<AddPlaylistCommandHandler> _logger;
+        private readonly IGuidProvider _guidProvider;
+        private readonly ILogger<SavePlaylistCommandHandler> _logger;
         private readonly IMapper _mapper;
 
-        public AddPlaylistCommandHandler(
+        public SavePlaylistCommandHandler(
             IPlaylistRepository playlistRepository,
             IViewerRepository viewerRepository,
             IRoomRepository roomRepository,
-            ILogger<AddPlaylistCommandHandler> logger,
+            IGuidProvider guidProvider,
+            ILogger<SavePlaylistCommandHandler> logger,
             IMapper mapper)
         {
             _playlistRepository = playlistRepository;
             _viewerRepository = viewerRepository;
             _roomRepository = roomRepository;
+            _guidProvider = guidProvider;
             _logger = logger;
             _mapper = mapper;
         }
         
-        public async Task<Unit> Handle(AddPlaylistCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(SavePlaylistCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -49,11 +55,21 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.AddPlaylist
                 var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken) 
                                      ?? throw new ArgumentException("Playlist could not be found");
 
-                if (viewer == room.Host && activePlaylist.IsTemporary)
+                if (activePlaylist.Owner == viewer) 
                 {
+                    if (!activePlaylist.IsTemporary)
+                    {
+                        throw new InvalidOperationException("Playlist is added already");
+                    }
+                    
                     activePlaylist.IsTemporary = false;
                 }
-
+                else
+                {
+                    Guid newPlaylistId = _guidProvider.GetNewGuid();
+                    activePlaylist = CreatePlaylistCopy(newPlaylistId, viewer, activePlaylist);
+                }
+                
                 await _playlistRepository.SaveAsync(activePlaylist, cancellationToken);
 
                 return Unit.Value;
@@ -65,5 +81,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.AddPlaylist
                 throw new InvalidOperationException("Could not add playlist. Please retry");
             }
         }
+
+        private Playlist CreatePlaylistCopy(Guid newPlaylistId, Viewer newPlaylistOwner, Playlist sourcePlaylist) =>
+            new Playlist(newPlaylistId, newPlaylistOwner, sourcePlaylist);
     }
 }
