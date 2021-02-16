@@ -42,7 +42,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
                     throw new ArgumentException("Name is null or empty");
                 }
                 
-                var host = await _viewerRepository.GetViewerAsync(request.HostId, cancellationToken)
+                var host = await _viewerRepository.GetAsync(request.HostId, cancellationToken) 
                            ?? throw new ArgumentException($"Host {request.HostId.ToString()} could not be found");
 
                 Guid generatedRoomId = _guidProvider.GetNewGuid();
