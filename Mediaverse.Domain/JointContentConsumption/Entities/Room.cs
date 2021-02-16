@@ -82,5 +82,47 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 throw new InvalidOperationException($"Could not update playlist {playlist} in room {this}", exception);
             }
         }
+
+        public void Join(Viewer viewer)
+        {
+            try
+            {
+                _ = viewer ?? throw new ArgumentNullException(nameof(viewer));
+
+                if (_viewers.Contains(viewer))
+                {
+                    throw new InvalidOperationException("Viewer joined the room already");
+                }
+                
+                _viewers.Add(viewer);
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException($"Viewer {viewer?.Profile.Id.ToString()} could not join " +
+                                                    $"the room {Id.ToString()}", exception);
+            }
+        }
+
+        public void Leave(Viewer viewer)
+        {
+            try
+            {
+                _ = viewer ?? throw new ArgumentNullException(nameof(viewer));
+
+                if (!_viewers.Contains(viewer))
+                {
+                    throw new InvalidOperationException("Viewer is not in the room");
+                }
+
+                _viewers.Remove(viewer);
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException($"Viewer {viewer?.Profile.Id.ToString()} could not leave " +
+                                                    $"the room {Id.ToString()}", exception);
+            }
+        }
+        
+        public bool IsSpotAvailable => _viewers.Count < _maxViewersQuantity;
     }
 }
