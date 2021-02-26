@@ -86,5 +86,7 @@ namespace Mediaverse.Domain.Authentication.Entities
                 throw new InvalidOperationException("Could not create user", exception);
             }
         }
+        
+        private User() { }
     }
 }

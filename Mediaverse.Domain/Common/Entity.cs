@@ -15,6 +15,8 @@ namespace Mediaverse.Domain.Common
 
             Id = id;
         }
+        
+        protected Entity() { }
 
         public override string ToString() => $"{Id.ToString()}";
     }

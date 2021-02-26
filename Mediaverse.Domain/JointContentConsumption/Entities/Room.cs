@@ -63,6 +63,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 throw new InvalidOperationException("Could not create room", exception);
             }
         }
+        
+        private Room() { }
 
         public void UpdateSelectedPlaylist(Playlist playlist)
         {

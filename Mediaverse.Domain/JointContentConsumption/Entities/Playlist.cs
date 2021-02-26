@@ -33,6 +33,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 throw new InvalidOperationException("Could not create playlist", exception);
             }
         }
+        
+        private Playlist() { }
 
         public IEnumerator<ContentId> GetEnumerator() => _contentIds.GetEnumerator();
         
