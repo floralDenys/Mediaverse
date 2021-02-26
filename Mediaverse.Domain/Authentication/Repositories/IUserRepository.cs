@@ -9,6 +9,6 @@ namespace Mediaverse.Domain.Authentication.Repositories
     {
         Task<User> GetUserAsync(Guid userId, CancellationToken cancellationToken);
         Task<User> GetUserAsync(string email, CancellationToken cancellationToken);
-        Task SaveUserAsync(User user, CancellationToken cancellationToken);
+        Task<int> SaveUserAsync(User user, CancellationToken cancellationToken);
     }
 }
