@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
+using MediatR;
+using Mediaverse.Domain.Authentication.Repositories;
+using Mediaverse.Infrastructure.Authentication.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,7 +22,12 @@ namespace Mediaverse.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
+            
+            services.AddMediatR(Assembly.Load("Mediaverse.Application"));
+
+            services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,9 +48,9 @@ namespace Mediaverse.Web
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
