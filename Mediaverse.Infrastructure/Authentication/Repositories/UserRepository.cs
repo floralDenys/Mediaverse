@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mediaverse.Infrastructure.Authentication.Repositories
 {
-    public class UserRepositories : IUserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _dbContext;
 
-        public UserRepositories(ApplicationDbContext dbContext) => _dbContext = dbContext;
+        public UserRepository(ApplicationDbContext dbContext) => _dbContext = dbContext;
         
         public Task<User> GetUserAsync(Guid userId, CancellationToken cancellationToken) =>
             _dbContext.Users.FindAsync(userId, cancellationToken).AsTask();

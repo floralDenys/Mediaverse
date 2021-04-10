@@ -1,0 +1,14 @@
+﻿@model Mediaverse.Application.Authentication.Commands.SignIn.SignInCommand;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    @Html.BeginForm("SignIn", "Authentication", new { id = "signInForm" }, FormMethod.Post)
+    {
+        <h1 class="display-5">Sign In</h1>
+        @Html.TextBoxFor(x => x.Email)
+        @Html.TextBoxFor(x => x.Password)
+        <input type="submit" value="Confirm" onclick="$('signInForm').submit()"/>
+    }
+</div>
