@@ -13,7 +13,6 @@
 # Editor-based HTTP Client requests
 /httpRequests/
 
-/Mediaverse/obj/
 /Mediaverse.Domain/obj/
 /Mediaverse.Domain/bin/
 /Mediaverse.Infrastructure/obj/
@@ -25,3 +24,4 @@
 /Mediaverse.Web/obj/
 /Mediaverse.Web/bin/
 /.vs/
+/obj/
