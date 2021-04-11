@@ -15,8 +15,7 @@ namespace Mediaverse.Web.Controllers
         {
             _mediator = mediator;
         }
-
-
+        
         [HttpGet]
         public IActionResult CreateRoom(Guid userId)
         {

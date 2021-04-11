@@ -60,7 +60,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
             }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not sign up user {request.Email}",exception);
+                _logger.LogError($"Could not sign up user {request.Email}", exception);
                 throw new InvalidOperationException("Could not sign up user. Please retry");
             }
         }
