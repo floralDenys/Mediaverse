@@ -50,18 +50,25 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         {
             try
             {
-                if (string.IsNullOrEmpty(name))
-                {
-                    throw new ArgumentException("Name could not be null or empty");
-                }
-                
                 Name = name;
+                
                 _viewers = new List<Viewer>() { host };
             }
             catch (Exception exception)
             {
                 throw new InvalidOperationException("Could not create room", exception);
             }
+        }
+
+        public Room(
+            Guid id,
+            string name,
+            Viewer host,
+            int maxViewersQuantity,
+            Guid activePlaylistId,
+            IEnumerable<Viewer> viewers) : base(id)
+        {
+            
         }
         
         private Room() { }

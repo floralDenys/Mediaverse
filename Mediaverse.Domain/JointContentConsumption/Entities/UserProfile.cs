@@ -6,9 +6,9 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
     public class UserProfile : Entity, IEquatable<UserProfile>
     {
         public string Name { get; }
-        public bool IsResident { get; }
+        public bool IsMember { get; }
 
-        public UserProfile(Guid id, string name, bool isResident) : base(id)
+        public UserProfile(Guid id, string name, bool isMember) : base(id)
         {
             try
             {
@@ -18,7 +18,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 }
 
                 Name = name;
-                IsResident = isResident;
+                IsMember = isMember;
             }
             catch (Exception exception)
             {
