@@ -1,0 +1,15 @@
+﻿@model Mediaverse.Application.JointContentConsumption.Commands.CreateRoom.CreateRoomCommand;
+@{
+    ViewData["Title"] = "Create room";
+}
+
+<div class="text-center">
+    @using (Html.BeginForm("CreateRoom", "ContentConsumption", new {id = "createRoomForm"}, FormMethod.Post))
+    {
+        <h1 class="display-5">Create room</h1>
+        @Html.HiddenFor(x => x.HostId)
+        
+        @Html.TextBoxFor(x => x.Name)
+        <input type="submit" value="Confirm" onclick="$('createRoomForm').submit()"/>
+    }
+</div>

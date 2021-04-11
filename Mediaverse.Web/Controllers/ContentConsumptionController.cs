@@ -15,16 +15,22 @@ namespace Mediaverse.Web.Controllers
         {
             _mediator = mediator;
         }
+
+        [HttpGet]
+        public IActionResult Index(Guid viewerId)
+        {
+            return View(viewerId);
+        }
         
         [HttpGet]
-        public IActionResult CreateRoom(Guid userId)
+        public IActionResult CreateRoom(Guid viewerId)
         {
-            var command = new CreateRoomCommand { HostId = userId };
+            var command = new CreateRoomCommand {HostId = viewerId};
             return View(command);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateRoom(CreateRoomCommand command, CancellationToken cancellationToken)
+        public async Task<ActionResult> CreateRoom(CreateRoomCommand command, CancellationToken cancellationToken)
         {
             var room = await _mediator.Send(command, cancellationToken);
             return RedirectToAction("Room", "ContentConsumption", new {roomId = room.Id});

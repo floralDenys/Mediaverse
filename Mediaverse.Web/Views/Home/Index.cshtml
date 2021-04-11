@@ -8,14 +8,17 @@
     or 
     @Html.ActionLink("Sign Up", "SignUp", "Authentication")
     or simply
-    <input type="button" value="Create a room" onclick="createAnonymousRoom()" />
+    <input type="button" value="Stay Anonymous" onclick="createAnonymousRoom()" />
 </div>
 
 <script type="text/javascript">
     const createAnonymousRoom = function() {
         $.ajax({
             type: "POST",
-            url: '@Url.Action("CreateRoom", "Authentication")'
+            url: '@Url.Action("SignUpAnonymous", "Authentication")',
+            success: function(res) {
+                window.location.href = res.redirectToUrl;
+            }
         });
     };
 </script>
