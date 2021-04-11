@@ -60,7 +60,7 @@ namespace Mediaverse.Web.Controllers
             var command = new SignUpAnonymousCommand();
             var user = await _mediator.Send(command);
 
-            return RedirectToAction("CreateRoom", "ContentConsumption", new { userId = user.GuidId });
+            return RedirectToAction("CreateRoom", "ContentConsumption", new { userId = user.Id });
         }
         
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

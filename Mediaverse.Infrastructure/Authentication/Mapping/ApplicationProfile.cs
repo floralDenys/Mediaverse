@@ -10,8 +10,7 @@ namespace Mediaverse.Infrastructure.Authentication.Mapping
         
         private void ConfigureMapping()
         {
-            CreateMap<User, UserDto>()
-                .ForMember(dst => dst.GuidId, opt => opt.MapFrom(src => src.Id));
+            CreateMap<User, UserDto>();
         }
     }
 }
