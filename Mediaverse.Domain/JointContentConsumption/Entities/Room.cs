@@ -21,10 +21,9 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 _name = value;
             }
         }
-        
-        private int _hostViewerIndex = 0;
-        public Viewer Host => Viewers[_hostViewerIndex];
-        
+
+        public Viewer Host { get; private set; }
+
         private IList<Viewer> _viewers;
         private int _maxViewersQuantity = int.MaxValue;
         
@@ -51,8 +50,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             try
             {
                 Name = name;
-                
-                _viewers = new List<Viewer>() { host };
+                Host = host;
             }
             catch (Exception exception)
             {
@@ -66,9 +64,13 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             Viewer host,
             int maxViewersQuantity,
             Guid activePlaylistId,
-            IEnumerable<Viewer> viewers) : base(id)
+            IList<Viewer> viewers) : base(id)
         {
-            
+            Name = name;
+            Host = host;
+            MaxViewersQuantity = maxViewersQuantity;
+            ActivePlaylistId = activePlaylistId;
+            _viewers = viewers;
         }
         
         private Room() { }
@@ -96,6 +98,11 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         {
             try
             {
+                if (!IsSpotAvailable)
+                {
+                    throw new InvalidOperationException("There is no spot for the viewer");
+                }
+                
                 _ = viewer ?? throw new ArgumentNullException(nameof(viewer));
 
                 if (_viewers.Contains(viewer))
@@ -125,11 +132,13 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
 
                 bool isHostLeavingTheRoom = Host.Equals(viewer);
                 
-                _viewers.Remove(viewer);
-
                 if (isHostLeavingTheRoom)
                 {
                     SelectNewHost();
+                }
+                else
+                {
+                    _viewers.Remove(viewer);
                 }
             }
             catch (Exception exception)
@@ -139,12 +148,16 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
         }
         
-        public bool IsSpotAvailable => _viewers.Count < _maxViewersQuantity;
+        private bool IsSpotAvailable => _viewers.Count < _maxViewersQuantity;
 
         private void SelectNewHost()
         {
             var random = new Random();
-            _hostViewerIndex = random.Next(0, _viewers.Count - 1);
+            
+            int newHostIndex = random.Next(0, _viewers.Count - 1);
+            Host = _viewers[newHostIndex];
+            
+            _viewers.Remove(Host);
         }
     }
 }

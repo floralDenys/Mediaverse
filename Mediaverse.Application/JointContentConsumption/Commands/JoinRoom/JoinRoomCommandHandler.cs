@@ -38,11 +38,6 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.JoinRoom
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                            ?? throw new ArgumentException("Room could not be found");
 
-                if (!room.IsSpotAvailable)
-                {
-                    throw new InvalidOperationException("There is no spot for the viewer");
-                }
-                
                 room.Join(viewer);
 
                 await _roomRepository.UpdateAsync(room, cancellationToken);

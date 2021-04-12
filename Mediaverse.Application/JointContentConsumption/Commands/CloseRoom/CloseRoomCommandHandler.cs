@@ -42,7 +42,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CloseRoom
 
                     if (activePlaylist.IsTemporary)
                     {
-                        await _playlistRepository.DeleteAsync(activePlaylist, cancellationToken);
+                        await _playlistRepository.DeleteAsync(activePlaylist.Id, cancellationToken);
                     }
                 }
                 
