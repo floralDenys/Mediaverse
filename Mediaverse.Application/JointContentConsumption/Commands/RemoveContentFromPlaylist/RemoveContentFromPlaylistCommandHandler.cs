@@ -42,7 +42,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.RemoveContentF
 
                 var contentId = _mapper.Map<ContentId>(request.ContentId);
                 activePlaylist.Remove(contentId);
-                await _playlistRepository.SaveAsync(activePlaylist, cancellationToken);
+                await _playlistRepository.UpdateAsync(activePlaylist, cancellationToken);
 
                 return _mapper.Map<PlaylistDto>(activePlaylist);
             }

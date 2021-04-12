@@ -70,7 +70,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SavePlaylist
                     activePlaylist = CreatePlaylistCopy(newPlaylistId, viewer, activePlaylist);
                 }
                 
-                await _playlistRepository.SaveAsync(activePlaylist, cancellationToken);
+                await _playlistRepository.AddAsync(activePlaylist, cancellationToken);
 
                 return Unit.Value;
             }

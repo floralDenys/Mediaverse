@@ -42,7 +42,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.AddContentToPl
                 
                 var contentId = _mapper.Map<ContentId>(request.ContentId);
                 playlist.Add(contentId);
-                await _playlistRepository.SaveAsync(playlist, cancellationToken);
+                await _playlistRepository.UpdateAsync(playlist, cancellationToken);
 
                 return _mapper.Map<PlaylistDto>(playlist);
             }
