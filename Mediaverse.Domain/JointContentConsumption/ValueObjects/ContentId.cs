@@ -13,10 +13,8 @@ namespace Mediaverse.Domain.JointContentConsumption.ValueObjects
         public ContentId(
             string externalId,
             MediaContentSource contentSource,
-            MediaContentType contentType, 
-            int playlistItemIndex)
+            MediaContentType contentType)
         {
-            PlaylistItemIndex = playlistItemIndex;
             try
             {
                 if (string.IsNullOrEmpty(externalId))
@@ -27,13 +25,6 @@ namespace Mediaverse.Domain.JointContentConsumption.ValueObjects
                 ExternalId = externalId;
                 ContentSource = contentSource;
                 ContentType = contentType;
-                
-                if (playlistItemIndex <= 0)
-                {
-                    throw new ArgumentException("Playlist item index should be higher than 0");
-                }
-                
-                PlaylistItemIndex = playlistItemIndex;
             }
             catch (Exception exception)
             {
