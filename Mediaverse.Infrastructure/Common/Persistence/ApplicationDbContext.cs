@@ -1,4 +1,5 @@
 ﻿using Mediaverse.Domain.Authentication.Entities;
+using Mediaverse.Domain.ContentSearch.Entities;
 using Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,7 @@ namespace Mediaverse.Infrastructure.Common.Persistence
     {
         public DbSet<User> Users { get; set; }
         public DbSet<RoomDto> Rooms { get; set; }
+        public DbSet<PlaylistDto> Playlists { get; set; }
 
         public ApplicationDbContext()
         {
@@ -37,9 +39,11 @@ namespace Mediaverse.Infrastructure.Common.Persistence
 
             modelBuilder.Entity<RoomDto>().ToTable("Rooms");
             modelBuilder.Entity<RoomDto>().HasKey(r => r.Id);
-            modelBuilder.Entity<RoomDto>();
-            modelBuilder.Entity<RoomDto>()
-                .HasMany(r => r.Viewers);
+            modelBuilder.Entity<RoomDto>().HasMany<ViewerDto>();
+
+            modelBuilder.Entity<PlaylistDto>().ToTable("Playlists");
+            modelBuilder.Entity<PlaylistDto>().HasKey(p => p.Id);
+            modelBuilder.Entity<PlaylistDto>().HasMany<ContentId>();
         }
     }
 }
