@@ -46,7 +46,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.DeletePlaylist
 
                 await _playlistRepository.DeleteAsync(playlist.Id, cancellationToken);
 
-                var remainingPlaylists = await _playlistRepository.GetAllByViewer(request.MemberId, cancellationToken);
+                var remainingPlaylists = await _playlistRepository.GetAllByViewerAsync(request.MemberId, cancellationToken);
                 return _mapper.Map<IList<PlaylistDto>>(remainingPlaylists);
             }
             catch (Exception exception)
