@@ -48,7 +48,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
                 Guid generatedRoomId = _guidProvider.GetNewGuid();
                 var room = new Room(generatedRoomId, request.Name, host);
                 
-                await _roomRepository.SaveAsync(room, cancellationToken);
+                await _roomRepository.AddAsync(room, cancellationToken);
                 
                 return _mapper.Map<RoomDto>(room);
             }

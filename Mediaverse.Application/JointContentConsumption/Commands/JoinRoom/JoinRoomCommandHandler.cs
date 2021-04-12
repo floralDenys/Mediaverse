@@ -45,7 +45,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.JoinRoom
                 
                 room.Join(viewer);
 
-                await _roomRepository.SaveAsync(room, cancellationToken);
+                await _roomRepository.UpdateAsync(room, cancellationToken);
 
                 return _mapper.Map<RoomDto>(room);
             }

@@ -46,7 +46,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CloseRoom
                     }
                 }
                 
-                await _roomRepository.DeleteAsync(room, cancellationToken);
+                await _roomRepository.DeleteAsync(.Id, cancellationToken);
                 
                 return Unit.Value;
             }

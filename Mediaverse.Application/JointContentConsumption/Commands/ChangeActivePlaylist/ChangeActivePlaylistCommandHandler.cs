@@ -53,7 +53,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeActivePl
                     }
                 }
 
-                await _roomRepository.SaveAsync(room, cancellationToken);
+                await _roomRepository.UpdateAsync(room, cancellationToken);
 
                 return _mapper.Map<PlaylistDto>(newPlaylist);
             }
