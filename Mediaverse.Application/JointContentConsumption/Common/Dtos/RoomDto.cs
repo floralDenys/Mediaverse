@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom.Dtos
+namespace Mediaverse.Application.JointContentConsumption.Common.Dtos
 {
     public class RoomDto
     {
