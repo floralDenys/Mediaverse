@@ -8,7 +8,6 @@ namespace Mediaverse.Domain.JointContentConsumption.ValueObjects
         public string ExternalId { get; }
         public MediaContentSource ContentSource { get; } 
         public MediaContentType ContentType { get; }
-        public int PlaylistItemIndex { get; }
 
         public ContentId(
             string externalId,
@@ -31,6 +30,8 @@ namespace Mediaverse.Domain.JointContentConsumption.ValueObjects
                 throw new InvalidOperationException("Could not create content ID", exception);
             }
         }
+
+        private ContentId() { }
         
         public bool Equals(ContentId other)
         {

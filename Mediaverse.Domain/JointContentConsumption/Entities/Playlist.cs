@@ -16,11 +16,11 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         
         private int? _currentlyPlayingContentIndex;
         
-        public Playlist(Guid id, Viewer owner, IEnumerable<PlaylistItem> contentIds = null) : base(id)
+        public Playlist(Guid id, Viewer owner, IEnumerable<PlaylistItem> items = null) : base(id)
         {
             try
             {
-                _items = contentIds?.ToList() ?? new List<PlaylistItem>();
+                _items = items?.ToList() ?? new List<PlaylistItem>();
 
                 Owner = owner ?? throw new ArgumentNullException(nameof(owner));
 
