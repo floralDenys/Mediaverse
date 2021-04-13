@@ -54,7 +54,16 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
                 OwnerId = playlist.Owner.Profile.Id,
                 IsTemporary = playlist.IsTemporary,
                 CurrentlyPlayingContentIndex = playlist.GetEnumerator()?.Current?.PlaylistItemIndex ?? -1,
-                ContentIds = playlist.Select(pi => pi.ContentId).ToList()
+                PlaylistItems = playlist
+                    .Select(pi => 
+                        new PlaylistItemDto
+                        {
+                            ExternalId = pi.ContentId.ExternalId,
+                            ContentSource = pi.ContentId.ContentSource,
+                            ContentType = pi.ContentId.ContentType,
+                            PlaylistItemIndex = pi.PlaylistItemIndex
+                        })
+                    .ToList()
             };
 
             _applicationDbContext.Playlists.Add(playlistDto);
@@ -67,7 +76,16 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
             var playlistDto = _applicationDbContext.Playlists.Find(playlist.Id);
             playlistDto.IsTemporary = playlist.IsTemporary;
             playlistDto.CurrentlyPlayingContentIndex = playlist.GetEnumerator()?.Current?.PlaylistItemIndex ?? -1;
-            playlistDto.ContentIds = playlist.Select(pi => pi.ContentId).ToList();
+            playlistDto.PlaylistItems = playlist
+                .Select(pi => 
+                    new PlaylistItemDto
+                    {
+                        ExternalId = pi.ContentId.ExternalId,
+                        ContentSource = pi.ContentId.ContentSource,
+                        ContentType = pi.ContentId.ContentType,
+                        PlaylistItemIndex = pi.PlaylistItemIndex
+                    })
+                .ToList();
 
             return _applicationDbContext.SaveChangesAsync(cancellationToken);
         }
@@ -84,6 +102,9 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
             new Playlist(
                 playlistDto.Id,
             new Viewer(
-                        new UserProfile(owner.Id, owner.Nickname, owner.Type == UserType.Member)));
+                        new UserProfile(owner.Id, owner.Nickname, owner.Type == UserType.Member)),
+                playlistDto.PlaylistItems.Select(pi => 
+                    new PlaylistItem(
+                        new ContentId(pi.ExternalId, pi.ContentSource, pi.ContentType), pi.PlaylistItemIndex)));
     }
 }
