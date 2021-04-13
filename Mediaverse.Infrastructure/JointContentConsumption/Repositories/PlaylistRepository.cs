@@ -53,8 +53,8 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
                 Id = playlist.Id,
                 OwnerId = playlist.Owner.Profile.Id,
                 IsTemporary = playlist.IsTemporary,
-                CurrentlyPlayingContentIndex = playlist.GetEnumerator()?.Current.PlaylistItemIndex ?? -1,
-                ContentIds = playlist.ToList()
+                CurrentlyPlayingContentIndex = playlist.GetEnumerator()?.Current?.PlaylistItemIndex ?? -1,
+                ContentIds = playlist.Select(pi => pi.ContentId).ToList()
             };
 
             _applicationDbContext.Playlists.Add(playlistDto);
@@ -66,8 +66,8 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         {
             var playlistDto = _applicationDbContext.Playlists.Find(playlist.Id);
             playlistDto.IsTemporary = playlist.IsTemporary;
-            playlistDto.CurrentlyPlayingContentIndex = playlist.GetEnumerator()?.Current.PlaylistItemIndex ?? -1;
-            playlistDto.ContentIds = playlist.ToList();
+            playlistDto.CurrentlyPlayingContentIndex = playlist.GetEnumerator()?.Current?.PlaylistItemIndex ?? -1;
+            playlistDto.ContentIds = playlist.Select(pi => pi.ContentId).ToList();
 
             return _applicationDbContext.SaveChangesAsync(cancellationToken);
         }
