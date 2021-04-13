@@ -1,5 +1,6 @@
 ﻿using Mediaverse.Domain.Authentication.Entities;
-using Mediaverse.Domain.JointContentConsumption.Entities;
+using Mediaverse.Domain.ContentSearch.Entities;
+using Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 #nullable disable
@@ -9,6 +10,8 @@ namespace Mediaverse.Infrastructure.Common.Persistence
     public class ApplicationDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<RoomDto> Rooms { get; set; }
+        public DbSet<PlaylistDto> Playlists { get; set; }
 
         public ApplicationDbContext()
         {
@@ -32,8 +35,15 @@ namespace Mediaverse.Infrastructure.Common.Persistence
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
-            modelBuilder.Entity<User>()
-                .HasKey(u => u.Id);
+            modelBuilder.Entity<User>().HasKey(u => u.Id);
+
+            modelBuilder.Entity<RoomDto>().ToTable("Rooms");
+            modelBuilder.Entity<RoomDto>().HasKey(r => r.Id);
+            modelBuilder.Entity<RoomDto>().HasMany<ViewerDto>();
+
+            modelBuilder.Entity<PlaylistDto>().ToTable("Playlists");
+            modelBuilder.Entity<PlaylistDto>().HasKey(p => p.Id);
+            modelBuilder.Entity<PlaylistDto>().HasMany<ContentId>();
         }
     }
 }

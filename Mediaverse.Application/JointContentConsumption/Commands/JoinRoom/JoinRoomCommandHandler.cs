@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
-using Mediaverse.Application.JointContentConsumption.Commands.CreateRoom.Dtos;
+using Mediaverse.Application.JointContentConsumption.Common.Dtos;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Microsoft.Extensions.Logging;
 
@@ -38,14 +38,9 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.JoinRoom
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                            ?? throw new ArgumentException("Room could not be found");
 
-                if (!room.IsSpotAvailable)
-                {
-                    throw new InvalidOperationException("There is no spot for the viewer");
-                }
-                
                 room.Join(viewer);
 
-                await _roomRepository.SaveAsync(room, cancellationToken);
+                await _roomRepository.UpdateAsync(room, cancellationToken);
 
                 return _mapper.Map<RoomDto>(room);
             }

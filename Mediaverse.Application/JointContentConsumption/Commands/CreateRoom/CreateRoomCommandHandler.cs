@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.Common.Services;
-using Mediaverse.Application.JointContentConsumption.Commands.CreateRoom.Dtos;
+using Mediaverse.Application.JointContentConsumption.Common.Dtos;
 using Mediaverse.Domain.JointContentConsumption.Entities;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Microsoft.Extensions.Logging;
@@ -48,7 +48,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
                 Guid generatedRoomId = _guidProvider.GetNewGuid();
                 var room = new Room(generatedRoomId, request.Name, host);
                 
-                await _roomRepository.SaveAsync(room, cancellationToken);
+                await _roomRepository.AddAsync(room, cancellationToken);
                 
                 return _mapper.Map<RoomDto>(room);
             }

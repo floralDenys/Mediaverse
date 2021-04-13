@@ -4,7 +4,7 @@
 }
 
 <div class="text-center">
-    @Html.BeginForm("SignIn", "Authentication", new { id = "signInForm" }, FormMethod.Post)
+    @using(Html.BeginForm("SignIn", "Authentication", new { id = "signInForm" }, FormMethod.Post))
     {
         <h1 class="display-5">Sign In</h1>
         @Html.TextBoxFor(x => x.Email)

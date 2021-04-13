@@ -1,6 +1,6 @@
 ﻿using System;
 using MediatR;
-using Mediaverse.Application.JointContentConsumption.Commands.CreateRoom.Dtos;
+using Mediaverse.Application.JointContentConsumption.Common.Dtos;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.JoinRoom
 {

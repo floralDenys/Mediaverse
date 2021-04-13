@@ -8,6 +8,7 @@ namespace Mediaverse.Domain.JointContentConsumption.ValueObjects
         public string ExternalId { get; }
         public MediaContentSource ContentSource { get; } 
         public MediaContentType ContentType { get; }
+        public int PlaylistItemIndex { get; }
 
         public ContentId(
             string externalId,

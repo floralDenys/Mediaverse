@@ -8,7 +8,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Repositories
     public interface IRoomRepository
     {
         Task<Room> GetAsync(Guid roomId, CancellationToken cancellationToken);
-        Task SaveAsync(Room room, CancellationToken cancellationToken);
-        Task DeleteAsync(Room room, CancellationToken cancellationToken);
+        Task AddAsync(Room room, CancellationToken cancellationToken);
+        Task UpdateAsync(Room room, CancellationToken cancellationToken);
+        Task DeleteAsync(Guid roomId, CancellationToken cancellationToken);
     }
 }

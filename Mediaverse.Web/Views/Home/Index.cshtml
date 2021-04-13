@@ -3,10 +3,22 @@
 }
 
 <div class="text-center">
-    <h1 class="display-5">Welcome to Mediverse</h1>
+    <h1 class="display-5">Welcome to Mediaverse</h1>
     @Html.ActionLink("Sign In", "SignIn", "Authentication")
     or 
     @Html.ActionLink("Sign Up", "SignUp", "Authentication")
     or simply
-    @Html.ActionLink("CreateRoom", "SignUp", "Authentication")
+    <input type="button" value="Stay Anonymous" onclick="createAnonymousRoom()" />
 </div>
+
+<script type="text/javascript">
+    const createAnonymousRoom = function() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SignUpAnonymous", "Authentication")',
+            success: function(res) {
+                window.location.href = res.redirectToUrl;
+            }
+        });
+    };
+</script>

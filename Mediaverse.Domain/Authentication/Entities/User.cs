@@ -28,7 +28,7 @@ namespace Mediaverse.Domain.Authentication.Entities
             get => _password;
             set
             {
-                if (string.IsNullOrEmpty(_password))
+                if (string.IsNullOrEmpty(value))
                 {
                     throw new ArgumentException("Password could not be null or empty");
                 }
@@ -64,6 +64,8 @@ namespace Mediaverse.Domain.Authentication.Entities
                 {
                     throw new ArgumentException("Email could not be null or empty");
                 }
+
+                _email = value;
             }
         }
 

@@ -49,11 +49,11 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeActivePl
 
                     if (previousPlaylist.IsTemporary)
                     {
-                        await _playlistRepository.DeleteAsync(previousPlaylist, cancellationToken);
+                        await _playlistRepository.DeleteAsync(previousPlaylist.Id, cancellationToken);
                     }
                 }
 
-                await _roomRepository.SaveAsync(room, cancellationToken);
+                await _roomRepository.UpdateAsync(room, cancellationToken);
 
                 return _mapper.Map<PlaylistDto>(newPlaylist);
             }

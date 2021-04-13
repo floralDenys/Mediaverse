@@ -55,12 +55,18 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateRoom()
+        public async Task<IActionResult> SignUpAnonymous()
         {
             var command = new SignUpAnonymousCommand();
             var user = await _mediator.Send(command);
 
-            return RedirectToAction("CreateRoom", "ContentConsumption", new { userId = user.GuidId });
+            return Json(new
+            {
+                redirectToUrl = @Url.Action(
+                    "Index",
+                    "ContentConsumption",
+                    new { viewerId = user.Id})
+            });
         }
         
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

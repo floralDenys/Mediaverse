@@ -7,25 +7,29 @@ using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 
 namespace Mediaverse.Domain.JointContentConsumption.Entities
 {
-    public class Playlist : Entity, IEnumerable<ContentId>
+    public class Playlist : Entity, IEnumerable<PlaylistItem>
     {
-        private readonly IList<ContentId> _contentIds;
+        private readonly IList<PlaylistItem> _items;
         
         public Viewer Owner { get; }
         public bool IsTemporary { get; set; }
         
         private int? _currentlyPlayingContentIndex;
         
-        public Playlist(Guid id, Viewer owner, IEnumerable<ContentId> contentIds = null) : base(id)
+        public Playlist(Guid id, Viewer owner, IEnumerable<PlaylistItem> contentIds = null) : base(id)
         {
             try
             {
-                _contentIds = contentIds?.ToList() ?? new List<ContentId>();
+                _items = contentIds?.ToList() ?? new List<PlaylistItem>();
+
                 Owner = owner ?? throw new ArgumentNullException(nameof(owner));
 
-                if (_contentIds.Any())
+                if (_items.Any())
                 {
                     _currentlyPlayingContentIndex = 0;
+
+                    // sort items by their playlist indexes 
+                    _items = _items.OrderBy(x => x.PlaylistItemIndex).ToList();
                 }
             }
             catch (Exception exception)
@@ -36,7 +40,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         
         private Playlist() { }
 
-        public IEnumerator<ContentId> GetEnumerator() => _contentIds.GetEnumerator();
+        public IEnumerator<PlaylistItem> GetEnumerator() => _items.GetEnumerator();
         
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -50,12 +54,13 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 {
                     throw new InvalidOperationException("Content is added already");
                 }
-                
-                _contentIds.Add(contentId);
 
-                if (_contentIds.Count == 1)
+                int playlistItemIndex = (_items.LastOrDefault()?.PlaylistItemIndex ?? 0) + 1;
+                _items.Add(new PlaylistItem(contentId, playlistItemIndex));
+
+                if (_items.Count == 1)
                 {
-                    _currentlyPlayingContentIndex = 0;
+                    _currentlyPlayingContentIndex = 1;
                 }
             }
             catch (Exception exception)
@@ -70,17 +75,18 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             {
                 _ = contentId ?? throw new ArgumentNullException(nameof(contentId));
 
-                if (!Contains(contentId))
+                var playlistItem = _items.First(x => x.ContentId.Equals(contentId));
+                if (playlistItem == null)
                 {
                     throw new InvalidOperationException("Playlist does not contain specified item");
                 }
                 
-                if (!_contentIds.Remove(contentId))
+                if (!_items.Remove(playlistItem))
                 {
                     throw new InvalidOperationException("Something went wrong");
                 }
 
-                if (!_contentIds.Any())
+                if (!_items.Any())
                 {
                     _currentlyPlayingContentIndex = null;
                 }
@@ -95,18 +101,22 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         {
             try
             {
-                if (!_contentIds.Any())
+                if (!_items.Any())
                 {
                     throw new InvalidOperationException("Playlist is empty");
                 }
 
-                if (_contentIds.Count == _currentlyPlayingContentIndex + 1)
+                var nextPlaylistItem = _items
+                    .FirstOrDefault(i => i.PlaylistItemIndex > _currentlyPlayingContentIndex);
+                
+                if (nextPlaylistItem == null)
                 {
                     throw new InvalidOperationException("The end of the playlist is reached already");
                 }
 
-                ++_currentlyPlayingContentIndex;
-                return _contentIds[_currentlyPlayingContentIndex.Value];
+                _currentlyPlayingContentIndex = nextPlaylistItem.PlaylistItemIndex;
+                
+                return nextPlaylistItem.ContentId;
             }
             catch (Exception exception)
             {
@@ -118,18 +128,22 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         {
             try
             {
-                if (!_contentIds.Any())
+                if (!_items.Any())
                 {
                     throw new InvalidOperationException("Playlist is empty");
                 }
 
-                if (_currentlyPlayingContentIndex == 0)
+                var previousPlaylistItem =
+                    _items.LastOrDefault(i => i.PlaylistItemIndex < _currentlyPlayingContentIndex); 
+                
+                if (previousPlaylistItem == null)
                 {
                     throw new InvalidOperationException("The start of the playlist is reached already");
                 }
 
-                --_currentlyPlayingContentIndex;
-                return _contentIds[_currentlyPlayingContentIndex.Value];
+                _currentlyPlayingContentIndex = previousPlaylistItem.PlaylistItemIndex;
+                
+                return previousPlaylistItem.ContentId;
             }
             catch (Exception exception)
             {
@@ -137,6 +151,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
         }
         
-        private bool Contains(ContentId contentId) => _contentIds.Contains(contentId);
+        private bool Contains(ContentId contentId) => _items
+            .Select(x => x.ContentId)
+            .Contains(contentId);
     }
 }

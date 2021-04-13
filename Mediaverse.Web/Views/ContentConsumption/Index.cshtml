@@ -1,0 +1,13 @@
+﻿@model Guid;
+@{
+    ViewData["Title"] = "Main Entrance";
+}
+
+<div class="text-center">
+    <h1 class="display-5">Main Entrance</h1>
+    @Html.ActionLink(
+        "Create a Room",
+        "CreateRoom",
+        "ContentConsumption",
+        new {viewerId = Model})
+</div>
