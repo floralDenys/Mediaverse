@@ -11,7 +11,8 @@ namespace Mediaverse.Infrastructure.Common.Persistence
         public DbSet<User> Users { get; set; }
         public DbSet<RoomDto> Rooms { get; set; }
         public DbSet<PlaylistDto> Playlists { get; set; }
-
+        public DbSet<ContentDto> CachedContent { get; set; }
+        
         public ApplicationDbContext()
         {
         }
@@ -45,7 +46,11 @@ namespace Mediaverse.Infrastructure.Common.Persistence
             modelBuilder.Entity<PlaylistDto>().HasMany<PlaylistItemDto>();
 
             modelBuilder.Entity<PlaylistItemDto>().HasKey(pi => 
-                new { pi.ExternalId, pi.ContentType, pi.ContentSource });
+                new {pi.ExternalId, pi.ContentType, pi.ContentSource});
+
+            modelBuilder.Entity<ContentDto>().ToTable("CachedContent");
+            modelBuilder.Entity<ContentDto>().HasKey(c =>
+                new {c.ExternalId, c.ContentType, c.ContentSource});
         }
     }
 }
