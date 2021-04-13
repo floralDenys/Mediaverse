@@ -3,14 +3,14 @@ using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 
 namespace Mediaverse.Domain.JointContentConsumption.Entities
 {
-    public abstract class Content
+    public class Content
     {
         public ContentId Id { get; }
         public string Title { get; }
         public string Description { get; }
         public ContentPlayer Player { get; }
 
-        protected Content(ContentId id, string title, ContentPlayer player, string description = "")
+        public Content(ContentId id, string title, ContentPlayer player, string description = "")
         {
             try
             {
