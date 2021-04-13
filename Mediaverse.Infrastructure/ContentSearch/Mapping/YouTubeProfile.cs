@@ -20,10 +20,10 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
         private void ConfigureMappings()
         {
             CreateMap<YouTubeData.SearchListResponse, SearchResult>()
-                .ForMember(dest => dest.PreviewList, o => o.MapFrom(src => src.Items));
+                .ForMember(dest => dest.MatchingContentPreviews, o => o.MapFrom(src => src.Items));
 
             CreateMap<YouTubeData.VideoListResponse, SearchResult>()
-                .ForMember(dest => dest.PreviewList, o => o.MapFrom(src => src.Items));
+                .ForMember(dest => dest.MatchingContentPreviews, o => o.MapFrom(src => src.Items));
             
             CreateMap<YouTubeData.SearchResult, Preview>()
                 .ConstructUsing(x => new Preview(
