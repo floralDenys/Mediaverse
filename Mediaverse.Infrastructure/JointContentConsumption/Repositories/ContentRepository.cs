@@ -2,35 +2,80 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Mediaverse.Domain.JointContentConsumption.Entities;
+using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
-using Search = Mediaverse.Domain.ContentSearch;
+using Mediaverse.Infrastructure.Common.Persistence;
+using Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos;
+using ContentSearchContext = Mediaverse.Domain.ContentSearch;
 
 namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
 {
     public class ContentRepository : IContentRepository
     {
-        private readonly Search.Repositories.IContentRepository _contentRepository;
+        private readonly ApplicationDbContext _applicationDbContext;
+        
+        private readonly ContentSearchContext.Repositories.IContentRepository _contentRepository;
 
         private readonly IMapper _mapper;
 
         public ContentRepository(
-            Search.Repositories.IContentRepository contentRepository,
+            ApplicationDbContext applicationDbContext,
+            ContentSearchContext.Repositories.IContentRepository contentRepository,
             IMapper mapper)
         {
+            _applicationDbContext = applicationDbContext;
             _contentRepository = contentRepository;
             _mapper = mapper;
         }
 
         public async Task<Content> GetAsync(ContentId contentId, CancellationToken cancellationToken)
         {
-            var searchResult = await _contentRepository.SearchForContentAsync(
-                (Search.Enums.MediaContentSource) contentId.ContentSource,
-                Search.Enums.ContentQueryType.ContentId,
-                contentId.ExternalId,
-                cancellationToken);
+            Content requestedContent;
+            
+            var cachedContent = await _applicationDbContext.CachedContent.FindAsync(
+                contentId.ExternalId, contentId.ContentType, contentId.ContentSource);
 
-            return _mapper.Map<Content>(searchResult.RequestedContent);
+            if (cachedContent != null)
+            {
+                requestedContent = _mapper.Map<Content>(cachedContent);
+            }
+            else
+            {
+                var searchResult = await _contentRepository.SearchForContentAsync(
+                    (ContentSearchContext.Enums.MediaContentSource) contentId.ContentSource,
+                    ContentSearchContext.Enums.ContentQueryType.ContentId,
+                    contentId.ExternalId,
+                    cancellationToken);
+
+                if (searchResult.RequestedContent != null)
+                {
+                    await CacheContent(searchResult.RequestedContent, cancellationToken);
+                }
+                
+                requestedContent = _mapper.Map<Content>(searchResult.RequestedContent);
+            }
+
+            return requestedContent;
+        }
+
+        private async Task CacheContent(
+            ContentSearchContext.ValueObjects.Content content,
+            CancellationToken cancellationToken)
+        {
+            var cachedContent = new ContentDto
+            {
+                ExternalId = content.Id.ExternalId,
+                ContentSource = (MediaContentSource) content.Id.ContentSource,
+                ContentType = (MediaContentType) content.Id.ContentType,
+                Title = content.Title,
+                Description = content.Description,
+                ContentPlayerHtml = content.PlayerHtml,
+                ContentPlayerWidth = content.PlayerWidth,
+                ContentPlayerHeight = content.PlayerHeight
+            };
+
+            await _applicationDbContext.CachedContent.AddAsync(cachedContent, cancellationToken);
         }
     }
 }
