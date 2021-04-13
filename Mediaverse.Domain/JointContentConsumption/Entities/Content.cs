@@ -8,8 +8,9 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public ContentId Id { get; }
         public string Title { get; }
         public string Description { get; }
-        
-        protected Content(ContentId id, string title, string description = "")
+        public ContentPlayer Player { get; }
+
+        protected Content(ContentId id, string title, ContentPlayer player, string description = "")
         {
             try
             {
@@ -20,6 +21,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
 
                 Id = id ?? throw new ArgumentNullException(nameof(id));
                 Title = title;
+                Player = player ?? throw new ArgumentException("Given player is invalid");
                 Description = description;
             }
             catch (Exception exception)
