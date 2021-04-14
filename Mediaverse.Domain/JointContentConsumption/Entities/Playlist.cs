@@ -14,7 +14,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public Viewer Owner { get; }
         public bool IsTemporary { get; set; }
         
-        private int? _currentlyPlayingContentIndex;
+        public int? CurrentlyPlayingContentIndex { get; private set; }
         
         public Playlist(Guid id, Viewer owner, IEnumerable<PlaylistItem> items = null) : base(id)
         {
@@ -26,7 +26,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
 
                 if (_items.Any())
                 {
-                    _currentlyPlayingContentIndex = 0;
+                    CurrentlyPlayingContentIndex = 0;
 
                     // sort items by their playlist indexes 
                     _items = _items.OrderBy(x => x.PlaylistItemIndex).ToList();
@@ -60,7 +60,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
 
                 if (_items.Count == 1)
                 {
-                    _currentlyPlayingContentIndex = 1;
+                    CurrentlyPlayingContentIndex = 1;
                 }
             }
             catch (Exception exception)
@@ -88,7 +88,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
 
                 if (!_items.Any())
                 {
-                    _currentlyPlayingContentIndex = null;
+                    CurrentlyPlayingContentIndex = null;
                 }
             }
             catch (Exception exception)
@@ -107,14 +107,14 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 }
 
                 var nextPlaylistItem = _items
-                    .FirstOrDefault(i => i.PlaylistItemIndex > _currentlyPlayingContentIndex);
+                    .FirstOrDefault(i => i.PlaylistItemIndex > CurrentlyPlayingContentIndex);
                 
                 if (nextPlaylistItem == null)
                 {
                     throw new InvalidOperationException("The end of the playlist is reached already");
                 }
 
-                _currentlyPlayingContentIndex = nextPlaylistItem.PlaylistItemIndex;
+                CurrentlyPlayingContentIndex = nextPlaylistItem.PlaylistItemIndex;
                 
                 return nextPlaylistItem.ContentId;
             }
@@ -134,14 +134,14 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 }
 
                 var previousPlaylistItem =
-                    _items.LastOrDefault(i => i.PlaylistItemIndex < _currentlyPlayingContentIndex); 
+                    _items.LastOrDefault(i => i.PlaylistItemIndex < CurrentlyPlayingContentIndex); 
                 
                 if (previousPlaylistItem == null)
                 {
                     throw new InvalidOperationException("The start of the playlist is reached already");
                 }
 
-                _currentlyPlayingContentIndex = previousPlaylistItem.PlaylistItemIndex;
+                CurrentlyPlayingContentIndex = previousPlaylistItem.PlaylistItemIndex;
                 
                 return previousPlaylistItem.ContentId;
             }
