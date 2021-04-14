@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mediaverse.Domain.Common;
+using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 
 namespace Mediaverse.Domain.JointContentConsumption.Entities
@@ -22,6 +23,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
         }
 
+        public RoomType Type => RoomType.Public;
+        
         public Viewer Host { get; private set; }
 
         private IList<Viewer> _viewers;

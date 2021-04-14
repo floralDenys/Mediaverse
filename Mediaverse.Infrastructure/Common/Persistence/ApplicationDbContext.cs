@@ -1,4 +1,5 @@
 ﻿using Mediaverse.Domain.Authentication.Entities;
+using Mediaverse.Domain.JointContentConsumption.Entities;
 using Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,21 +37,26 @@ namespace Mediaverse.Infrastructure.Common.Persistence
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
             modelBuilder.Entity<User>().HasKey(u => u.Id);
+            modelBuilder.Entity<User>().Property(u => u.Type).HasConversion<int>();
 
             modelBuilder.Entity<RoomDto>().ToTable("Rooms");
             modelBuilder.Entity<RoomDto>().HasKey(r => r.Id);
             modelBuilder.Entity<RoomDto>().HasMany<ViewerDto>();
-
+            modelBuilder.Entity<RoomDto>().Property(r => r.Type).HasConversion<int>();
+            
             modelBuilder.Entity<PlaylistDto>().ToTable("Playlists");
             modelBuilder.Entity<PlaylistDto>().HasKey(p => p.Id);
             modelBuilder.Entity<PlaylistDto>().HasMany<PlaylistItemDto>();
 
+            modelBuilder.Entity<PlaylistItemDto>().ToTable("PlaylistItems");
             modelBuilder.Entity<PlaylistItemDto>().HasKey(pi => 
-                new {pi.ExternalId, pi.ContentType, pi.ContentSource});
+                new {pi.ExternalId, pi.ContentSource, pi.ContentType});
 
             modelBuilder.Entity<ContentDto>().ToTable("CachedContent");
             modelBuilder.Entity<ContentDto>().HasKey(c =>
-                new {c.ExternalId, c.ContentType, c.ContentSource});
+                new {c.ExternalId, c.ContentSource, c.ContentType});
+            modelBuilder.Entity<ContentDto>().Property(c => c.ContentSource).HasConversion<int>();
+            modelBuilder.Entity<ContentDto>().Property(c => c.ContentType).HasConversion<int>();
         }
     }
 }
