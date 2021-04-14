@@ -48,7 +48,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignUpAnonymous
                     LastActive = DateTime.Now
                 };
 
-                await _userRepository.SaveUserAsync(user, cancellationToken);
+                await _userRepository.AddUserAsync(user, cancellationToken);
 
                 return _mapper.Map<UserDto>(user);
             }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Mediaverse.Domain.Authentication.Enums;
 using Mediaverse.Domain.Authentication.Repositories;
 using Mediaverse.Domain.JointContentConsumption.Entities;
@@ -19,19 +20,23 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
 
         private readonly IUserRepository _userRepository;
 
+        private readonly IMapper _mapper;
+        
         public RoomRepository(
             ApplicationDbContext applicationDbContext,
-            UserRepository userRepository)
+            UserRepository userRepository, 
+            IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         public async Task<Room> GetAsync(Guid roomId, CancellationToken cancellationToken)
         {
             var roomDto = await _applicationDbContext.Rooms.FindAsync(roomId);
 
-            var host = await GetViewer(roomDto.Host, cancellationToken);
+            var host = await GetViewer(roomDto.HostId, cancellationToken);
             var viewers = roomDto.Viewers
                 .Select(x => GetViewer(x.Id, cancellationToken))
                 .Select(t => t.Result)
@@ -48,17 +53,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
 
         public Task AddAsync(Room room, CancellationToken cancellationToken)
         {
-            var roomDto = new RoomDto
-            {
-                Id = room.Id,
-                Name = room.Name,
-                Host = room.Host.Profile.Id,
-                ActivePlaylistId = room.ActivePlaylistId,
-                MaxViewersQuantity = room.MaxViewersQuantity,
-                Viewers = room.Viewers
-                    .Select(v => new ViewerDto{ Id = v.Profile.Id })
-                    .ToList()
-            };
+            var roomDto = _mapper.Map<RoomDto>(room);
 
             _applicationDbContext.Rooms.Add(roomDto);
             
@@ -69,7 +64,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         {
             var roomDto = _applicationDbContext.Rooms.Find(room.Id);
             roomDto.Name = room.Name;
-            roomDto.Host = room.Host.Profile.Id;
+            roomDto.HostId = room.Host.Profile.Id;
             roomDto.ActivePlaylistId = room.ActivePlaylistId;
             roomDto.MaxViewersQuantity = room.MaxViewersQuantity;
             roomDto.Viewers = room.Viewers

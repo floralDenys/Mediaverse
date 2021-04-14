@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Mediaverse.Domain.Authentication.Entities;
 using Mediaverse.Domain.Authentication.Enums;
 using Mediaverse.Domain.Authentication.Repositories;
@@ -19,14 +20,17 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         private readonly ApplicationDbContext _applicationDbContext;
 
         private readonly IUserRepository _userRepository;
+
+        private readonly IMapper _mapper;
         
         public PlaylistRepository(
             ApplicationDbContext applicationDbContext,
-            IUserRepository userRepository)
+            IUserRepository userRepository, 
+            IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
-
             _userRepository = userRepository;
+            _mapper = mapper;
         }
         
         public async Task<Playlist> GetAsync(Guid playlistId, CancellationToken cancellationToken)
@@ -48,23 +52,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
 
         public Task AddAsync(Playlist playlist, CancellationToken cancellationToken)
         {
-            var playlistDto = new PlaylistDto
-            {
-                Id = playlist.Id,
-                OwnerId = playlist.Owner.Profile.Id,
-                IsTemporary = playlist.IsTemporary,
-                CurrentlyPlayingContentIndex = playlist.GetEnumerator()?.Current?.PlaylistItemIndex ?? -1,
-                PlaylistItems = playlist
-                    .Select(pi => 
-                        new PlaylistItemDto
-                        {
-                            ExternalId = pi.ContentId.ExternalId,
-                            ContentSource = pi.ContentId.ContentSource,
-                            ContentType = pi.ContentId.ContentType,
-                            PlaylistItemIndex = pi.PlaylistItemIndex
-                        })
-                    .ToList()
-            };
+            var playlistDto = _mapper.Map<PlaylistDto>(playlist);
 
             _applicationDbContext.Playlists.Add(playlistDto);
 

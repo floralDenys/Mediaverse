@@ -54,7 +54,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
                     Password = request.Password
                 };
 
-                await _userRepository.SaveUserAsync(user, cancellationToken);
+                await _userRepository.AddUserAsync(user, cancellationToken);
 
                 return _mapper.Map<UserDto>(user);
             }

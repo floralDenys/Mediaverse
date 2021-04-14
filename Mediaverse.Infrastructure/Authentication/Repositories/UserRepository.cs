@@ -20,18 +20,9 @@ namespace Mediaverse.Infrastructure.Authentication.Repositories
         public Task<User> GetUserAsync(string email, CancellationToken cancellationToken) =>
             _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
 
-        public async Task<int> SaveUserAsync(User user, CancellationToken cancellationToken)
+        public async Task<int> AddUserAsync(User user, CancellationToken cancellationToken)
         {
-            var existingUser = await _dbContext.Users.FindAsync(user.Id);
-            if (existingUser == null)
-            {
-                await _dbContext.Users.AddAsync(user, cancellationToken);
-            }
-            else
-            {
-                _dbContext.Users.Update(user);
-            }
-            
+            await _dbContext.Users.AddAsync(user, cancellationToken);
             return await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }

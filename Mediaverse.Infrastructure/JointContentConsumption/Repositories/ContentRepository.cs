@@ -59,23 +59,13 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
             return requestedContent;
         }
 
-        private async Task CacheContent(
+        private Task CacheContent(
             ContentSearchContext.ValueObjects.Content content,
-            CancellationToken cancellationToken)
-        {
-            var cachedContent = new ContentDto
-            {
-                ExternalId = content.Id.ExternalId,
-                ContentSource = (MediaContentSource) content.Id.ContentSource,
-                ContentType = (MediaContentType) content.Id.ContentType,
-                Title = content.Title,
-                Description = content.Description,
-                ContentPlayerHtml = content.PlayerHtml,
-                ContentPlayerWidth = content.PlayerWidth,
-                ContentPlayerHeight = content.PlayerHeight
-            };
-
-            await _applicationDbContext.CachedContent.AddAsync(cachedContent, cancellationToken);
-        }
+            CancellationToken cancellationToken
+            ) =>
+            _applicationDbContext.CachedContent.AddAsync(
+                _mapper.Map<ContentDto>(content),
+                cancellationToken)
+                .AsTask();
     }
 }
