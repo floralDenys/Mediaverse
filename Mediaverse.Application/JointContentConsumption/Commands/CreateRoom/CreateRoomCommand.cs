@@ -6,7 +6,9 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
 {
     public class CreateRoomCommand : IRequest<RoomDto>
     {
-        public string Name { get; set; }
         public Guid HostId { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string EntrancePassword { get; set; }
     }
 }

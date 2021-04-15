@@ -23,8 +23,32 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
         }
         public string Description { get; set; }
-        
-        public RoomType Type => RoomType.Public;
+
+        public RoomType Type { get; private set; } = RoomType.Public;
+        private Invitation _invitation;
+
+        public Invitation Invitation
+        {
+            get => _invitation;
+            set
+            {
+                if (value == null)
+                {
+                    throw new InvalidOperationException("Room requires invitation");
+                }
+
+                _invitation = value;
+
+                if (string.IsNullOrEmpty(value.Password))
+                {
+                    Type = RoomType.Public;
+                }
+                else
+                {
+                    Type = RoomType.Private;
+                }
+            }
+        }
         
         public Viewer Host { get; private set; }
 
@@ -49,12 +73,18 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
         }
 
-        public Room(Guid id, string name, Viewer host) : base(id)
+        public Room(
+            Guid id,
+            string name,
+            Viewer host,
+            Invitation invitation,
+            string description = "") : base(id)
         {
             try
             {
                 Name = name;
                 Host = host;
+                Invitation = invitation;
             }
             catch (Exception exception)
             {
@@ -67,6 +97,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             string name,
             string description,
             Viewer host,
+            Invitation invitation,
             int maxViewersQuantity,
             Guid activePlaylistId,
             IList<Viewer> viewers) : base(id)
@@ -74,12 +105,11 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             Name = name;
             Description = description;
             Host = host;
+            Invitation = invitation;
             MaxViewersQuantity = maxViewersQuantity;
             ActivePlaylistId = activePlaylistId;
             _viewers = viewers;
         }
-        
-        private Room() { }
 
         public void UpdateSelectedPlaylist(Playlist playlist)
         {

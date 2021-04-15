@@ -47,6 +47,9 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
                 roomDto.Name,
                 roomDto.Description,
                 host, 
+                new Invitation(
+                    roomDto.Invitation.Token,
+                    roomDto.Invitation.Password), 
                 roomDto.MaxViewersQuantity,
                 roomDto.ActivePlaylistId,
                 viewers);
