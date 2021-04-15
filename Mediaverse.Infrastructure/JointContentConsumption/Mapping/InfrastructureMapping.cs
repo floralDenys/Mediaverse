@@ -53,6 +53,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dst => dst.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dst => dst.HostId, opt => opt.MapFrom(src => src.Host.Profile.Id))
+                .ForMember(dst => dst.Token, opt => opt.MapFrom(src => src.Invitation.Token))
                 .ForMember(dst => dst.ActivePlaylistId, opt => opt.MapFrom(src => src.ActivePlaylistId))
                 .ForMember(dst => dst.MaxViewersQuantity, opt => opt.MapFrom(src => src.MaxViewersQuantity));
 

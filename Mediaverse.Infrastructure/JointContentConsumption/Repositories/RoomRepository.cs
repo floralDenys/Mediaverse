@@ -47,9 +47,30 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
                 roomDto.Name,
                 roomDto.Description,
                 host, 
-                new Invitation(
-                    roomDto.Invitation.Token,
-                    roomDto.Invitation.Password), 
+                roomDto.Type,
+                new Invitation(roomDto.Token), 
+                roomDto.MaxViewersQuantity,
+                roomDto.ActivePlaylistId,
+                viewers);
+        }
+
+        public async Task<Room> GetAsync(string roomToken, CancellationToken cancellationToken)
+        {
+            var roomDto = _applicationDbContext.Rooms.First(r => r.Token.Equals(roomToken));
+            
+            var host = await GetViewer(roomDto.HostId, cancellationToken);
+            var viewers = roomDto.Viewers
+                .Select(x => GetViewer(x.Id, cancellationToken))
+                .Select(t => t.Result)
+                .ToList();
+            
+            return new Room(
+                roomDto.Id,
+                roomDto.Name,
+                roomDto.Description,
+                host, 
+                roomDto.Type,
+                new Invitation(roomDto.Token), 
                 roomDto.MaxViewersQuantity,
                 roomDto.ActivePlaylistId,
                 viewers);

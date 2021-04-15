@@ -30,24 +30,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public Invitation Invitation
         {
             get => _invitation;
-            set
-            {
-                if (value == null)
-                {
-                    throw new InvalidOperationException("Room requires invitation");
-                }
-
-                _invitation = value;
-
-                if (string.IsNullOrEmpty(value.Password))
-                {
-                    Type = RoomType.Public;
-                }
-                else
-                {
-                    Type = RoomType.Private;
-                }
-            }
+            set => _invitation = value 
+                                 ?? throw new InvalidOperationException("Room requires invitation");
         }
         
         public Viewer Host { get; private set; }
@@ -77,6 +61,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             Guid id,
             string name,
             Viewer host,
+            RoomType type,
             Invitation invitation,
             string description = "") : base(id)
         {
@@ -84,6 +69,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             {
                 Name = name;
                 Host = host;
+                Type = type;
                 Invitation = invitation;
             }
             catch (Exception exception)
@@ -97,6 +83,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             string name,
             string description,
             Viewer host,
+            RoomType type,
             Invitation invitation,
             int maxViewersQuantity,
             Guid activePlaylistId,
@@ -105,6 +92,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             Name = name;
             Description = description;
             Host = host;
+            Type = type;
             Invitation = invitation;
             MaxViewersQuantity = maxViewersQuantity;
             ActivePlaylistId = activePlaylistId;

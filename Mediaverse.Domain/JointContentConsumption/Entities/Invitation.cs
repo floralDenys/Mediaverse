@@ -3,14 +3,10 @@
     public class Invitation
     {
         public string Token { get; }
-        public string Password { get; }
 
-        public Invitation(
-            string token,
-            string password)
+        public Invitation(string token)
         {
             Token = token;
-            Password = password;
         }
     }
 }

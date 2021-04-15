@@ -1,6 +1,7 @@
 ﻿using System;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
+using Mediaverse.Domain.JointContentConsumption.Enums;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
 {
@@ -9,6 +10,6 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
         public Guid HostId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string EntrancePassword { get; set; }
+        public RoomType Type { get; set; }
     }
 }

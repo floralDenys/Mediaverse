@@ -52,7 +52,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
                     generatedRoomId,
                     request.Name,
                     host,
-                    new Invitation(invitationToken, request.EntrancePassword),
+                    request.Type,
+                    new Invitation(invitationToken),
                     request.Description);
                 
                 await _roomRepository.AddAsync(room, cancellationToken);
