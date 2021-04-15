@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.Authentication.Commands.SignIn
 {
-    public class SignInCommandHandler : IRequestHandler<SignUpCommand, UserDto>
+    public class SignInCommandHandler : IRequestHandler<SignInCommand, UserDto>
     {
         private readonly IUserRepository _userRepository;
         private readonly ILogger<SignInCommandHandler> _logger;
@@ -26,7 +26,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignIn
             _mapper = mapper;
         }
         
-        public async Task<UserDto> Handle(SignUpCommand request, CancellationToken cancellationToken)
+        public async Task<UserDto> Handle(SignInCommand request, CancellationToken cancellationToken)
         {
             try
             {

@@ -35,7 +35,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.JoinRoom
                 var viewer = await _viewerRepository.GetAsync(request.ViewerId, cancellationToken)
                              ?? throw new ArgumentException("Viewer could not be found");
 
-                var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
+                var room = await _roomRepository.GetAsync(request.RoomToken, cancellationToken)
                            ?? throw new ArgumentException("Room could not be found");
 
                 room.Join(viewer);
@@ -47,7 +47,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.JoinRoom
             catch (Exception exception)
             {
                 _logger.LogError($"Viewer {request.ViewerId.ToString()} could not join the " +
-                                 $"room {request.RoomId.ToString()}", exception);
+                                 $"room {request.RoomToken}", exception);
                 throw new InvalidOperationException("Failed to join the room. Please retry");
             }
         }

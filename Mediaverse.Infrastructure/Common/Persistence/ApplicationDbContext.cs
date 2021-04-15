@@ -43,7 +43,7 @@ namespace Mediaverse.Infrastructure.Common.Persistence
             modelBuilder.Entity<RoomDto>().HasKey(r => r.Id);
             modelBuilder.Entity<RoomDto>().HasMany<ViewerDto>();
             modelBuilder.Entity<RoomDto>().Property(r => r.Type).HasConversion<int>();
-            
+
             modelBuilder.Entity<PlaylistDto>().ToTable("Playlists");
             modelBuilder.Entity<PlaylistDto>().HasKey(p => p.Id);
             modelBuilder.Entity<PlaylistDto>().HasMany<PlaylistItemDto>();

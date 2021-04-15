@@ -35,9 +35,17 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult SignIn(SignInCommand signIn)
+        public async Task<ActionResult> SignIn(SignInCommand signIn)
         {
-            return View();
+            var user = await _mediator.Send(signIn);
+            
+            return Json(new
+            {
+                redirectToUrl = @Url.Action(
+                    "Index",
+                    "ContentConsumption",
+                    new { viewerId = user.Id})
+            });
         }
         
         [HttpGet]
@@ -51,7 +59,13 @@ namespace Mediaverse.Web.Controllers
         {
             var user = await _mediator.Send(command);
             
-            return View();
+            return Json(new
+            {
+                redirectToUrl = @Url.Action(
+                    "Index",
+                    "ContentConsumption",
+                    new { viewerId = user.Id})
+            });
         }
 
         [HttpPost]

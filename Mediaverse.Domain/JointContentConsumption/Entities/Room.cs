@@ -22,8 +22,17 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 _name = value;
             }
         }
+        public string Description { get; set; }
 
-        public RoomType Type => RoomType.Public;
+        public RoomType Type { get; private set; } = RoomType.Public;
+        private Invitation _invitation;
+
+        public Invitation Invitation
+        {
+            get => _invitation;
+            set => _invitation = value 
+                                 ?? throw new InvalidOperationException("Room requires invitation");
+        }
         
         public Viewer Host { get; private set; }
 
@@ -48,12 +57,20 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
         }
 
-        public Room(Guid id, string name, Viewer host) : base(id)
+        public Room(
+            Guid id,
+            string name,
+            Viewer host,
+            RoomType type,
+            Invitation invitation,
+            string description = "") : base(id)
         {
             try
             {
                 Name = name;
                 Host = host;
+                Type = type;
+                Invitation = invitation;
             }
             catch (Exception exception)
             {
@@ -64,19 +81,23 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public Room(
             Guid id,
             string name,
+            string description,
             Viewer host,
+            RoomType type,
+            Invitation invitation,
             int maxViewersQuantity,
             Guid activePlaylistId,
             IList<Viewer> viewers) : base(id)
         {
             Name = name;
+            Description = description;
             Host = host;
+            Type = type;
+            Invitation = invitation;
             MaxViewersQuantity = maxViewersQuantity;
             ActivePlaylistId = activePlaylistId;
             _viewers = viewers;
         }
-        
-        private Room() { }
 
         public void UpdateSelectedPlaylist(Playlist playlist)
         {

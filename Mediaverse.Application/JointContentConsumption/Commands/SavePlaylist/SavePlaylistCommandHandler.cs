@@ -17,7 +17,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SavePlaylist
         private readonly IPlaylistRepository _playlistRepository;
         private readonly IViewerRepository _viewerRepository;
         private readonly IRoomRepository _roomRepository;
-        private readonly IGuidProvider _guidProvider;
+        private readonly IIdentifierProvider _identifierProvider;
         private readonly ILogger<SavePlaylistCommandHandler> _logger;
         private readonly IMapper _mapper;
 
@@ -25,14 +25,14 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SavePlaylist
             IPlaylistRepository playlistRepository,
             IViewerRepository viewerRepository,
             IRoomRepository roomRepository,
-            IGuidProvider guidProvider,
+            IIdentifierProvider identifierProvider,
             ILogger<SavePlaylistCommandHandler> logger,
             IMapper mapper)
         {
             _playlistRepository = playlistRepository;
             _viewerRepository = viewerRepository;
             _roomRepository = roomRepository;
-            _guidProvider = guidProvider;
+            _identifierProvider = identifierProvider;
             _logger = logger;
             _mapper = mapper;
         }
@@ -66,7 +66,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SavePlaylist
                 }
                 else
                 {
-                    Guid newPlaylistId = _guidProvider.GetNewGuid();
+                    Guid newPlaylistId = _identifierProvider.GenerateGuid();
                     activePlaylist = CreatePlaylistCopy(newPlaylistId, viewer, activePlaylist);
                 }
                 

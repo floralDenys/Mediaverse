@@ -3,12 +3,40 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
+<div class="text-center container-centered">
     @using(Html.BeginForm("SignIn", "Authentication", new { id = "signInForm" }, FormMethod.Post))
     {
         <h1 class="display-5">Sign In</h1>
-        @Html.TextBoxFor(x => x.Email)
-        @Html.TextBoxFor(x => x.Password)
-        <input type="submit" value="Confirm" onclick="$('signInForm').submit()"/>
+        <td>
+            <tr class="text-raw">
+                Login
+            </tr>
+            <tr class="text-raw">
+            </tr>
+        </td>
+        <div class="text-raw">
+            <span></span>
+            
+        </div>
+        <div class="text-raw">
+            Password      
+            @Html.TextBoxFor(x => x.Password)
+        </div>
+        <div class="text-raw">
+            <input type="button" value="Confirm" onclick="signIn()"/>
+        </div>
     }
 </div>
+
+<script type="text/javascript">
+    const signIn = function() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SignIn", "Authentication")',
+            data: $('signInForm').serialize(),
+            success: function(res) {
+                window.location.href = res.redirectToUrl;
+            }
+        });
+    };
+</script>

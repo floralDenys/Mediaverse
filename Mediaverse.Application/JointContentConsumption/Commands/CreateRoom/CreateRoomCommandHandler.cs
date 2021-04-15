@@ -15,20 +15,20 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IViewerRepository _viewerRepository;
-        private readonly IGuidProvider _guidProvider;
+        private readonly IIdentifierProvider _identifierProvider;
         private readonly ILogger<CreateRoomCommandHandler> _logger;
         private readonly IMapper _mapper;
 
         public CreateRoomCommandHandler(
             IRoomRepository roomRepository,
             IViewerRepository viewerRepository,
-            IGuidProvider guidProvider,
+            IIdentifierProvider identifierProvider,
             ILogger<CreateRoomCommandHandler> logger,
             IMapper mapper)
         {
             _roomRepository = roomRepository;
             _viewerRepository = viewerRepository;
-            _guidProvider = guidProvider;
+            _identifierProvider = identifierProvider;
             _logger = logger;
             _mapper = mapper;
         }
@@ -45,8 +45,16 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
                 var host = await _viewerRepository.GetAsync(request.HostId, cancellationToken) 
                            ?? throw new ArgumentException($"Host {request.HostId.ToString()} could not be found");
 
-                Guid generatedRoomId = _guidProvider.GetNewGuid();
-                var room = new Room(generatedRoomId, request.Name, host);
+                Guid generatedRoomId = _identifierProvider.GenerateGuid();
+                string invitationToken = _identifierProvider.GenerateToken(generatedRoomId);
+                    
+                var room = new Room(
+                    generatedRoomId,
+                    request.Name,
+                    host,
+                    request.Type,
+                    new Invitation(invitationToken),
+                    request.Description);
                 
                 await _roomRepository.AddAsync(room, cancellationToken);
                 

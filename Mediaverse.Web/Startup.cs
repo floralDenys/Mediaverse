@@ -37,7 +37,7 @@ namespace Mediaverse.Web
 
             services.AddDbContext<ApplicationDbContext>();
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
-            services.AddScoped(typeof(IGuidProvider), typeof(DefaultGuidProvider));
+            services.AddScoped(typeof(IIdentifierProvider), typeof(DefaultIdentifierProvider));
             services.AddScoped(typeof(INameGenerator), typeof(NameGenerator));
         }
 

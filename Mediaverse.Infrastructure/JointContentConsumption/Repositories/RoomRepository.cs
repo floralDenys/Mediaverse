@@ -45,7 +45,32 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
             return new Room(
                 roomDto.Id,
                 roomDto.Name,
+                roomDto.Description,
                 host, 
+                roomDto.Type,
+                new Invitation(roomDto.Token), 
+                roomDto.MaxViewersQuantity,
+                roomDto.ActivePlaylistId,
+                viewers);
+        }
+
+        public async Task<Room> GetAsync(string roomToken, CancellationToken cancellationToken)
+        {
+            var roomDto = _applicationDbContext.Rooms.First(r => r.Token.Equals(roomToken));
+            
+            var host = await GetViewer(roomDto.HostId, cancellationToken);
+            var viewers = roomDto.Viewers
+                .Select(x => GetViewer(x.Id, cancellationToken))
+                .Select(t => t.Result)
+                .ToList();
+            
+            return new Room(
+                roomDto.Id,
+                roomDto.Name,
+                roomDto.Description,
+                host, 
+                roomDto.Type,
+                new Invitation(roomDto.Token), 
                 roomDto.MaxViewersQuantity,
                 roomDto.ActivePlaylistId,
                 viewers);
@@ -64,6 +89,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         {
             var roomDto = _applicationDbContext.Rooms.Find(room.Id);
             roomDto.Name = room.Name;
+            roomDto.Description = room.Description;
             roomDto.HostId = room.Host.Profile.Id;
             roomDto.ActivePlaylistId = room.ActivePlaylistId;
             roomDto.MaxViewersQuantity = room.MaxViewersQuantity;
