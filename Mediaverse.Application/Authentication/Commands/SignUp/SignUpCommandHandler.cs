@@ -15,18 +15,18 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
     public class SignUpCommandHandler : IRequestHandler<SignUpCommand, UserDto>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IGuidProvider _guidProvider;
+        private readonly IIdentifierProvider _identifierProvider;
         private readonly ILogger<SignUpCommandHandler> _logger;
         private readonly IMapper _mapper;
 
         public SignUpCommandHandler(
             IUserRepository userRepository,
-            IGuidProvider guidProvider,
+            IIdentifierProvider identifierProvider,
             ILogger<SignUpCommandHandler> logger,
             IMapper mapper)
         {
             _userRepository = userRepository;
-            _guidProvider = guidProvider;
+            _identifierProvider = identifierProvider;
             _logger = logger;
             _mapper = mapper;
         }
@@ -46,7 +46,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
                     throw new InvalidOperationException("Password and Confirmation does not match");
                 }
                 
-                Guid userId = _guidProvider.GetNewGuid();
+                Guid userId = _identifierProvider.GenerateGuid();
                 user = new User(userId, UserType.Member)
                 {
                     Nickname = request.Nickname,

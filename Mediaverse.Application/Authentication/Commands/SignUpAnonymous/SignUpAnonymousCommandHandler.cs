@@ -16,20 +16,20 @@ namespace Mediaverse.Application.Authentication.Commands.SignUpAnonymous
     public class SignUpAnonymousCommandHandler : IRequestHandler<SignUpAnonymousCommand, UserDto>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IGuidProvider _guidProvider;
+        private readonly IIdentifierProvider _identifierProvider;
         private readonly INameGenerator _nameGenerator;
         private readonly ILogger<SignUpAnonymousCommandHandler> _logger;
         private readonly IMapper _mapper;
 
         public SignUpAnonymousCommandHandler(
             IUserRepository userRepository,
-            IGuidProvider guidProvider,
+            IIdentifierProvider identifierProvider,
             INameGenerator nameGenerator,
             ILogger<SignUpAnonymousCommandHandler> logger,
             IMapper mapper)
         {
             _userRepository = userRepository;
-            _guidProvider = guidProvider;
+            _identifierProvider = identifierProvider;
             _nameGenerator = nameGenerator;
             _logger = logger;
             _mapper = mapper;
@@ -39,7 +39,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignUpAnonymous
         {
             try
             {
-                Guid userId = _guidProvider.GetNewGuid();
+                Guid userId = _identifierProvider.GenerateGuid();
                 string generatedNickname = _nameGenerator.GenerateAnonymousName();
 
                 var user = new User(userId, UserType.Anonymous)
