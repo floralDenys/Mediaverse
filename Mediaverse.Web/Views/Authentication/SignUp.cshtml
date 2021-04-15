@@ -11,6 +11,19 @@
         @Html.TextBoxFor(x => x.Email)
         @Html.TextBoxFor(x => x.Password)
         @Html.TextBoxFor(x => x.PasswordConfirmation)
-        <input type="submit" value="Confirm" onclick="$('signUpForm').submit()"/>
+        <input type="button" value="Confirm" onclick="signUp()"/>
     }
 </div>
+
+<script type="text/javascript">
+    const signUp = function() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SignUp", "Authentication")',
+            data: $('signUpForm').serialize(),
+            success: function(res) {
+                window.location.href = res.redirectToUrl;
+            }
+        });
+    };
+</script>
