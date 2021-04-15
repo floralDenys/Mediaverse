@@ -22,7 +22,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 _name = value;
             }
         }
-
+        public string Description { get; set; }
+        
         public RoomType Type => RoomType.Public;
         
         public Viewer Host { get; private set; }
@@ -64,12 +65,14 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public Room(
             Guid id,
             string name,
+            string description,
             Viewer host,
             int maxViewersQuantity,
             Guid activePlaylistId,
             IList<Viewer> viewers) : base(id)
         {
             Name = name;
+            Description = description;
             Host = host;
             MaxViewersQuantity = maxViewersQuantity;
             ActivePlaylistId = activePlaylistId;

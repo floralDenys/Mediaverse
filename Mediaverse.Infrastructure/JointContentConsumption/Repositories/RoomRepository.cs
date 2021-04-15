@@ -45,6 +45,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
             return new Room(
                 roomDto.Id,
                 roomDto.Name,
+                roomDto.Description,
                 host, 
                 roomDto.MaxViewersQuantity,
                 roomDto.ActivePlaylistId,
@@ -64,6 +65,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         {
             var roomDto = _applicationDbContext.Rooms.Find(room.Id);
             roomDto.Name = room.Name;
+            roomDto.Description = room.Description;
             roomDto.HostId = room.Host.Profile.Id;
             roomDto.ActivePlaylistId = room.ActivePlaylistId;
             roomDto.MaxViewersQuantity = room.MaxViewersQuantity;
