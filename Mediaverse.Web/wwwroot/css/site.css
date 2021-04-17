@@ -26,16 +26,23 @@ a {
 
 .container-centered {
   position: absolute;
-  top: 50%;
+  top: 30%;
   left: 50%;
-  -moz-transform: translateX(-50%) translateY(-50%);
-  -webkit-transform: translateX(-50%) translateY(-50%);
-  transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-30%);
+  -webkit-transform: translateX(-50%) translateY(-30%);
+  transform: translateX(-50%) translateY(-30%);
 }
 
-.text-raw {
-  padding-top: 5px;
-  padding-bottom: 5px;
+input {
+  border-radius: 10px;
+  padding: 5px 10px;
+}
+
+.card { 
+  !important;
+  border-color: #bedfea; 
+  background-color: #bedfea; 
+  border-radius: 10px;
 }
 
 /* Sticky footer styles
