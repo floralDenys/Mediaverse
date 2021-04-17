@@ -39,6 +39,7 @@ namespace Mediaverse.Web
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(IIdentifierProvider), typeof(DefaultIdentifierProvider));
             services.AddScoped(typeof(INameGenerator), typeof(NameGenerator));
+            services.AddScoped(typeof(IEmailService), typeof(EmailService));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
