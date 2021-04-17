@@ -17,8 +17,11 @@ namespace Mediaverse.Infrastructure.Authentication.Repositories
         public Task<User> GetUserAsync(Guid userId, CancellationToken cancellationToken) =>
             _dbContext.Users.FindAsync(userId, cancellationToken).AsTask();
 
-        public Task<User> GetUserAsync(string email, CancellationToken cancellationToken) =>
+        public Task<User> GetUserByEmailAsync(string email, CancellationToken cancellationToken) =>
             _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+
+        public Task<User> GetUserByLoginAsync(string login, CancellationToken cancellationToken) =>
+            _dbContext.Users.FirstOrDefaultAsync(u => u.Nickname == login, cancellationToken);
 
         public async Task<int> AddUserAsync(User user, CancellationToken cancellationToken)
         {

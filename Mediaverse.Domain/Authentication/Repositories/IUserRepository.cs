@@ -8,7 +8,8 @@ namespace Mediaverse.Domain.Authentication.Repositories
     public interface IUserRepository
     {
         Task<User> GetUserAsync(Guid userId, CancellationToken cancellationToken);
-        Task<User> GetUserAsync(string email, CancellationToken cancellationToken);
+        Task<User> GetUserByEmailAsync(string email, CancellationToken cancellationToken);
+        Task<User> GetUserByLoginAsync(string login, CancellationToken cancellationToken);
         Task<int> AddUserAsync(User user, CancellationToken cancellationToken);
     }
 }
