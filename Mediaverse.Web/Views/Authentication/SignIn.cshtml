@@ -3,39 +3,63 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center container-centered">
-    @using(Html.BeginForm("SignIn", "Authentication", new { id = "signInForm" }, FormMethod.Post))
-    {
-        <h1 class="display-5">Sign In</h1>
-        <td>
-            <tr class="text-raw">
-                Login
-            </tr>
-            <tr class="text-raw">
-            </tr>
-        </td>
-        <div class="text-raw">
-            <span></span>
-            
+<div class="container-centered">
+    <div class="card" style="width: 500px; height: 400px; padding-top: 15%;">
+        <div class="container-centered text-center">
+            @using (Html.BeginForm("SignIn", "Authentication", FormMethod.Post, new {id="signInForm"}))
+            {
+                <h1 class="display-3 text-center">Sign In</h1>
+                <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
+                    <div style="text-align: left">
+                        Login or email
+                    </div>
+                    <div>
+                        @Html.TextBoxFor(x => x.LoginOrEmail, new {required="required", style = "font-size: 18px; width: 250px; height: 40px;"})
+                    </div>
+                </div>
+                <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
+                    <div style="text-align: left">
+                        Password
+                    </div>
+                    <div>
+                        @Html.TextBoxFor(x => x.Password, new {type = "password", required="required", @class= "password", style = "font-size: 18px; width: 250px; height: 40px;"})
+                    </div>
+                </div>
+                 <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
+                     @Html.CheckBox("showPassword", false, new {id = "showPassword"})
+                     show password?
+                 </div>
+                <div style="padding-top: 10px;">
+                    <input type="button" value="Confirm" onclick="signIn()" style="width: 250px; height: 40px;"/>
+                </div>
+            }
         </div>
-        <div class="text-raw">
-            Password      
-            @Html.TextBoxFor(x => x.Password)
-        </div>
-        <div class="text-raw">
-            <input type="button" value="Confirm" onclick="signIn()"/>
-        </div>
-    }
+    </div>
 </div>
 
 <script type="text/javascript">
+    $(function(){
+        $("#showPassword").on("change", function() {
+            if($(this).prop('checked')) {
+                $(".password").attr("type", "text");
+            } else {
+                $(".password").attr("type", "password");
+            }
+        })
+    })
+
     const signIn = function() {
+        var data = $("#signInForm").serialize();
+        
         $.ajax({
             type: "POST",
             url: '@Url.Action("SignIn", "Authentication")',
-            data: $('signInForm').serialize(),
+            data: data,
             success: function(res) {
                 window.location.href = res.redirectToUrl;
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(xhr.message);
             }
         });
     };
