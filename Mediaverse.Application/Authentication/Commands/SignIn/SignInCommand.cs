@@ -5,7 +5,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignIn
 {
     public class SignInCommand : IRequest<UserDto>
     {
-        public string Email { get; set; }
+        public string LoginOrEmail { get; set; }
         public string Password { get; set; }
     }
 }
