@@ -3,8 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
-using Mediaverse.Application.Authentication.Commands.SignUp;
 using Mediaverse.Application.Authentication.Common.Dtos;
+using Mediaverse.Application.Authentication.Services;
 using Mediaverse.Domain.Authentication.Repositories;
 using Microsoft.Extensions.Logging;
 
@@ -13,15 +13,19 @@ namespace Mediaverse.Application.Authentication.Commands.SignIn
     public class SignInCommandHandler : IRequestHandler<SignInCommand, UserDto>
     {
         private readonly IUserRepository _userRepository;
+
+        private readonly IEmailService _emailService;
         private readonly ILogger<SignInCommandHandler> _logger;
         private readonly IMapper _mapper;
 
         public SignInCommandHandler(
             IUserRepository userRepository,
+            IEmailService emailService,
             ILogger<SignInCommandHandler> logger,
             IMapper mapper)
         {
             _userRepository = userRepository;
+            _emailService = emailService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -30,8 +34,11 @@ namespace Mediaverse.Application.Authentication.Commands.SignIn
         {
             try
             {
-                var user = await _userRepository.GetUserAsync(request.Email, cancellationToken) 
-                           ?? throw new ArgumentException("User with given email could not be found");
+                var user = _emailService.IsValidEmail(request.LoginOrEmail)
+                    ? await _userRepository.GetUserByEmailAsync(request.LoginOrEmail, cancellationToken)
+                    : await _userRepository.GetUserByLoginAsync(request.LoginOrEmail, cancellationToken);
+
+                _ = user ?? throw new ArgumentException("User with given email could not be found");
 
                 if (user.Password != request.Password)
                 {
@@ -42,7 +49,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignIn
             }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not sign in {request.Email}", exception);
+                _logger.LogError($"Could not sign in {request.LoginOrEmail}", exception);
                 throw new InvalidOperationException("Email or Password is invalid. Please retry");
             }
         }

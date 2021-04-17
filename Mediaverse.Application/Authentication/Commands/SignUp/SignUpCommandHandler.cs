@@ -35,7 +35,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
         {
             try
             {
-                var user = await _userRepository.GetUserAsync(request.Email, cancellationToken);
+                var user = await _userRepository.GetUserByEmailAsync(request.Email, cancellationToken);
                 if (user != null)
                 {
                     throw new ArgumentException("User with given email exists already");
