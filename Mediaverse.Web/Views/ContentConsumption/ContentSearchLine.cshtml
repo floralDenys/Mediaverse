@@ -1,0 +1,24 @@
+﻿@using Mediaverse.Domain.ContentSearch.Enums
+@model Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.GetRelevantContentQuery;
+
+<div class="text-center contentSearchLine" id="searchLine">
+    @Html.DropDownListFor(x => x.SelectedSource, new SelectList(Enum.GetNames(typeof(MediaContentSource))), new {@class = "selectBox"})
+    @Html.TextBoxFor(x => x.QueryString, new {type="search", size = "80px", height = "50px", placeholder = "What are looking for?"})
+    <input type="button" value="Find" onclick="search()" style="width: 200px; height: 40px;"/>
+</div>
+
+<script type="text/javascript">
+    const search = function() {       
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("SearchForContent", "ContentSearch")',
+            data: $('#searchLine').serialize(),
+            success: function(res) {
+                
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(xhr.message);
+            }
+        });
+    };
+</script>

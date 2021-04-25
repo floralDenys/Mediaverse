@@ -1,0 +1,23 @@
+﻿@using Mediaverse.Application.ContentSearch.Queries.GetRelevantContent
+@using Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos
+@using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos
+@using Mediaverse.Application.JointContentConsumption.Common.Dtos
+@model RoomDto;
+@{
+    ViewData["Title"] = "Main Entrance";
+}
+
+<div class="text-center room">
+    <h1 class="display-5">@Model.Name</h1>
+    @await Html.PartialAsync("ContentSearchLine", new GetRelevantContentQuery())
+
+    @await Html.PartialAsync("ContentPlayer", 
+        new ContentDto
+        {
+            Player = new ContentPlayerDto {Html = "\u003ciframe width=\"480\" height=\"270\" src=\"//www.youtube.com/embed/Ks-_Mh1QhMc\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen\u003e\u003c/iframe\u003e"}
+        })
+    
+    @await Html.PartialAsync("Playlist", new PlaylistDto())
+
+    @await Html.PartialAsync("SearchResults", new SearchResultDto())
+</div>

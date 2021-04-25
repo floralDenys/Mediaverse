@@ -1,0 +1,39 @@
+﻿@using Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos
+@model Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos.SearchResultDto
+
+@{
+    var searchResults = new SearchResultDto
+    {
+        Previews = Enumerable.Repeat(
+           new PreviewDto
+            {
+                Title = "Some title",
+                Description = "Some description",
+                Thumbnail = new ThumbnailDto { Url = "https://i.ytimg.com/vi/Ks-_Mh1QhMc/default.jpg" }
+            },
+            10).ToList()
+    };
+}
+
+<div class="contentSearchResults grid">
+    @foreach (var preview in searchResults.Previews)
+    {
+        @Html.Partial("Preview", preview)
+    }
+</div>
+
+<script type="text/javascript">
+    const search = function() {       
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("SearchForContent", "ContentSearch")',
+            data: $('#searchLine').serialize(),
+            success: function(res) {
+                
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(xhr.message);
+            }
+        })
+    }
+</script>

@@ -3,26 +3,79 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    @using (Html.BeginForm("SignUp", "Authentication", new {id = "signUpForm"}, FormMethod.Post))
-    {
-        <h1 class="display-5">Sign Up</h1>
-        @Html.TextBoxFor(x => x.Nickname)
-        @Html.TextBoxFor(x => x.Email)
-        @Html.TextBoxFor(x => x.Password)
-        @Html.TextBoxFor(x => x.PasswordConfirmation)
-        <input type="button" value="Confirm" onclick="signUp()"/>
-    }
+<div class="container-centered">
+    <div class="card" style="width: 500px; height: 500px; padding-top: 20%;">
+        <div class="container-centered text-center">
+            @using (Html.BeginForm("SignUp", "Authentication", FormMethod.Post, new {id="signUpForm"}))
+            {
+                <h1 class="display-3 text-center">Sign Up</h1>
+                <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
+                    <div style="text-align: left">
+                        Login
+                    </div>
+                    <div>
+                        @Html.TextBoxFor(x => x.Login, new {required="required", style = "font-size: 18px; width: 250px; height: 40px;"})
+                    </div>
+                </div>
+                <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
+                    <div style="text-align: left">
+                        Email
+                    </div>
+                    <div>
+                        @Html.TextBoxFor(x => x.Email, new {required="required", style = "font-size: 18px; width: 250px; height: 40px;"})
+                    </div>
+                </div>
+                <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
+                    <div style="text-align: left">
+                        Password
+                    </div>
+                    <div>
+                        @Html.TextBoxFor(x => x.Password, new {type = "password", required="required", @class= "password", style = "font-size: 18px; width: 250px; height: 40px;"})
+                    </div>
+                </div>
+                <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
+                    <div style="text-align: left">
+                        Password
+                    </div>
+                    <div>
+                        @Html.TextBoxFor(x => x.PasswordConfirmation, new {type = "password", required="required", @class= "password", style = "font-size: 18px; width: 250px; height: 40px;"})
+                    </div>
+                </div>
+                <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
+                    @Html.CheckBox("showPassword", false, new {id = "showPassword"})
+                    show password?
+                </div>
+                <div style="padding-top: 10px;">
+                    <input type="button" value="Confirm" onclick="signUp()" style="width: 250px; height: 40px;"/>
+                </div>
+            }
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
+    $(function(){
+        $("#showPassword").on("change", function() {
+            if($(this).prop('checked')) {
+                $(".password").attr("type", "text");
+            } else {
+                $(".password").attr("type", "password");
+            }
+        })
+    })
+
     const signUp = function() {
+        var data = $("#signUpForm").serialize();
+        
         $.ajax({
             type: "POST",
             url: '@Url.Action("SignUp", "Authentication")',
-            data: $('signUpForm').serialize(),
+            data: data,
             success: function(res) {
                 window.location.href = res.redirectToUrl;
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(xhr.message);
             }
         });
     };

@@ -1,0 +1,25 @@
+﻿@model Mediaverse.Application.JointContentConsumption.Common.Dtos.RoomDto
+
+<div class="card gridItem" style="width: 150px" onclick="joinRoom()">
+    @Html.HiddenFor(x => x.Id)
+    @Html.LabelFor(x => x.Name)
+    @Html.LabelFor(x => x.Description)
+</div>
+
+<script type="text/javascript">
+    const joinRoom = function() {
+            var data = $("#signUpForm").serialize();
+            
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SignUp", "Authentication")',
+                data: data,
+                success: function(res) {
+                    window.location.href = res.redirectToUrl;
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(xhr.message);
+                }
+            });
+        };
+</script>

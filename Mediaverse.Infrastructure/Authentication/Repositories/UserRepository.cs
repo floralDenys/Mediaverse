@@ -15,7 +15,7 @@ namespace Mediaverse.Infrastructure.Authentication.Repositories
         public UserRepository(ApplicationDbContext dbContext) => _dbContext = dbContext;
         
         public Task<User> GetUserAsync(Guid userId, CancellationToken cancellationToken) =>
-            _dbContext.Users.FindAsync(userId, cancellationToken).AsTask();
+            _dbContext.Users.FindAsync(userId).AsTask();
 
         public Task<User> GetUserByEmailAsync(string email, CancellationToken cancellationToken) =>
             _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);

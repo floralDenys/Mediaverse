@@ -1,0 +1,7 @@
+﻿@model Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos.PreviewDto;
+
+<div class="card gridItem" style="width: 150px" onclick="alert('clicked')">
+    <div><img src="@Model.Thumbnail.Url" alt=""/></div>
+    <div>@Html.LabelFor(x => x.Title)</div>
+    <div>@Html.LabelFor(x => x.Description)</div>
+</div>

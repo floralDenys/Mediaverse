@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Commands.CreateRoom;
+using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent;
+using Mediaverse.Application.JointContentConsumption.Common.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mediaverse.Web.Controllers
@@ -34,6 +36,19 @@ namespace Mediaverse.Web.Controllers
         {
             var room = await _mediator.Send(command, cancellationToken);
             return RedirectToAction("Room", "ContentConsumption", new {roomId = room.Id});
+        }
+
+        [HttpGet]
+        public ActionResult Room()
+        {
+            return View(new RoomDto());
+        }
+        
+        [HttpPost]
+        public async Task<ActionResult> SwitchContent(SwitchContentCommand command, CancellationToken cancellationToken)
+        {
+            var content = await _mediator.Send(command, cancellationToken);
+            return View("ContentPlayer", content);
         }
     }
 }

@@ -4,8 +4,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.
 {
     public class ContentDto
     {
-        public ContentIdDto ContentId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public ContentPlayerDto Player { get; set; }
     }
 }

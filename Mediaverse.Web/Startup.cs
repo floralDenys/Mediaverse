@@ -3,10 +3,12 @@ using MediatR;
 using Mediaverse.Application.Authentication.Services;
 using Mediaverse.Application.Common.Services;
 using Mediaverse.Domain.Authentication.Repositories;
+using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Mediaverse.Infrastructure.Authentication.Repositories;
 using Mediaverse.Infrastructure.Authentication.Services;
 using Mediaverse.Infrastructure.Common.Persistence;
 using Mediaverse.Infrastructure.Common.Services;
+using Mediaverse.Infrastructure.JointContentConsumption.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -40,6 +42,8 @@ namespace Mediaverse.Web
             services.AddScoped(typeof(IIdentifierProvider), typeof(DefaultIdentifierProvider));
             services.AddScoped(typeof(INameGenerator), typeof(NameGenerator));
             services.AddScoped(typeof(IEmailService), typeof(EmailService));
+            services.AddScoped(typeof(IViewerRepository), typeof(ViewerRepository));
+            services.AddScoped(typeof(IRoomRepository), typeof(RoomRepository));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
