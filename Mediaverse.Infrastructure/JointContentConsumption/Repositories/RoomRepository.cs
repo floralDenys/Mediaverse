@@ -18,17 +18,17 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
     {
         private readonly ApplicationDbContext _applicationDbContext;
 
-        private readonly IUserRepository _userRepository;
+        private readonly IViewerRepository _viewerRepository;
 
         private readonly IMapper _mapper;
         
         public RoomRepository(
             ApplicationDbContext applicationDbContext,
-            UserRepository userRepository, 
+            IViewerRepository viewerRepository, 
             IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
-            _userRepository = userRepository;
+            _viewerRepository = viewerRepository;
             _mapper = mapper;
         }
 
@@ -36,9 +36,9 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         {
             var roomDto = await _applicationDbContext.Rooms.FindAsync(roomId);
 
-            var host = await GetViewer(roomDto.HostId, cancellationToken);
+            var host = await _viewerRepository.GetAsync(roomDto.HostId, cancellationToken);
             var viewers = roomDto.Viewers
-                .Select(x => GetViewer(x.Id, cancellationToken))
+                .Select(x => _viewerRepository.GetAsync(x.Id, cancellationToken))
                 .Select(t => t.Result)
                 .ToList();
             
@@ -58,9 +58,9 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         {
             var roomDto = _applicationDbContext.Rooms.First(r => r.Token.Equals(roomToken));
             
-            var host = await GetViewer(roomDto.HostId, cancellationToken);
+            var host = await _viewerRepository.GetAsync(roomDto.HostId, cancellationToken);
             var viewers = roomDto.Viewers
-                .Select(x => GetViewer(x.Id, cancellationToken))
+                .Select(x => _viewerRepository.GetAsync(x.Id, cancellationToken))
                 .Select(t => t.Result)
                 .ToList();
             
@@ -106,12 +106,6 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
             _applicationDbContext.Remove(roomDto);
 
             return _applicationDbContext.SaveChangesAsync(cancellationToken);
-        }
-        
-        private async Task<Viewer> GetViewer(Guid viewerId, CancellationToken cancellationToken)
-        {
-            var user = await _userRepository.GetUserAsync(viewerId, cancellationToken);
-            return new Viewer(new UserProfile(user.Id, user.Nickname, user.Type == UserType.Member));
         }
     }
 }

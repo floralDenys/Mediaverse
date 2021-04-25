@@ -1,6 +1,6 @@
 ﻿namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos
 {
-    public class PlayerDto
+    public class ContentPlayerDto
     {
         public long Width { get; set; }
         public long Height { get; set; }

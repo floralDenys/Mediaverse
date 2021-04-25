@@ -24,6 +24,8 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
             CreateMap<Content, PlaylistItemDto>()
                 .ForMember(dest => dest.Title, o => o.MapFrom(src => src.Title))
                 .ForMember(dest => dest.Description, o => o.MapFrom(src => src.Description));
+
+            CreateMap<Room, RoomDto>();
         }
     }
 }

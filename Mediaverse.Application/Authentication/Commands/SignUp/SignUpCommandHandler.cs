@@ -49,7 +49,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
                 Guid userId = _identifierProvider.GenerateGuid();
                 user = new User(userId, UserType.Member)
                 {
-                    Nickname = request.Nickname,
+                    Nickname = request.Login,
                     Email = request.Email,
                     Password = request.Password
                 };

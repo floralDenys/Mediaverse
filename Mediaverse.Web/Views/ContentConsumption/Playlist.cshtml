@@ -1,0 +1,55 @@
+﻿@using Mediaverse.Application.JointContentConsumption.Common.Dtos
+@using Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos
+@model Mediaverse.Application.JointContentConsumption.Common.Dtos.PlaylistDto
+
+@{
+    var playlist = new PlaylistDto()
+    {
+        Name = "Some playlist",
+        Items = Enumerable.Repeat(
+           new PlaylistItemDto
+            {
+                Title = "Some title",
+                Description = "Some description",
+                Thumbnail = new ThumbnailDto { Url = "https://i.ytimg.com/vi/Ks-_Mh1QhMc/default.jpg" }
+            },
+            10).ToList()
+    };
+}
+
+<div style="width: 350px; height: 500px; text-align: left; background-color: #bedfea" class="playlist">
+    <div style="height: 25px">
+        Active playlist:
+        <b>@Html.Label(playlist.Name)</b>
+    </div>
+    <hr size="3" style="margin: 10px"/>
+    <div class="text-center">
+        <input style="width: 150px" type="button" value="<- Previous"/>
+        <input style="width: 150px" type="button" value="Next ->"/>
+    </div>
+    <hr size="3" style="margin: 10px"/>
+    <ul>
+        @foreach (var playlistItem in playlist.Items)
+        {
+            <li>
+                @Html.Partial("PlaylistItem", playlistItem)
+            </li>
+        }
+    </ul>
+</div>
+
+<script type="text/javascript">
+    const search = function() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("SearchForContent", "ContentSearch")',
+            data: $('#searchLine').serialize(),
+            success: function(res) {
+
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(xhr.message);
+            }
+        })
+    }
+</script>

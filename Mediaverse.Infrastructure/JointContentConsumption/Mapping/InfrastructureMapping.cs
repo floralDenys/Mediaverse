@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using AutoMapper;
+using Mediaverse.Domain.Authentication.Entities;
+using Mediaverse.Domain.Authentication.Enums;
 using Mediaverse.Domain.JointContentConsumption.Entities;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 using Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos;
@@ -59,6 +61,10 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
 
             CreateMap<Viewer, ViewerDto>()
                 .ForMember(src => src.Id, opt => opt.MapFrom(src => src.Profile.Id));
+
+            CreateMap<User, Viewer>()
+                .ConstructUsing(src => new Viewer(
+                    new UserProfile(src.Id, src.Nickname, src.Type == UserType.Member)));
         }
     }
 }
