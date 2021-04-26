@@ -7,8 +7,8 @@ namespace Mediaverse.Domain.ContentSearch.Entities
     public class Preview
     {
         public ContentId ContentId { get; }
-        public string ContentTitle { get; }
-        public string ContentDescription { get; }
+        public string Title { get; }
+        public string Description { get; }
         public Thumbnail Thumbnail { get; set; }
         
         public Preview(
@@ -27,8 +27,8 @@ namespace Mediaverse.Domain.ContentSearch.Entities
                 }
                 
                 ContentId = new ContentId(externalId, contentSource, contentType);
-                ContentTitle = contentTitle;
-                ContentDescription = contentDescription;
+                Title = contentTitle;
+                Description = contentDescription;
                 Thumbnail = thumbnail ?? throw new ArgumentNullException(nameof(thumbnail));
             }
             catch (Exception exception)
