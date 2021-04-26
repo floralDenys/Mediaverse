@@ -32,13 +32,15 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                     _items = _items.OrderBy(x => x.PlaylistItemIndex).ToList();
                 }
             }
+            catch (InformativeException)
+            {
+                throw;
+            }
             catch (Exception exception)
             {
                 throw new InvalidOperationException("Could not create playlist", exception);
             }
         }
-        
-        private Playlist() { }
 
         public IEnumerator<PlaylistItem> GetEnumerator() => _items.GetEnumerator();
         
@@ -46,109 +48,80 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
 
         public void Add(ContentId contentId)
         {
-            try
+            _ = contentId ?? throw new ArgumentNullException(nameof(contentId));
+            if (Contains(contentId))
             {
-                _ = contentId ?? throw new ArgumentNullException(nameof(contentId));
-
-                if (Contains(contentId))
-                {
-                    throw new InvalidOperationException("Content is added already");
-                }
-
-                int playlistItemIndex = (_items.LastOrDefault()?.PlaylistItemIndex ?? 0) + 1;
-                _items.Add(new PlaylistItem(contentId, playlistItemIndex));
-
-                if (_items.Count == 1)
-                {
-                    CurrentlyPlayingContentIndex = 1;
-                }
+                throw new InformativeException("Content is added already");
             }
-            catch (Exception exception)
+
+            int playlistItemIndex = (_items.LastOrDefault()?.PlaylistItemIndex ?? 0) + 1;
+            _items.Add(new PlaylistItem(contentId, playlistItemIndex));
+
+            if (_items.Count == 1)
             {
-                throw new InvalidOperationException($"Could not add content {contentId} to playlist {this}", exception);
+                CurrentlyPlayingContentIndex = 1;
             }
         }
         
         public void Remove(ContentId contentId)
         {
-            try
+            _ = contentId ?? throw new ArgumentNullException(nameof(contentId));
+
+            var playlistItem = _items.First(x => x.ContentId.Equals(contentId));
+            if (playlistItem == null)
             {
-                _ = contentId ?? throw new ArgumentNullException(nameof(contentId));
-
-                var playlistItem = _items.First(x => x.ContentId.Equals(contentId));
-                if (playlistItem == null)
-                {
-                    throw new InvalidOperationException("Playlist does not contain specified item");
-                }
-                
-                if (!_items.Remove(playlistItem))
-                {
-                    throw new InvalidOperationException("Something went wrong");
-                }
-
-                if (!_items.Any())
-                {
-                    CurrentlyPlayingContentIndex = null;
-                }
+                throw new InformativeException("Playlist does not contain specified item");
             }
-            catch (Exception exception)
+            
+            if (!_items.Remove(playlistItem))
             {
-                throw new InvalidOperationException($"Could not remove content {contentId} from playlist {this}", exception);
+                throw new InvalidOperationException("Something went wrong");
+            }
+
+            if (!_items.Any())
+            {
+                CurrentlyPlayingContentIndex = null;
             }
         }
 
         public ContentId PlayNextContent()
         {
-            try
+            if (!_items.Any())
             {
-                if (!_items.Any())
-                {
-                    throw new InvalidOperationException("Playlist is empty");
-                }
-
-                var nextPlaylistItem = _items
-                    .FirstOrDefault(i => i.PlaylistItemIndex > CurrentlyPlayingContentIndex);
-                
-                if (nextPlaylistItem == null)
-                {
-                    throw new InvalidOperationException("The end of the playlist is reached already");
-                }
-
-                CurrentlyPlayingContentIndex = nextPlaylistItem.PlaylistItemIndex;
-                
-                return nextPlaylistItem.ContentId;
+                throw new InformativeException("Playlist is empty");
             }
-            catch (Exception exception)
+
+            var nextPlaylistItem = _items
+                .FirstOrDefault(i => i.PlaylistItemIndex > CurrentlyPlayingContentIndex);
+            
+            if (nextPlaylistItem == null)
             {
-                throw new InvalidOperationException($"Could not play next content from the playlist {this}", exception);
+                throw new InformativeException("The end of the playlist is reached already");
             }
+
+            CurrentlyPlayingContentIndex = nextPlaylistItem.PlaylistItemIndex;
+            
+            return nextPlaylistItem.ContentId;
         }
 
         public ContentId PlayPreviousContent()
         {
-            try
+            if (!_items.Any())
             {
-                if (!_items.Any())
-                {
-                    throw new InvalidOperationException("Playlist is empty");
-                }
-
-                var previousPlaylistItem =
-                    _items.LastOrDefault(i => i.PlaylistItemIndex < CurrentlyPlayingContentIndex); 
-                
-                if (previousPlaylistItem == null)
-                {
-                    throw new InvalidOperationException("The start of the playlist is reached already");
-                }
-
-                CurrentlyPlayingContentIndex = previousPlaylistItem.PlaylistItemIndex;
-                
-                return previousPlaylistItem.ContentId;
+                throw new InformativeException("Playlist is empty");
             }
-            catch (Exception exception)
+
+            var previousPlaylistItem =
+                _items.LastOrDefault(i => i.PlaylistItemIndex < CurrentlyPlayingContentIndex); 
+            
+            if (previousPlaylistItem == null)
             {
-                throw new InvalidOperationException($"Could not play previous content from the playlist {this}", exception);
+                throw new InformativeException("The start of the playlist is reached already");
             }
+
+            CurrentlyPlayingContentIndex = previousPlaylistItem.PlaylistItemIndex;
+            
+            return previousPlaylistItem.ContentId;
         }
         
         private bool Contains(ContentId contentId) => _items

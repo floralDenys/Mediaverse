@@ -16,7 +16,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException("Given name is invalid");
+                    throw new InformativeException("Given name is invalid");
                 }
 
                 _name = value;
@@ -50,7 +50,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             {
                 if (value < 1)
                 {
-                    throw new ArgumentException("Max viewers quantity should be more than 1");
+                    throw new InformativeException("Max viewers quantity should be more than 1");
                 }
 
                 _maxViewersQuantity = value;
@@ -71,6 +71,10 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 Host = host;
                 Type = type;
                 Invitation = invitation;
+            }
+            catch (InformativeException)
+            {
+                throw;
             }
             catch (Exception exception)
             {
@@ -101,74 +105,49 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
 
         public void UpdateSelectedPlaylist(Playlist playlist)
         {
-            try
+            _ = playlist ?? throw new ArgumentNullException(nameof(playlist));
+            if (!playlist.Owner.Equals(Host))
             {
-                _ = playlist ?? throw new ArgumentNullException(nameof(playlist));
-                
-                if (!playlist.Owner.Equals(Host))
-                {
-                    throw new InvalidOperationException($"Playlist {playlist} does not belong to host {Host}");
-                }
+                throw new InformativeException($"Playlist {playlist} does not belong to host {Host}");
+            }
 
-                ActivePlaylistId = playlist.Id;
-            }
-            catch (Exception exception)
-            {
-                throw new InvalidOperationException($"Could not update playlist {playlist} in room {this}", exception);
-            }
+            ActivePlaylistId = playlist.Id;
         }
 
         public void Join(Viewer viewer)
         {
-            try
+            if (!IsSpotAvailable)
             {
-                if (!IsSpotAvailable)
-                {
-                    throw new InvalidOperationException("There is no spot for the viewer");
-                }
-                
-                _ = viewer ?? throw new ArgumentNullException(nameof(viewer));
+                throw new InformativeException("There is no spot for the viewer");
+            }
+            
+            _ = viewer ?? throw new ArgumentNullException(nameof(viewer));
 
-                if (_viewers.Contains(viewer))
-                {
-                    throw new InvalidOperationException("Viewer joined the room already");
-                }
-                
-                _viewers.Add(viewer);
-            }
-            catch (Exception exception)
+            if (_viewers.Contains(viewer))
             {
-                throw new InvalidOperationException($"Viewer {viewer?.Profile.Id.ToString()} could not join " +
-                                                    $"the room {Id.ToString()}", exception);
+                throw new InformativeException("Viewer has joined the room already");
             }
+            
+            _viewers.Add(viewer);
         }
 
         public void Leave(Viewer viewer)
         {
-            try
+            _ = viewer ?? throw new ArgumentNullException(nameof(viewer));
+            if (!_viewers.Contains(viewer))
             {
-                _ = viewer ?? throw new ArgumentNullException(nameof(viewer));
-
-                if (!_viewers.Contains(viewer))
-                {
-                    throw new InvalidOperationException("Viewer is not in the room");
-                }
-
-                bool isHostLeavingTheRoom = Host.Equals(viewer);
-                
-                if (isHostLeavingTheRoom)
-                {
-                    SelectNewHost();
-                }
-                else
-                {
-                    _viewers.Remove(viewer);
-                }
+                throw new InformativeException("Viewer is not in the room");
             }
-            catch (Exception exception)
+
+            bool isHostLeavingTheRoom = Host.Equals(viewer);
+            
+            if (isHostLeavingTheRoom)
             {
-                throw new InvalidOperationException($"Viewer {viewer?.Profile.Id.ToString()} could not leave " +
-                                                    $"the room {Id.ToString()}", exception);
+                SelectNewHost();
+            }
+            else
+            {
+                _viewers.Remove(viewer);
             }
         }
         

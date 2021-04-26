@@ -1,4 +1,5 @@
 ﻿using System;
+using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 
 namespace Mediaverse.Domain.JointContentConsumption.Entities
