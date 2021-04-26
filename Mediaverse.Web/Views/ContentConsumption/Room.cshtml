@@ -21,3 +21,33 @@
 
     @await Html.PartialAsync("SearchResults", new SearchResultDto())
 </div>
+
+<script type="text/javascript">
+    const addToPlaylist = function(
+        externalId,
+        contentSource,
+        contentType) {
+        
+        let contentId = {
+            ExternalId: externalId,
+            ContentSource: contentSource,
+            contentType: contentType
+        }
+        
+        let command = {
+            ContentId: contentId
+        }
+        
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddContentToPlaylist", "ContentConsumption")',
+            data: command,
+            success: function(res) {
+                $('#playlist').replaceWith(res);
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(xhr.message);
+            }
+        });
+    };
+</script>
