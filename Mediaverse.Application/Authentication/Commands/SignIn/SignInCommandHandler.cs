@@ -6,6 +6,7 @@ using MediatR;
 using Mediaverse.Application.Authentication.Common.Dtos;
 using Mediaverse.Application.Authentication.Services;
 using Mediaverse.Domain.Authentication.Repositories;
+using Mediaverse.Domain.Common;
 using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.Authentication.Commands.SignIn
@@ -47,10 +48,15 @@ namespace Mediaverse.Application.Authentication.Commands.SignIn
 
                 return _mapper.Map<UserDto>(user);
             }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, $"Could not sign in {request.LoginOrEmail}");
+                throw;
+            }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not sign in {request.LoginOrEmail}", exception);
-                throw new InvalidOperationException("Email or Password is invalid. Please retry");
+                _logger.LogError(exception, $"Could not sign in {request.LoginOrEmail}");
+                throw new InformativeException("Email or Password is invalid. Please retry");
             }
         }
     }

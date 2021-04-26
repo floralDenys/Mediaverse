@@ -8,6 +8,7 @@ using Mediaverse.Application.Common.Services;
 using Mediaverse.Domain.Authentication.Entities;
 using Mediaverse.Domain.Authentication.Enums;
 using Mediaverse.Domain.Authentication.Repositories;
+using Mediaverse.Domain.Common;
 using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.Authentication.Commands.SignUp
@@ -45,7 +46,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
                 {
                     throw new InvalidOperationException("Password and Confirmation does not match");
                 }
-                
+
                 Guid userId = _identifierProvider.GenerateGuid();
                 user = new User(userId, UserType.Member)
                 {
@@ -58,10 +59,15 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
 
                 return _mapper.Map<UserDto>(user);
             }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, $"Could not sign up user {request.Email}");
+                throw;
+            }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not sign up user {request.Email}", exception);
-                throw new InvalidOperationException("Could not sign up user. Please retry");
+                _logger.LogError(exception, $"Could not sign up user {request.Email}");
+                throw new InformativeException("Could not sign up user. Please retry");
             }
         }
     }
