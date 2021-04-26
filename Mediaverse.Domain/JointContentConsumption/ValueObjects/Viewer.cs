@@ -11,7 +11,7 @@ namespace Mediaverse.Domain.JointContentConsumption.ValueObjects
         {
             try
             {
-                _ = profile ?? throw new ArgumentNullException(nameof(profile));
+                Profile = profile ?? throw new ArgumentNullException(nameof(profile));
             }
             catch (Exception exception)
             {
