@@ -21,19 +21,3 @@
         @Html.Partial("Preview", preview)
     }
 </div>
-
-<script type="text/javascript">
-    const search = function() {       
-        $.ajax({
-            type: "GET",
-            url: '@Url.Action("SearchForContent", "ContentSearch")',
-            data: $('#searchLine').serialize(),
-            success: function(res) {
-                
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-                alert(xhr.message);
-            }
-        })
-    }
-</script>
