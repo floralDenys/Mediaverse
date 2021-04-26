@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Google.Apis.YouTube.v3;
@@ -12,8 +13,9 @@ namespace Mediaverse.Infrastructure.ContentSearch.Repositories.YouTube
         private readonly IMapper _mapper;
 
         private const string SearchParts = "id,snippet";
+        private const string RetrieveByIdParts = "id,snippet,player";
         private const string SearchType = "video";
-        private const int MaxSearchResultQuantity = 25;
+        private const int MaxSearchResultQuantity = 1;
 
         public YouTubeRepository(
             YouTubeService youTubeService,
@@ -37,7 +39,7 @@ namespace Mediaverse.Infrastructure.ContentSearch.Repositories.YouTube
 
         public async Task<SearchResult> SearchForVideoById(string videoId, CancellationToken cancellationToken)
         {
-            var searchRequest = _youTubeService.Videos.List(SearchParts);
+            var searchRequest = _youTubeService.Videos.List(RetrieveByIdParts);
             searchRequest.Id = videoId;
 
             var searchResult = await searchRequest.ExecuteAsync(cancellationToken);

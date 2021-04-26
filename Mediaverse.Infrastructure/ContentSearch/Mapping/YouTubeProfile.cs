@@ -25,7 +25,7 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
                 .ForMember(dest => dest.MatchingContentPreviews, o => o.MapFrom(src => src.Items));
 
             CreateMap<YouTubeData.VideoListResponse, SearchResult>()
-                .ForMember(dest => dest.MatchingContentPreviews, o => o.MapFrom(src => src.Items.FirstOrDefault()));
+                .ForMember(dest => dest.RequestedContent, o => o.MapFrom(src => src.Items.FirstOrDefault()));
             
             CreateMap<YouTubeData.SearchResult, Preview>()
                 .ConstructUsing(x => new Preview(
@@ -35,9 +35,9 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
                     x.Snippet.Title,
                     x.Snippet.Description,
                     new Thumbnail(
-                        x.Snippet.Thumbnails.Standard.Width.GetValueOrDefault(),
-                        x.Snippet.Thumbnails.Standard.Height.GetValueOrDefault(),
-                        x.Snippet.Thumbnails.Standard.Url)));
+                        x.Snippet.Thumbnails.Default__.Width.GetValueOrDefault(),
+                        x.Snippet.Thumbnails.Default__.Height.GetValueOrDefault(),
+                        x.Snippet.Thumbnails.Default__.Url)));
 
             CreateMap<YouTubeData.Video, Content>()
                 .ConstructUsing(src => new Content(
