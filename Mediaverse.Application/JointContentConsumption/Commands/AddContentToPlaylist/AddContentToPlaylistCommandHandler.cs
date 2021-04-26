@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
+using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 using Microsoft.Extensions.Logging;
@@ -34,23 +35,30 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.AddContentToPl
             try
             {
                 var room = await _roomRepository.GetAsync(request.CurrentRoomId, cancellationToken)
-                    ?? throw new ArgumentException($"Room {request.CurrentRoomId.ToString()} could not be found");
-                
+                           ?? throw new ArgumentException(
+                               $"Room {request.CurrentRoomId.ToString()} could not be found");
+
                 var playlist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken)
-                    ?? throw new InvalidOperationException($"Playlist {room.ActivePlaylistId.ToString()} " +
-                                                           $"could not be found");
-                
+                               ?? throw new InvalidOperationException($"Playlist {room.ActivePlaylistId.ToString()} " +
+                                                                      $"could not be found");
+
                 var contentId = _mapper.Map<ContentId>(request.ContentId);
                 playlist.Add(contentId);
                 await _playlistRepository.UpdateAsync(playlist, cancellationToken);
 
                 return _mapper.Map<PlaylistDto>(playlist);
             }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, $"Could not add content {request.ContentId} to active playlist of " +
+                                            $"room {request.CurrentRoomId.ToString()}");
+                throw;
+            }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not add content {request.ContentId} to active playlist of " +
-                                 $"room {request.CurrentRoomId.ToString()}", exception);
-                throw new InvalidOperationException("Could not add content to the playlist. Please retry");
+                _logger.LogError(exception, $"Could not add content {request.ContentId} to active playlist of " +
+                                 $"room {request.CurrentRoomId.ToString()}");
+                throw new InformativeException("Could not add content to the playlist. Please retry");
             }
         }
     }

@@ -14,11 +14,15 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             {
                 if (string.IsNullOrEmpty(name))
                 {
-                    throw new ArgumentException("Given name is invalid");
+                    throw new InformativeException("Given name is invalid");
                 }
 
                 Name = name;
                 IsMember = isMember;
+            }
+            catch (InformativeException)
+            {
+                throw;
             }
             catch (Exception exception)
             {

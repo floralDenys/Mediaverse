@@ -1,4 +1,6 @@
-﻿namespace Mediaverse.Domain.JointContentConsumption.Entities
+﻿using System;
+
+namespace Mediaverse.Domain.JointContentConsumption.Entities
 {
     public class Invitation
     {
@@ -6,7 +8,19 @@
 
         public Invitation(string token)
         {
-            Token = token;
+            try
+            {
+                if (string.IsNullOrEmpty(token))
+                {
+                    throw new ArgumentNullException(nameof(token));
+                }
+
+                Token = token;
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException("Could not create invitation", exception);
+            }
         }
     }
 }

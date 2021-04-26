@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos;
+using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Microsoft.Extensions.Logging;
@@ -36,7 +37,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
         {
             try
             {
-                var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken) 
+                var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                            ?? throw new InvalidOperationException($"Room {request.RoomId.ToString()} does not exist");
 
                 var playlist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken)
@@ -50,11 +51,17 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
                 var content = await _contentRepository.GetAsync(contentId, cancellationToken);
                 return _mapper.Map<ContentDto>(content);
             }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, $"Could not play next content from active playlist of " +
+                                            $"room {request.RoomId.ToString()}");
+                throw;
+            }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not play next content from active playlist of " +
-                                 $"room {request.RoomId.ToString()}", exception);
-                throw new InvalidOperationException("Could not play next content from the playlist. Please retry");
+                _logger.LogError(exception, $"Could not play next content from active playlist of " +
+                                 $"room {request.RoomId.ToString()}");
+                throw new InformativeException("Could not play next content from the playlist. Please retry");
             }
         }
     }

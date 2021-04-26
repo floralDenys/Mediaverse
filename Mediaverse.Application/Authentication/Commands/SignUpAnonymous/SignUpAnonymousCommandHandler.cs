@@ -9,6 +9,7 @@ using Mediaverse.Application.Common.Services;
 using Mediaverse.Domain.Authentication.Entities;
 using Mediaverse.Domain.Authentication.Enums;
 using Mediaverse.Domain.Authentication.Repositories;
+using Mediaverse.Domain.Common;
 using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.Authentication.Commands.SignUpAnonymous
@@ -52,10 +53,15 @@ namespace Mediaverse.Application.Authentication.Commands.SignUpAnonymous
 
                 return _mapper.Map<UserDto>(user);
             }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, "Could not sign up as anonymous");
+                throw;
+            }
             catch (Exception exception)
             {
-                _logger.LogError("Could not sign up as anonymous", exception);
-                throw new InvalidOperationException("Could not sign up as anonymous. Please retry");
+                _logger.LogError(exception, "Could not sign up as anonymous");
+                throw new InformativeException("Could not sign up as anonymous. Please retry");
             }
         }
     }
