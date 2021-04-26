@@ -10,6 +10,7 @@ using Mediaverse.Application.JointContentConsumption.Commands.LeaveRoom;
 using Mediaverse.Application.JointContentConsumption.Commands.RemoveContentFromPlaylist;
 using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
+using Mediaverse.Application.JointContentConsumption.Queries.GetRoom;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mediaverse.Web.Controllers
@@ -40,7 +41,14 @@ namespace Mediaverse.Web.Controllers
         public async Task<ActionResult> CreateRoom(CreateRoomCommand command, CancellationToken cancellationToken)
         {
             var room = await _mediator.Send(command, cancellationToken);
-            return View("Room", room);
+            
+            return Json(new
+            {
+                redirectToUrl = @Url.Action(
+                    "Room",
+                    "ContentConsumption",
+                    new { roomId = room.Id})
+            });
         }
 
         [HttpPost]
@@ -50,10 +58,18 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> JoinRoom(JoinRoomCommand command, CancellationToken cancellationToken)
+        public async Task<ActionResult> JoinRoom(Guid guestId, string roomToken, CancellationToken cancellationToken)
         {
+            var command = new JoinRoomCommand {ViewerId = guestId, RoomToken = roomToken};
             var room = await _mediator.Send(command, cancellationToken);
-            return View("Room", room);
+            
+            return Json(new
+            {
+                redirectToUrl = @Url.Action(
+                    "Room",
+                    "ContentConsumption",
+                    new {roomId = room.Id})
+            });
         }
 
         [HttpPost]
@@ -72,9 +88,11 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult Room()
+        public async Task<ActionResult> Room(Guid roomId, CancellationToken cancellationToken)
         {
-            return View(new RoomDto());
+            var query = new GetRoomQuery {RoomId = roomId};
+            var room = await _mediator.Send(query, cancellationToken);
+            return View(room);
         }
         
         [HttpPost]
