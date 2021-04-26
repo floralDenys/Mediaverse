@@ -8,11 +8,11 @@
 </div>
 
 <script type="text/javascript">
-    const search = function() {       
+    const search = function() {  
         $.ajax({
             type: "GET",
-            url: '@Url.Action("SearchForContent", "ContentSearch")',
-            data: $('#searchLine').serialize(),
+            url: '@Url.Action("SearchForContent", "ContentSearch")?source='
+                                                + $('#SelectedSource').val() + '&queryString=' + '\"' + $('#QueryString').val() + '\"',
             success: function(res) {
                 
             },
