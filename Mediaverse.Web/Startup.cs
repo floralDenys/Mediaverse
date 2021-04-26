@@ -1,19 +1,26 @@
 using System.Reflection;
+using Google.Apis.Services;
+using Google.Apis.YouTube.v3;
 using MediatR;
 using Mediaverse.Application.Authentication.Services;
 using Mediaverse.Application.Common.Services;
 using Mediaverse.Domain.Authentication.Repositories;
+using Mediaverse.Domain.ContentSearch.Services;
+using Mediaverse.Domain.ContentSearch.Services.Implementation;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Mediaverse.Infrastructure.Authentication.Repositories;
 using Mediaverse.Infrastructure.Authentication.Services;
 using Mediaverse.Infrastructure.Common.Persistence;
 using Mediaverse.Infrastructure.Common.Services;
+using Mediaverse.Infrastructure.ContentSearch.Repositories.YouTube;
 using Mediaverse.Infrastructure.JointContentConsumption.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ContentRepository = Mediaverse.Infrastructure.ContentSearch.Repositories.ContentRepository;
+using IContentRepository = Mediaverse.Domain.ContentSearch.Repositories.IContentRepository;
 
 namespace Mediaverse.Web
 {
@@ -44,6 +51,16 @@ namespace Mediaverse.Web
             services.AddScoped(typeof(IEmailService), typeof(EmailService));
             services.AddScoped(typeof(IViewerRepository), typeof(ViewerRepository));
             services.AddScoped(typeof(IRoomRepository), typeof(RoomRepository));
+            services.AddScoped(typeof(IContentRepository), typeof(ContentRepository));
+            services.AddScoped(typeof(IQueryStringProcessor), typeof(QueryStringProcessor));
+            services.AddScoped<YouTubeRepository>();
+
+            var authInitializer = new BaseClientService.Initializer
+            {
+                ApiKey = "AIzaSyDzk-VfGUWqdQ7wviczCh_ebFDXEW-nsyQ",
+                ApplicationName = "mediaverse"
+            };
+            services.AddScoped(x => new YouTubeService(authInitializer));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
