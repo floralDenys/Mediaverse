@@ -39,8 +39,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         private IList<Viewer> _viewers;
         private int _maxViewersQuantity = int.MaxValue;
         
-        public Guid ActivePlaylistId { get; private set; }
-        public bool IsPlaylistSelected => ActivePlaylistId != default;
+        public Guid? ActivePlaylistId { get; private set; }
+        public bool IsPlaylistSelected => ActivePlaylistId.HasValue;
         
         public IReadOnlyList<Viewer> Viewers => (IReadOnlyList<Viewer>)_viewers;
         public int MaxViewersQuantity
@@ -90,7 +90,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             RoomType type,
             Invitation invitation,
             int maxViewersQuantity,
-            Guid activePlaylistId,
+            Guid? activePlaylistId,
             IList<Viewer> viewers) : base(id)
         {
             Name = name;

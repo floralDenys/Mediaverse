@@ -38,7 +38,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.AddContentToPl
                            ?? throw new ArgumentException(
                                $"Room {request.CurrentRoomId.ToString()} could not be found");
 
-                var playlist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken)
+                var playlist = await _playlistRepository.GetAsync(room.ActivePlaylistId.Value, cancellationToken)
                                ?? throw new InvalidOperationException($"Playlist {room.ActivePlaylistId.ToString()} " +
                                                                       $"could not be found");
 

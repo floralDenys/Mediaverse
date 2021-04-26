@@ -40,7 +40,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                            ?? throw new InvalidOperationException($"Room {request.RoomId.ToString()} does not exist");
 
-                var playlist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken)
+                var playlist = await _playlistRepository.GetAsync(room.ActivePlaylistId.Value, cancellationToken)
                                ?? throw new InvalidOperationException($"Playlist {room.ActivePlaylistId.ToString()} " +
                                                                       $"does not exist");
 

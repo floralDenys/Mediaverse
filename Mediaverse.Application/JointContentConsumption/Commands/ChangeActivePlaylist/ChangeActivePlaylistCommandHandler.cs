@@ -36,16 +36,14 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeActivePl
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                            ?? throw new ArgumentException("Room could not be found");
 
-                Guid previousPlaylistId = room.IsPlaylistSelected ? room.ActivePlaylistId : default;
-
                 var newPlaylist = await _playlistRepository.GetAsync(request.PlaylistId, cancellationToken)
                                   ?? throw new ArgumentException("New playlist could not be found");
 
                 room.UpdateSelectedPlaylist(newPlaylist);
 
-                if (previousPlaylistId != default)
+                if (room.IsPlaylistSelected)
                 {
-                    var previousPlaylist = await _playlistRepository.GetAsync(previousPlaylistId, cancellationToken)
+                    var previousPlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId.Value, cancellationToken)
                                            ?? throw new InvalidOperationException(
                                                "Previous active playlist could not be found");
 

@@ -53,7 +53,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SavePlaylist
                     throw new InvalidOperationException("Viewer does not belong to this room");
                 }
 
-                var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken)
+                var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId.Value, cancellationToken)
                                      ?? throw new ArgumentException("Playlist could not be found");
 
                 if (activePlaylist.Owner == viewer)

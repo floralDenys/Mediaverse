@@ -38,7 +38,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.RemoveContentF
                            ?? throw new ArgumentException(
                                $"Room {request.CurrentRoomId.ToString()} could not be found");
 
-                var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken)
+                var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId.Value, cancellationToken)
                                      ?? throw new InvalidOperationException(
                                          $"Playlist {room.ActivePlaylistId.ToString()} " +
                                          $"could not be found");

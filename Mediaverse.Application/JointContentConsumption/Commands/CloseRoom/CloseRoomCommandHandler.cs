@@ -38,7 +38,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CloseRoom
 
                 if (room.IsPlaylistSelected)
                 {
-                    var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken)
+                    var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId.Value, cancellationToken)
                                          ?? throw new ArgumentException("Active playlist could not be found");
 
                     if (activePlaylist.IsTemporary)

@@ -12,7 +12,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos
         public RoomType Type { get; set; }
         public string Token { get; set; }
         public Guid HostId { get; set; }
-        public Guid ActivePlaylistId { get; set; }
+        public Guid? ActivePlaylistId { get; set; }
         public int MaxViewersQuantity { get; set; }
         public List<ViewerDto> Viewers { get; set; }
     }
