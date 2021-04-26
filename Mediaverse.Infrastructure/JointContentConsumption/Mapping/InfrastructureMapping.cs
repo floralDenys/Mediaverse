@@ -26,16 +26,6 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
                     new ContentPlayer(src.PlayerWidth, src.PlayerHeight, src.PlayerHtml),
                     src.Description));
 
-            CreateMap<ContentSearchContext.ValueObjects.Content, ContentDto>()
-                .ForMember(dst => dst.ExternalId, opt => opt.MapFrom(src => src.Id.ExternalId))
-                .ForMember(dst => dst.ContentSource, opt => opt.MapFrom(src => src.Id.ContentSource))
-                .ForMember(dst => dst.ContentType, opt => opt.MapFrom(src => src.Id.ContentType))
-                .ForMember(dst => dst.Title, opt => opt.MapFrom(src => src.Title))
-                .ForMember(dst => dst.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dst => dst.ContentPlayerHtml, opt => opt.MapFrom(src => src.PlayerHtml))
-                .ForMember(dst => dst.ContentPlayerWidth, opt => opt.MapFrom(src => src.PlayerWidth))
-                .ForMember(dst => dst.ContentPlayerHeight, opt => opt.MapFrom(src => src.PlayerHeight));
-
             CreateMap<Playlist, PlaylistDto>()
                 .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dst => dst.OwnerId, opt => opt.MapFrom(src => src.Owner.Profile.Id))

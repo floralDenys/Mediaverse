@@ -1,5 +1,6 @@
 ﻿using Mediaverse.Domain.Authentication.Entities;
 using Mediaverse.Domain.JointContentConsumption.Entities;
+using Mediaverse.Infrastructure.ContentSearch.Repositories.Dtos;
 using Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos;
 using Microsoft.EntityFrameworkCore;
 

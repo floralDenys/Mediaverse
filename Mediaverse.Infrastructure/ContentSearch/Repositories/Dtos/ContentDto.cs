@@ -1,6 +1,6 @@
-﻿using Mediaverse.Domain.JointContentConsumption.Enums;
+﻿using Mediaverse.Domain.ContentSearch.Enums;
 
-namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos
+namespace Mediaverse.Infrastructure.ContentSearch.Repositories.Dtos
 {
     public class ContentDto
     {
@@ -14,5 +14,9 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos
         public string ContentPlayerHtml { get; set; }
         public int ContentPlayerWidth { get; set; }
         public int ContentPlayerHeight { get; set; }
+        
+        public string ThumbnailUrl { get; set; }
+        public long ThumbnailWidth { get; set; }
+        public long ThumbnailHeight { get; set; }
     }
 }
