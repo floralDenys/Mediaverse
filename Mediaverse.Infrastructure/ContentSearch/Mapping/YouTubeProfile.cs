@@ -49,11 +49,11 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
                     new Thumbnail(
                         src.Snippet.Thumbnails.Default__.Width.GetValueOrDefault(),
                         src.Snippet.Thumbnails.Default__.Height.GetValueOrDefault(),
-                        src.Snippet.Thumbnails.Default__.Url), 
+                        src.Snippet.Thumbnails.Default__.Url),
                     src.Player.EmbedHtml,
                     (int) src.Player.EmbedWidth.GetValueOrDefault(),
                     (int) src.Player.EmbedHeight.GetValueOrDefault(),
-                    src.Snippet.Description))
+                    src.Snippet.Description));
         }
     }
 }
