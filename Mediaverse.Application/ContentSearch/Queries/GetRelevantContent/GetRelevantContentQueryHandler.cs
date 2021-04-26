@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos;
+using Mediaverse.Domain.Common;
 using Mediaverse.Domain.ContentSearch.Repositories;
 using Mediaverse.Domain.ContentSearch.Services;
 using Microsoft.Extensions.Logging;
@@ -34,8 +35,9 @@ namespace Mediaverse.Application.ContentSearch.Queries.GetRelevantContent
         {
             try
             {
-                var contentQueryType = _queryStringProcessor.DefineQueryStringType(request.SelectedSource, request.QueryString);
-                var searchResult =  await _contentRepository.SearchForContentAsync(
+                var contentQueryType =
+                    _queryStringProcessor.DefineQueryStringType(request.SelectedSource, request.QueryString);
+                var searchResult = await _contentRepository.SearchForContentAsync(
                     request.SelectedSource,
                     contentQueryType,
                     request.QueryString,
@@ -43,10 +45,15 @@ namespace Mediaverse.Application.ContentSearch.Queries.GetRelevantContent
 
                 return _mapper.Map<SearchResultDto>(searchResult);
             }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, $"Could not get relevant content for {request}");
+                throw;
+            }
             catch (Exception exception)
             {
                 _logger.LogError(exception, $"Could not get relevant content for {request}", exception);
-                throw new InvalidOperationException("Could not get relevant content. Please retry");
+                throw new InformativeException("Could not get relevant content for your request. Please retry");
             }
         }
     }
