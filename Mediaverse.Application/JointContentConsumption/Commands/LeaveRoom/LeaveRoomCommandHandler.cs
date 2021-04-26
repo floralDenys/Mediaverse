@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Microsoft.Extensions.Logging;
 
@@ -31,21 +32,27 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.LeaveRoom
         {
             try
             {
-                var viewer = await _viewerRepository.GetAsync(request.ViewerId, cancellationToken) 
+                var viewer = await _viewerRepository.GetAsync(request.ViewerId, cancellationToken)
                              ?? throw new ArgumentException("Viewer could not be found");
 
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                            ?? throw new ArgumentException("Room could not be found");
-                
+
                 room.Leave(viewer);
 
                 return Unit.Value;
             }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, $"Viewer {request.ViewerId.ToString()} could not leave " +
+                                            $"the room {request.RoomId.ToString()}");
+                throw;
+            }
             catch (Exception exception)
             {
-                _logger.LogError($"Viewer {request.ViewerId.ToString()} could not leave " +
-                                 $"the room {request.RoomId.ToString()}", exception);
-                throw new InvalidOperationException("Failed to leave the room. Please retry");
+                _logger.LogError(exception, $"Viewer {request.ViewerId.ToString()} could not leave " +
+                                 $"the room {request.RoomId.ToString()}");
+                throw new InformativeException("Failed to leave the room. Please retry");
             }
         }
     }

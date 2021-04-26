@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
+using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Microsoft.Extensions.Logging;
 
@@ -33,16 +34,22 @@ namespace Mediaverse.Application.JointContentConsumption.Queries.GetAvailablePla
         {
             try
             {
-                var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken) 
+                var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                            ?? throw new ArgumentException("Room could not be found");
 
-                var availablePlaylists = await _playlistRepository.GetAllByViewerAsync(room.Host.Profile.Id, cancellationToken);
+                var availablePlaylists =
+                    await _playlistRepository.GetAllByViewerAsync(room.Host.Profile.Id, cancellationToken);
                 return _mapper.Map<IList<PlaylistDto>>(availablePlaylists);
+            }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, $"Could not get available playlists for room {request.RoomId.ToString()}");
+                throw;
             }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not get available playlists for room {request.RoomId.ToString()}", exception);
-                throw new InvalidOperationException("Could not get available playlists. Please retry");
+                _logger.LogError(exception, $"Could not get available playlists for room {request.RoomId.ToString()}");
+                throw new InformativeException("Could not get available playlists. Please retry");
             }
         }
     }

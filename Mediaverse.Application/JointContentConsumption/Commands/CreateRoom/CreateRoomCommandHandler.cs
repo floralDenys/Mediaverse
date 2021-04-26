@@ -5,6 +5,7 @@ using AutoMapper;
 using MediatR;
 using Mediaverse.Application.Common.Services;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
+using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Entities;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Microsoft.Extensions.Logging;
@@ -37,17 +38,12 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
         {
             try
             {
-                if (string.IsNullOrEmpty(request.Name))
-                {
-                    throw new ArgumentException("Name is null or empty");
-                }
-                
-                var host = await _viewerRepository.GetAsync(request.HostId, cancellationToken) 
+                var host = await _viewerRepository.GetAsync(request.HostId, cancellationToken)
                            ?? throw new ArgumentException($"Host {request.HostId.ToString()} could not be found");
 
                 Guid generatedRoomId = _identifierProvider.GenerateGuid();
                 string invitationToken = _identifierProvider.GenerateToken(generatedRoomId);
-                    
+
                 var room = new Room(
                     generatedRoomId,
                     request.Name,
@@ -55,16 +51,22 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
                     request.Type,
                     new Invitation(invitationToken),
                     request.Description);
-                
+
                 await _roomRepository.AddAsync(room, cancellationToken);
-                
+
                 return _mapper.Map<RoomDto>(room);
+            }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, $"Could not create room with name {request.Name} by user with ID " +
+                                            $"{request.HostId.ToString()}");
+                throw;
             }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not create room with name {request.Name} by user with ID " +
-                                 $"{request.HostId.ToString()}", exception);
-                throw new InvalidOperationException("Could not create room. Please retry");
+                _logger.LogError(exception, $"Could not create room with name {request.Name} by user with ID " +
+                                 $"{request.HostId.ToString()}");
+                throw new InformativeException("Could not create room. Please retry");
             }
         }
     }

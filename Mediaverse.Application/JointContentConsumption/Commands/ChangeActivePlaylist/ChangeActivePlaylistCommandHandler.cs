@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
+using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Microsoft.Extensions.Logging;
 
@@ -32,20 +33,21 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeActivePl
         {
             try
             {
-                var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken) 
+                var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                            ?? throw new ArgumentException("Room could not be found");
 
                 Guid previousPlaylistId = room.IsPlaylistSelected ? room.ActivePlaylistId : default;
 
-                var newPlaylist = await _playlistRepository.GetAsync(request.PlaylistId, cancellationToken) 
+                var newPlaylist = await _playlistRepository.GetAsync(request.PlaylistId, cancellationToken)
                                   ?? throw new ArgumentException("New playlist could not be found");
-                
+
                 room.UpdateSelectedPlaylist(newPlaylist);
-                
+
                 if (previousPlaylistId != default)
                 {
                     var previousPlaylist = await _playlistRepository.GetAsync(previousPlaylistId, cancellationToken)
-                        ?? throw new InvalidOperationException("Previous active playlist could not be found");
+                                           ?? throw new InvalidOperationException(
+                                               "Previous active playlist could not be found");
 
                     if (previousPlaylist.IsTemporary)
                     {
@@ -57,10 +59,15 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeActivePl
 
                 return _mapper.Map<PlaylistDto>(newPlaylist);
             }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, $"Could not change active playlist in room {request.RoomId.ToString()}");
+                throw;
+            }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not change active playlist in room {request.RoomId.ToString()}", exception);
-                throw new InvalidOperationException("Could not change active playlist in room. Please retry");
+                _logger.LogError(exception, $"Could not change active playlist in room {request.RoomId.ToString()}");
+                throw new InformativeException("Could not change active playlist in room. Please retry");
             }
         }
     }

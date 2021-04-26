@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
+using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 using Microsoft.Extensions.Logging;
@@ -34,11 +35,13 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.RemoveContentF
             try
             {
                 var room = await _roomRepository.GetAsync(request.CurrentRoomId, cancellationToken)
-                    ?? throw new ArgumentException($"Room {request.CurrentRoomId.ToString()} could not be found");
+                           ?? throw new ArgumentException(
+                               $"Room {request.CurrentRoomId.ToString()} could not be found");
 
                 var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken)
-                    ?? throw new InvalidOperationException($"Playlist {room.ActivePlaylistId.ToString()} " +
-                                                           $"could not be found");
+                                     ?? throw new InvalidOperationException(
+                                         $"Playlist {room.ActivePlaylistId.ToString()} " +
+                                         $"could not be found");
 
                 var contentId = _mapper.Map<ContentId>(request.ContentId);
                 activePlaylist.Remove(contentId);
@@ -46,11 +49,17 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.RemoveContentF
 
                 return _mapper.Map<PlaylistDto>(activePlaylist);
             }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, $"Could not remove content {request.ContentId} from active playlist of " +
+                                            $"room {request.CurrentRoomId.ToString()}");
+                throw;
+            }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not remove content {request.ContentId} from active playlist of " +
-                                 $"room {request.CurrentRoomId.ToString()}", exception);
-                throw new InvalidOperationException("Could not remove content from the playlist. Please retry");
+                _logger.LogError(exception, $"Could not remove content {request.ContentId} from active playlist of " +
+                                 $"room {request.CurrentRoomId.ToString()}");
+                throw new InformativeException("Could not remove content from the playlist. Please retry");
             }
         }
     }

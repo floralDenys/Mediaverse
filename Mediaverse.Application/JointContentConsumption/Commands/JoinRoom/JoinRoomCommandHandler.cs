@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
+using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Microsoft.Extensions.Logging;
 
@@ -44,11 +45,17 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.JoinRoom
 
                 return _mapper.Map<RoomDto>(room);
             }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, $"Viewer {request.ViewerId.ToString()} could not join the " +
+                                            $"room {request.RoomToken}");
+                throw;
+            }
             catch (Exception exception)
             {
-                _logger.LogError($"Viewer {request.ViewerId.ToString()} could not join the " +
-                                 $"room {request.RoomToken}", exception);
-                throw new InvalidOperationException("Failed to join the room. Please retry");
+                _logger.LogError(exception, $"Viewer {request.ViewerId.ToString()} could not join the " +
+                                 $"room {request.RoomToken}");
+                throw new InformativeException("Failed to join the room. Please retry");
             }
         }
     }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.Common.Services;
+using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Entities;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
@@ -51,17 +52,17 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SavePlaylist
                 {
                     throw new InvalidOperationException("Viewer does not belong to this room");
                 }
-                
-                var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken) 
+
+                var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId, cancellationToken)
                                      ?? throw new ArgumentException("Playlist could not be found");
 
-                if (activePlaylist.Owner == viewer) 
+                if (activePlaylist.Owner == viewer)
                 {
                     if (!activePlaylist.IsTemporary)
                     {
                         throw new InvalidOperationException("Playlist is added already");
                     }
-                    
+
                     activePlaylist.IsTemporary = false;
                 }
                 else
@@ -69,16 +70,22 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SavePlaylist
                     Guid newPlaylistId = _identifierProvider.GenerateGuid();
                     activePlaylist = CreatePlaylistCopy(newPlaylistId, viewer, activePlaylist);
                 }
-                
+
                 await _playlistRepository.AddAsync(activePlaylist, cancellationToken);
 
                 return Unit.Value;
             }
+            catch (InformativeException exception)
+            {
+                _logger.LogError(exception, $"Could not add playlist {request.RoomId.ToString()} " +
+                                            $"to host of room {request.RoomId.ToString()}");
+                throw;
+            }
             catch (Exception exception)
             {
-                _logger.LogError($"Could not add playlist {request.RoomId.ToString()} " +
-                                 $"to host of room {request.RoomId.ToString()}", exception);
-                throw new InvalidOperationException("Could not add playlist. Please retry");
+                _logger.LogError(exception, $"Could not add playlist {request.RoomId.ToString()} " +
+                                 $"to host of room {request.RoomId.ToString()}");
+                throw new InformativeException("Could not add playlist. Please retry");
             }
         }
 
