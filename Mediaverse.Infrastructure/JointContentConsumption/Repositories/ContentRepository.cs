@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Mediaverse.Domain.JointContentConsumption.Entities;
-using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 using Mediaverse.Infrastructure.Common.Persistence;

@@ -1,8 +1,8 @@
 ﻿using System;
+using Mediaverse.Domain.ContentSearch.Entities;
 using Mediaverse.Domain.ContentSearch.Enums;
-using Mediaverse.Domain.ContentSearch.ValueObjects;
 
-namespace Mediaverse.Domain.ContentSearch.Entities
+namespace Mediaverse.Domain.ContentSearch.ValueObjects
 {
     public class Preview
     {
