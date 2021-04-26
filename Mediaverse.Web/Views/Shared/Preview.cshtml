@@ -1,0 +1,27 @@
+﻿@model Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos.PreviewDto;
+
+@{
+    string Truncate(string text)
+    {
+        const int size = 20;
+        return text.Length > size
+            ? text.Substring(0, size) + "..."
+            : text;
+    }
+}
+
+<div class="card gridItem" style="width: 150px" onclick="alert('clicked')">
+    <div><img src="@Model.Thumbnail.Url" alt=""/></div>
+    <div><strong>@Model.Title</strong></div>
+    <div>@Truncate(Model.Description)</div>
+    <input type="button" value="Find" onclick="search()" style="width: 200px; height: 40px;"/>
+</div>
+
+<script type="text/javascript">
+    let size = 30;
+    const truncate = function(text) {
+        return text.length > size 
+            ? text.slice(0, size - 1) + "…" 
+            : text;
+    }
+</script>

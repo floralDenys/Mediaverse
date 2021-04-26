@@ -14,7 +14,7 @@
             url: '@Url.Action("SearchForContent", "ContentSearch")?source='
                                                 + $('#SelectedSource').val() + '&queryString=' + $('#QueryString').val(),
             success: function(res) {
-                
+                $('#searchResults').replaceWith(res);
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 alert(xhr.message);
