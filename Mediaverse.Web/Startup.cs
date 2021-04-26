@@ -57,8 +57,8 @@ namespace Mediaverse.Web
 
             var authInitializer = new BaseClientService.Initializer
             {
-                ApiKey = "AIzaSyDzk-VfGUWqdQ7wviczCh_ebFDXEW-nsyQ",
-                ApplicationName = "mediaverse"
+                ApiKey = "",
+                ApplicationName = ""
             };
             services.AddScoped(x => new YouTubeService(authInitializer));
         }
