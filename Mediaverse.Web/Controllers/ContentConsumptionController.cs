@@ -63,12 +63,12 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<PlaylistDto> AddContentToPlaylist(
+        public async Task<ActionResult> AddContentToPlaylist(
             AddContentToPlaylistCommand command,
             CancellationToken cancellationToken)
         {
             var playlist = await _mediator.Send(command, cancellationToken);
-            return playlist;
+            return View("Playlist", playlist);
         }
 
         [HttpGet]

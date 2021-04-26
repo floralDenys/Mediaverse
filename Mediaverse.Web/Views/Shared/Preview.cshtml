@@ -10,18 +10,10 @@
     }
 }
 
-<div class="card gridItem" style="width: 150px" onclick="alert('clicked')">
+<div class="card gridItem" style="width: 150px">
     <div><img src="@Model.Thumbnail.Url" alt=""/></div>
     <div><strong>@Truncate(Model.Title)</strong></div>
     <div>@Truncate(Model.Description)</div>
-    <input type="button" value="+" onclick="search()" style="width: 30px; height: 20px;"/>
+    <input type="button" value="+" style="width: 30px; height: 20px;"
+           onclick="addToPlaylist('@Model.ContentId.ExternalId', '@Model.ContentId.ContentSource', '@Model.ContentId.ContentType')"/>
 </div>
-
-<script type="text/javascript">
-    let size = 30;
-    const truncate = function(text) {
-        return text.length > size 
-            ? text.slice(0, size - 1) + "…" 
-            : text;
-    }
-</script>

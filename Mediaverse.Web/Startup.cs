@@ -53,6 +53,7 @@ namespace Mediaverse.Web
             services.AddScoped(typeof(IRoomRepository), typeof(RoomRepository));
             services.AddScoped(typeof(IContentRepository), typeof(ContentRepository));
             services.AddScoped(typeof(IQueryStringProcessor), typeof(QueryStringProcessor));
+            services.AddScoped(typeof(IPlaylistRepository), typeof(PlaylistRepository));
             services.AddScoped<YouTubeRepository>();
 
             var authInitializer = new BaseClientService.Initializer
