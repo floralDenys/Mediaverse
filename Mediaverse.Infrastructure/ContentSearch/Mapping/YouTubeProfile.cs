@@ -25,7 +25,7 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
                 .ForMember(dest => dest.MatchingContentPreviews, o => o.MapFrom(src => src.Items));
 
             CreateMap<YouTubeData.VideoListResponse, SearchResult>()
-                .ForMember(dest => dest.MatchingContentPreviews, o => o.MapFrom(src => src.Items.FirstOrDefault()));
+                .ForMember(dest => dest.RequestedContent, o => o.MapFrom(src => src.Items.FirstOrDefault()));
             
             CreateMap<YouTubeData.SearchResult, Preview>()
                 .ConstructUsing(x => new Preview(
@@ -35,9 +35,9 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
                     x.Snippet.Title,
                     x.Snippet.Description,
                     new Thumbnail(
-                        x.Snippet.Thumbnails.Standard.Width.GetValueOrDefault(),
-                        x.Snippet.Thumbnails.Standard.Height.GetValueOrDefault(),
-                        x.Snippet.Thumbnails.Standard.Url)));
+                        x.Snippet.Thumbnails.Default__.Width.GetValueOrDefault(),
+                        x.Snippet.Thumbnails.Default__.Height.GetValueOrDefault(),
+                        x.Snippet.Thumbnails.Default__.Url)));
 
             CreateMap<YouTubeData.Video, Content>()
                 .ConstructUsing(src => new Content(
@@ -46,22 +46,14 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
                         MediaContentSource.YouTube,
                         _contentTypeMappings[src.Kind]),
                     src.Snippet.Title,
+                    new Thumbnail(
+                        src.Snippet.Thumbnails.Default__.Width.GetValueOrDefault(),
+                        src.Snippet.Thumbnails.Default__.Height.GetValueOrDefault(),
+                        src.Snippet.Thumbnails.Default__.Url),
                     src.Player.EmbedHtml,
                     (int) src.Player.EmbedWidth.GetValueOrDefault(),
                     (int) src.Player.EmbedHeight.GetValueOrDefault(),
                     src.Snippet.Description));
-            
-            // CreateMap<YouTubeData.Video, Preview>()
-            //     .ConstructUsing(x => new Preview(
-            //         x.Id,
-            //         MediaContentSource.YouTube,
-            //         _contentTypeMappings[x.Kind],
-            //         x.Snippet.Title,
-            //         x.Snippet.Description,
-            //         new Thumbnail(
-            //             x.Snippet.Thumbnails.Standard.Width.GetValueOrDefault(),
-            //             x.Snippet.Thumbnails.Standard.Height.GetValueOrDefault(),
-            //             x.Snippet.Thumbnails.Standard.Url)));
         }
     }
 }

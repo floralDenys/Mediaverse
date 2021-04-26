@@ -11,6 +11,12 @@ namespace Mediaverse.Domain.ContentSearch.Services.Implementation
             {
                 { MediaContentSource.YouTube, "youtube.com/watch"}
             };
+        
+        private readonly  IDictionary<MediaContentSource, Tuple<string, string>> _contentIdScope =
+            new Dictionary<MediaContentSource, Tuple<string, string>>
+            {
+                { MediaContentSource.YouTube, new Tuple<string, string>("v=", "&") }
+            };
 
         public ContentQueryType DefineQueryStringType(MediaContentSource source, string queryString)
         {
@@ -23,6 +29,18 @@ namespace Mediaverse.Domain.ContentSearch.Services.Implementation
             return queryString.Contains(selectedSourceDomain)
                 ? ContentQueryType.ContentId
                 : ContentQueryType.Keywords;
+        }
+
+        public string ExtractExternalContentIdFromUrl(MediaContentSource source, string queryString)
+        {
+            var selectedSourceScope = _contentIdScope[source];
+            
+            int beginningPosition = queryString.IndexOf(selectedSourceScope.Item1, StringComparison.Ordinal) 
+                + selectedSourceScope.Item1.Length;
+            int endingPosition = queryString.IndexOf(selectedSourceScope.Item2, StringComparison.Ordinal);
+            endingPosition = endingPosition == -1 ? queryString.Length - 1 : endingPosition;
+            
+            return queryString.Substring(beginningPosition, endingPosition - beginningPosition + 1);
         }
     }
 }

@@ -1,0 +1,11 @@
+﻿@model Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos.SearchResultDto
+
+<div id="searchResults" class="contentSearchResults grid">
+    @if (Model.Previews != null && Model.Previews.Any())
+    {
+        foreach (var preview in Model.Previews)
+        {
+            @Html.Partial("Preview", preview)
+        }
+    }
+</div>

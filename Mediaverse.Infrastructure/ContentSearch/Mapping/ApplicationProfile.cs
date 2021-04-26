@@ -17,6 +17,8 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
             CreateMap<Preview, PreviewDto>();
             CreateMap<ContentId, ContentIdDto>();
             CreateMap<Thumbnail, ThumbnailDto>();
+            CreateMap<Content, PreviewDto>()
+                .ForMember(dst => dst.ContentId, opt => opt.MapFrom(src => src.Id));
         }
     }
 }

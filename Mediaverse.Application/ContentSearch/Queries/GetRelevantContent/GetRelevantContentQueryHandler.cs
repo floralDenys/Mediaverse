@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos;
 using Mediaverse.Domain.Common;
+using Mediaverse.Domain.ContentSearch.Enums;
 using Mediaverse.Domain.ContentSearch.Repositories;
 using Mediaverse.Domain.ContentSearch.Services;
 using Microsoft.Extensions.Logging;
@@ -35,15 +37,24 @@ namespace Mediaverse.Application.ContentSearch.Queries.GetRelevantContent
         {
             try
             {
-                var contentQueryType =
-                    _queryStringProcessor.DefineQueryStringType(request.SelectedSource, request.QueryString);
+                var contentQueryType = _queryStringProcessor.DefineQueryStringType(request.SelectedSource, request.QueryString);
+
+                string queryString = contentQueryType == ContentQueryType.ContentId
+                    ? _queryStringProcessor.ExtractExternalContentIdFromUrl(request.SelectedSource, request.QueryString)
+                    : request.QueryString;
+                
                 var searchResult = await _contentRepository.SearchForContentAsync(
                     request.SelectedSource,
                     contentQueryType,
-                    request.QueryString,
+                    queryString,
                     cancellationToken);
 
-                return _mapper.Map<SearchResultDto>(searchResult);
+                return new SearchResultDto
+                {
+                    Previews = searchResult.MatchingContentPreviews != null
+                        ? _mapper.Map<IList<PreviewDto>>(searchResult.MatchingContentPreviews)
+                        : new List<PreviewDto>{_mapper.Map<PreviewDto>(searchResult.RequestedContent)}
+                };
             }
             catch (InformativeException exception)
             {
