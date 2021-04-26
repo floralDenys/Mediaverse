@@ -46,22 +46,14 @@ namespace Mediaverse.Infrastructure.ContentSearch.Mapping
                         MediaContentSource.YouTube,
                         _contentTypeMappings[src.Kind]),
                     src.Snippet.Title,
+                    new Thumbnail(
+                        src.Snippet.Thumbnails.Default__.Width.GetValueOrDefault(),
+                        src.Snippet.Thumbnails.Default__.Height.GetValueOrDefault(),
+                        src.Snippet.Thumbnails.Default__.Url), 
                     src.Player.EmbedHtml,
                     (int) src.Player.EmbedWidth.GetValueOrDefault(),
                     (int) src.Player.EmbedHeight.GetValueOrDefault(),
-                    src.Snippet.Description));
-            
-            // CreateMap<YouTubeData.Video, Preview>()
-            //     .ConstructUsing(x => new Preview(
-            //         x.Id,
-            //         MediaContentSource.YouTube,
-            //         _contentTypeMappings[x.Kind],
-            //         x.Snippet.Title,
-            //         x.Snippet.Description,
-            //         new Thumbnail(
-            //             x.Snippet.Thumbnails.Standard.Width.GetValueOrDefault(),
-            //             x.Snippet.Thumbnails.Standard.Height.GetValueOrDefault(),
-            //             x.Snippet.Thumbnails.Standard.Url)));
+                    src.Snippet.Description))
         }
     }
 }

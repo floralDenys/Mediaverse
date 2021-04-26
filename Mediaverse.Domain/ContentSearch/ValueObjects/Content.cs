@@ -13,10 +13,13 @@ namespace Mediaverse.Domain.ContentSearch.ValueObjects
         public string PlayerHtml { get; }
         public int PlayerWidth { get; }
         public int PlayerHeight { get; }
+        
+        public Thumbnail Thumbnail { get; }
 
         public Content(
             ContentId id,
             string title,
+            Thumbnail thumbnail,
             string playerHtml,
             int playerWidth,
             int playerHeight,
@@ -34,6 +37,7 @@ namespace Mediaverse.Domain.ContentSearch.ValueObjects
             
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Title = title;
+            Thumbnail = thumbnail;
             Description = description;
             PlayerHtml = playerHtml;
             PlayerWidth = playerWidth;

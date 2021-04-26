@@ -12,9 +12,9 @@
 
 <div class="card gridItem" style="width: 150px" onclick="alert('clicked')">
     <div><img src="@Model.Thumbnail.Url" alt=""/></div>
-    <div><strong>@Model.Title</strong></div>
+    <div><strong>@Truncate(Model.Title)</strong></div>
     <div>@Truncate(Model.Description)</div>
-    <input type="button" value="Find" onclick="search()" style="width: 200px; height: 40px;"/>
+    <input type="button" value="+" onclick="search()" style="width: 30px; height: 20px;"/>
 </div>
 
 <script type="text/javascript">

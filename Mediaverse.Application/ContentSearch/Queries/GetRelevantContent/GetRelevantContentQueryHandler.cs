@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -48,7 +49,12 @@ namespace Mediaverse.Application.ContentSearch.Queries.GetRelevantContent
                     queryString,
                     cancellationToken);
 
-                return _mapper.Map<SearchResultDto>(searchResult);
+                return new SearchResultDto
+                {
+                    Previews = searchResult.MatchingContentPreviews != null
+                        ? _mapper.Map<IList<PreviewDto>>(searchResult.MatchingContentPreviews)
+                        : new List<PreviewDto>{_mapper.Map<PreviewDto>(searchResult.RequestedContent)}
+                };
             }
             catch (InformativeException exception)
             {

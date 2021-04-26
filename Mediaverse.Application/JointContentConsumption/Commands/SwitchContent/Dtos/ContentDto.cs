@@ -1,6 +1,4 @@
-﻿using Mediaverse.Application.JointContentConsumption.Common.Dtos;
-
-namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos
+﻿namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos
 {
     public class ContentDto
     {
