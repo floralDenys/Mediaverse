@@ -1,5 +1,6 @@
 ﻿using System;
 using Mediaverse.Domain.Authentication.Enums;
+using Mediaverse.Domain.Common;
 
 namespace Mediaverse.Domain.Authentication.Entities
 {
@@ -15,7 +16,7 @@ namespace Mediaverse.Domain.Authentication.Entities
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException("Nickname could not be null or empty");
+                    throw new InformativeException("Nickname could not be null or empty");
                 }
 
                 _nickname = value;
@@ -30,7 +31,7 @@ namespace Mediaverse.Domain.Authentication.Entities
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException("Password could not be null or empty");
+                    throw new InformativeException("Password could not be null or empty");
                 }
 
                 _password = value;
@@ -62,7 +63,7 @@ namespace Mediaverse.Domain.Authentication.Entities
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException("Email could not be null or empty");
+                    throw new InformativeException("Email could not be null or empty");
                 }
 
                 _email = value;
@@ -80,8 +81,12 @@ namespace Mediaverse.Domain.Authentication.Entities
 
                 Id = id;
                 Type = type;
-                
+
                 _lastActive = DateTime.Now;
+            }
+            catch (InformativeException)
+            {
+                throw;
             }
             catch (Exception exception)
             {
