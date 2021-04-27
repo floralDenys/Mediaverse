@@ -13,7 +13,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
         public string Name { get; set; }
         public string Description { get; set; }
         public RoomType Type { get; set; }
-        public Guid? PlaylistId { get; set; }
+        public Guid PlaylistId { get; set; }
         
         public IList<SelectablePlaylistDto> AvailablePlaylists { get; set; }
     }

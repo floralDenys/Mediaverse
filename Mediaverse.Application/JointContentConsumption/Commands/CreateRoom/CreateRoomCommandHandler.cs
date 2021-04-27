@@ -44,7 +44,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
                 var host = await _viewerRepository.GetAsync(request.HostId, cancellationToken)
                            ?? throw new ArgumentException($"Host {request.HostId.ToString()} could not be found");
 
-                if (!request.PlaylistId.HasValue)
+                if (request.PlaylistId == default)
                 {
                     Guid generatedPlaylistId = _identifierProvider.GenerateGuid();
                     var playlist = new Playlist(generatedPlaylistId, "Temporary", host) {IsTemporary = true};

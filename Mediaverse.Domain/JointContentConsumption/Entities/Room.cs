@@ -69,10 +69,12 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             try
             {
                 Name = name;
+                Description = description;
                 Host = host;
                 Type = type;
                 Invitation = invitation;
                 ActivePlaylistId = playlistId;
+                _viewers = new List<Viewer>();
             }
             catch (InformativeException)
             {
@@ -102,7 +104,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             Invitation = invitation;
             MaxViewersQuantity = maxViewersQuantity;
             ActivePlaylistId = activePlaylistId;
-            _viewers = viewers;
+            _viewers = viewers ?? new List<Viewer>();
         }
 
         public void UpdateSelectedPlaylist(Playlist playlist)

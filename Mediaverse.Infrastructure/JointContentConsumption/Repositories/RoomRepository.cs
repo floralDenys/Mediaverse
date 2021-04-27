@@ -60,7 +60,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
             var roomDto = _applicationDbContext.Rooms.First(r => r.Token.Equals(roomToken));
             
             var host = await _viewerRepository.GetAsync(roomDto.HostId, cancellationToken);
-            var viewers = roomDto.Viewers
+            var viewers = roomDto.Viewers?
                 .Select(x => _viewerRepository.GetAsync(x.Id, cancellationToken))
                 .Select(t => t.Result)
                 .ToList();
