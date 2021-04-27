@@ -9,6 +9,22 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
 {
     public class Playlist : Entity, IEnumerable<PlaylistItem>
     {
+        private string _name;
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new InformativeException("Playlist name can not be empty");
+                }
+
+                _name = value;
+            }
+        }
+        
         private readonly IList<PlaylistItem> _items;
         
         public Viewer Owner { get; }
@@ -16,20 +32,25 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         
         public int? CurrentlyPlayingContentIndex { get; private set; }
         
-        public Playlist(Guid id, Viewer owner, IEnumerable<PlaylistItem> items = null) : base(id)
+        public Playlist(
+            Guid id,
+            string name,
+            Viewer owner,
+            IEnumerable<PlaylistItem> items = null,
+            int? currentlyPlayingContentIndex = null) : base(id)
         {
             try
             {
-                _items = items?.ToList() ?? new List<PlaylistItem>();
-
+                Name = name;
                 Owner = owner ?? throw new ArgumentNullException(nameof(owner));
 
+                _items = items?.ToList() ?? new List<PlaylistItem>();
                 if (_items.Any())
                 {
-                    CurrentlyPlayingContentIndex = 0;
-
                     // sort items by their playlist indexes 
                     _items = _items.OrderBy(x => x.PlaylistItemIndex).ToList();
+
+                    CurrentlyPlayingContentIndex = currentlyPlayingContentIndex;
                 }
             }
             catch (InformativeException)

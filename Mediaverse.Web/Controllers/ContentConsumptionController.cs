@@ -10,6 +10,9 @@ using Mediaverse.Application.JointContentConsumption.Commands.LeaveRoom;
 using Mediaverse.Application.JointContentConsumption.Commands.RemoveContentFromPlaylist;
 using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
+using Mediaverse.Application.JointContentConsumption.Queries.GetAvailablePlaylists;
+using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist;
+using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist.Dtos;
 using Mediaverse.Application.JointContentConsumption.Queries.GetRoom;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,9 +34,12 @@ namespace Mediaverse.Web.Controllers
         }
         
         [HttpGet]
-        public IActionResult CreateRoom(Guid viewerId)
+        public async Task<IActionResult> CreateRoom(Guid viewerId)
         {
-            var command = new CreateRoomCommand {HostId = viewerId};
+            var query = new GetAvailablePlaylistsQuery {HostId = viewerId};
+            var availablePlaylists = await _mediator.Send(query);
+            
+            var command = new CreateRoomCommand {HostId = viewerId, AvailablePlaylists = availablePlaylists};
             return View(command);
         }
 
@@ -84,7 +90,7 @@ namespace Mediaverse.Web.Controllers
             CancellationToken cancellationToken)
         {
             var playlist = await _mediator.Send(command, cancellationToken);
-            return View("Playlist", playlist);
+            return RedirectToAction("Playlist", new {playlistId = playlist.Id});
         }
 
         [HttpGet]
@@ -93,6 +99,14 @@ namespace Mediaverse.Web.Controllers
             var query = new GetRoomQuery {RoomId = roomId};
             var room = await _mediator.Send(query, cancellationToken);
             return View(room);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> Playlist(Guid playlistId, CancellationToken cancellationToken)
+        {
+            var query = new GetPlaylistQuery {PlaylistId = playlistId};
+            var playlist = await _mediator.Send(query, cancellationToken);
+            return PartialView(playlist);
         }
         
         [HttpPost]
@@ -108,7 +122,7 @@ namespace Mediaverse.Web.Controllers
         public async Task<ActionResult> SwitchContent(SwitchContentCommand command, CancellationToken cancellationToken)
         {
             var content = await _mediator.Send(command, cancellationToken);
-            return View("ContentPlayer", content);
+            return PartialView("ContentPlayer", content);
         }
     }
 }

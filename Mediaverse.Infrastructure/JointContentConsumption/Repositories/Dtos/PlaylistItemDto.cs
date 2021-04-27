@@ -1,4 +1,5 @@
-﻿using Mediaverse.Domain.JointContentConsumption.Enums;
+﻿using System;
+using Mediaverse.Domain.JointContentConsumption.Enums;
 
 namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos
 {
@@ -8,5 +9,6 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos
         public MediaContentSource ContentSource { get; set; }
         public MediaContentType ContentType { get; set; }
         public int PlaylistItemIndex { get; set; }
+        public PlaylistDto Playlist { get; set; }
     }
 }

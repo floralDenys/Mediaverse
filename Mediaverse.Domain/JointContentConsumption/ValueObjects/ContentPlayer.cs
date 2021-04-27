@@ -12,12 +12,12 @@ namespace Mediaverse.Domain.JointContentConsumption.ValueObjects
         {
             try
             {
-                if (width <= 0)
+                if (width < 0)
                 {
                     throw new ArgumentException("Given width is invalid");
                 }
 
-                if (height <= 0)
+                if (height < 0)
                 {
                     throw new ArgumentException("Given height is invalid");
                 }

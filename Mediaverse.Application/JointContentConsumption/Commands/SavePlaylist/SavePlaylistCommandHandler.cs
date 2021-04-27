@@ -90,6 +90,6 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SavePlaylist
         }
 
         private Playlist CreatePlaylistCopy(Guid newPlaylistId, Viewer newPlaylistOwner, Playlist sourcePlaylist) =>
-            new Playlist(newPlaylistId, newPlaylistOwner, sourcePlaylist);
+            new Playlist(newPlaylistId, sourcePlaylist.Name, newPlaylistOwner, sourcePlaylist);
     }
 }

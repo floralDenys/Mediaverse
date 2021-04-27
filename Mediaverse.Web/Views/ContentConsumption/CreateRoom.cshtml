@@ -5,7 +5,7 @@
 }
 
 <div class="container-centered">
-    <div class="card" style="width: 500px; height: 550px; padding-top: 20%;">
+    <div class="card" style="width: 500px; height: 600px; padding-top: 20%;">
         <div class="container-centered text-center">
             @using (Html.BeginForm("CreateRoom", "ContentConsumption", FormMethod.Post, new {id="createRoomForm"}))
             {
@@ -33,6 +33,17 @@
                     </div>
                     <div>
                         @Html.DropDownListFor(x => x.Type, new SelectList(Enum.GetNames(typeof(RoomType))), new {@class="selectBox", style="width: 250px"})
+                    </div>
+                </div>
+                <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
+                    <div style="text-align: left">
+                        What is the type of the room?
+                    </div>
+                    <div>
+                        @Html.DropDownListFor(
+                            x => x.PlaylistId,
+                            new SelectList(Model.AvailablePlaylists, "Id", "Name", ""), 
+                            new {@class="selectBox", style="width: 250px"})
                     </div>
                 </div>
                 <div style="padding-top: 10px;">

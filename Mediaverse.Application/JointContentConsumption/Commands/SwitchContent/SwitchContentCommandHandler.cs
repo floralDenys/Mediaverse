@@ -48,6 +48,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
                     ? playlist.PlayNextContent()
                     : playlist.PlayPreviousContent();
 
+                await _playlistRepository.UpdateAsync(playlist, cancellationToken);
+                
                 var content = await _contentRepository.GetAsync(contentId, cancellationToken);
                 return _mapper.Map<ContentDto>(content);
             }

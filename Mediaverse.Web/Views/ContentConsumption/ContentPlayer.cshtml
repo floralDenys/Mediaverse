@@ -1,6 +1,8 @@
 ﻿@model Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos.ContentDto
 
-<div class="content">
-    @Html.Raw(Model.Player.Html)
-    <div><input type="button" value="Play" /></div>
+<div id="contentPlayer" class="content">
+    @if (Model.Player != null)
+    {
+        @Html.Raw(Model.Player.Html)
+    }
 </div>

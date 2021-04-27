@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
             var roomDto = await _applicationDbContext.Rooms.FindAsync(roomId);
 
             var host = await _viewerRepository.GetAsync(roomDto.HostId, cancellationToken);
-            var viewers = roomDto.Viewers
+            var viewers = (roomDto.Viewers ?? new List<ViewerDto>())
                 .Select(x => _viewerRepository.GetAsync(x.Id, cancellationToken))
                 .Select(t => t.Result)
                 .ToList();

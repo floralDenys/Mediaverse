@@ -12,6 +12,7 @@ using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 using Mediaverse.Infrastructure.Common.Persistence;
 using Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
 {
@@ -20,22 +21,27 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         private readonly ApplicationDbContext _applicationDbContext;
 
         private readonly IUserRepository _userRepository;
+        private readonly IContentRepository _contentRepository;
 
         private readonly IMapper _mapper;
         
         public PlaylistRepository(
             ApplicationDbContext applicationDbContext,
             IUserRepository userRepository, 
+            IContentRepository contentRepository,
             IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
             _userRepository = userRepository;
+            _contentRepository = contentRepository;
             _mapper = mapper;
         }
         
         public async Task<Playlist> GetAsync(Guid playlistId, CancellationToken cancellationToken)
         {
-            var playlistDto = _applicationDbContext.Playlists.Find(playlistId);
+            var playlistDto = _applicationDbContext.Playlists
+                .Include(p => p.PlaylistItems)
+                .FirstOrDefault(p => p.Id == playlistId);
             var owner = await _userRepository.GetUserAsync(playlistDto.OwnerId, cancellationToken);
 
             return GetPlaylist(playlistDto, owner);
@@ -45,7 +51,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         {
             var owner = await _userRepository.GetUserAsync(ownerId, cancellationToken);
             var playlistDtos = _applicationDbContext.Playlists
-                .Where(p => p.OwnerId == ownerId);
+                .Where(p => p.OwnerId == ownerId).ToList();
 
             return playlistDtos.Select(p => GetPlaylist(p, owner)).ToList();
         }
@@ -63,8 +69,13 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         {
             var playlistDto = _applicationDbContext.Playlists.Find(playlist.Id);
             playlistDto.IsTemporary = playlist.IsTemporary;
-            playlistDto.CurrentlyPlayingContentIndex = playlist.GetEnumerator()?.Current?.PlaylistItemIndex ?? -1;
-            playlistDto.PlaylistItems = playlist
+            playlistDto.CurrentlyPlayingContentIndex = playlist.CurrentlyPlayingContentIndex;
+            playlistDto.PlaylistItems.AddRange(playlist
+                .Where(pi => !playlistDto.PlaylistItems
+                    .Any(pid => 
+                        pid.ExternalId == pi.ContentId.ExternalId 
+                        && pid.ContentSource == pi.ContentId.ContentSource 
+                        && pid.ContentType == pi.ContentId.ContentType))
                 .Select(pi => 
                     new PlaylistItemDto
                     {
@@ -72,8 +83,13 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
                         ContentSource = pi.ContentId.ContentSource,
                         ContentType = pi.ContentId.ContentType,
                         PlaylistItemIndex = pi.PlaylistItemIndex
-                    })
-                .ToList();
+                    }));
+            
+            playlistDto.PlaylistItems.RemoveAll(pid => 
+                !playlist.Any(pi =>
+                    pi.ContentId.ExternalId == pid.ExternalId
+                    && pi.ContentId.ContentSource == pid.ContentSource
+                    && pi.ContentId.ContentType == pid.ContentType));
 
             return _applicationDbContext.SaveChangesAsync(cancellationToken);
         }
@@ -86,13 +102,36 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
             return _applicationDbContext.SaveChangesAsync(cancellationToken);
         }
 
-        private Playlist GetPlaylist(PlaylistDto playlistDto, User owner) => 
-            new Playlist(
+        private Playlist GetPlaylist(PlaylistDto playlistDto, User owner)
+        {
+            var playlistItems = playlistDto.PlaylistItems?
+                .Select(async pi => await GetPlaylistItem(pi))
+                .Select(t => t.Result)
+                .Where(t => t != null)
+                .ToList();
+            
+            return new Playlist(
                 playlistDto.Id,
-            new Viewer(
-                        new UserProfile(owner.Id, owner.Nickname, owner.Type == UserType.Member)),
-                playlistDto.PlaylistItems.Select(pi => 
-                    new PlaylistItem(
-                        new ContentId(pi.ExternalId, pi.ContentSource, pi.ContentType), pi.PlaylistItemIndex)));
+                playlistDto.Name,
+                new Viewer(
+                    new UserProfile(owner.Id, owner.Nickname, owner.Type == UserType.Member)),
+                playlistItems,
+                playlistDto.CurrentlyPlayingContentIndex);
+        }
+
+        private async Task<PlaylistItem> GetPlaylistItem(PlaylistItemDto playlistItemDto)
+        {
+            var contentId = new ContentId(
+                playlistItemDto.ExternalId,
+                playlistItemDto.ContentSource,
+                playlistItemDto.ContentType);
+
+            var content = await _contentRepository.GetAsync(contentId, CancellationToken.None);
+            return new PlaylistItem(
+                contentId,
+                playlistItemDto.PlaylistItemIndex,
+                content.Title,
+                content.Description);
+        }
     }
 }

@@ -52,14 +52,16 @@ namespace Mediaverse.Web
             services.AddScoped(typeof(IViewerRepository), typeof(ViewerRepository));
             services.AddScoped(typeof(IRoomRepository), typeof(RoomRepository));
             services.AddScoped(typeof(IContentRepository), typeof(ContentRepository));
+            services.AddScoped(typeof(Mediaverse.Domain.JointContentConsumption.Repositories.IContentRepository), 
+                typeof(Mediaverse.Infrastructure.JointContentConsumption.Repositories.ContentRepository));
             services.AddScoped(typeof(IQueryStringProcessor), typeof(QueryStringProcessor));
             services.AddScoped(typeof(IPlaylistRepository), typeof(PlaylistRepository));
             services.AddScoped<YouTubeRepository>();
 
             var authInitializer = new BaseClientService.Initializer
             {
-                ApiKey = "",
-                ApplicationName = ""
+                ApiKey = "AIzaSyDzk-VfGUWqdQ7wviczCh_ebFDXEW-nsyQ",
+                ApplicationName = "mediaverse"
             };
             services.AddScoped(x => new YouTubeService(authInitializer));
         }

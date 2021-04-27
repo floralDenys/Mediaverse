@@ -63,6 +63,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             Viewer host,
             RoomType type,
             Invitation invitation,
+            Guid? playlistId,
             string description = "") : base(id)
         {
             try
@@ -71,6 +72,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 Host = host;
                 Type = type;
                 Invitation = invitation;
+                ActivePlaylistId = playlistId;
             }
             catch (InformativeException)
             {
