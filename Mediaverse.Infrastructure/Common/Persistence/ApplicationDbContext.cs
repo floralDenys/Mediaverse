@@ -47,9 +47,14 @@ namespace Mediaverse.Infrastructure.Common.Persistence
 
             modelBuilder.Entity<PlaylistDto>().ToTable("Playlists");
             modelBuilder.Entity<PlaylistDto>().HasKey(p => p.Id);
-            modelBuilder.Entity<PlaylistDto>().HasMany<PlaylistItemDto>();
+            modelBuilder.Entity<PlaylistDto>()
+                .HasMany(p => p.PlaylistItems)
+                .WithOne(pi => pi.Playlist);
 
             modelBuilder.Entity<PlaylistItemDto>().ToTable("PlaylistItems");
+            modelBuilder.Entity<PlaylistItemDto>()
+                .HasOne(pi => pi.Playlist)
+                .WithMany(p => p.PlaylistItems);
             modelBuilder.Entity<PlaylistItemDto>().HasKey(pi => 
                 new {pi.ExternalId, pi.ContentSource, pi.ContentType});
 

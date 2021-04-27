@@ -4,14 +4,16 @@ using Mediaverse.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Mediaverse.Infrastructure.Migrations
+namespace Mediaverse.Infrastructure.Common.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210426191333_AddedNameToPlaylist")]
+    partial class AddedNameToPlaylist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,7 +122,10 @@ namespace Mediaverse.Infrastructure.Migrations
                     b.Property<int>("ContentType")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("PlaylistId")
+                    b.Property<Guid?>("PlaylistDtoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PlaylistDtoId1")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("PlaylistItemIndex")
@@ -128,7 +133,9 @@ namespace Mediaverse.Infrastructure.Migrations
 
                     b.HasKey("ExternalId", "ContentSource", "ContentType");
 
-                    b.HasIndex("PlaylistId");
+                    b.HasIndex("PlaylistDtoId");
+
+                    b.HasIndex("PlaylistDtoId1");
 
                     b.ToTable("PlaylistItems");
                 });
@@ -188,11 +195,13 @@ namespace Mediaverse.Infrastructure.Migrations
 
             modelBuilder.Entity("Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos.PlaylistItemDto", b =>
                 {
-                    b.HasOne("Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos.PlaylistDto", "Playlist")
+                    b.HasOne("Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos.PlaylistDto", null)
                         .WithMany("PlaylistItems")
-                        .HasForeignKey("PlaylistId");
+                        .HasForeignKey("PlaylistDtoId");
 
-                    b.Navigation("Playlist");
+                    b.HasOne("Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos.PlaylistDto", null)
+                        .WithMany()
+                        .HasForeignKey("PlaylistDtoId1");
                 });
 
             modelBuilder.Entity("Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos.ViewerDto", b =>
