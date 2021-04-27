@@ -1,14 +1,47 @@
-﻿@model Guid;
+﻿@model Mediaverse.Application.JointContentConsumption.Commands.JoinRoom.JoinRoomCommand
 @{
     ViewData["Title"] = "Hall";
 }
 
 <div class="text-center">
-    <h1 class="display-5">Hall</h1>
-    @Html.Hidden("GuestId", Model)
-    @Html.ActionLink(
-        "Create a Room",
-        "CreateRoom",
-        "ContentConsumption",
-        new {viewerId = Model})
+    <h1 class="display-4" style="padding-top: 3%">Welcome to our hall</h1>
+    <h1 class="display-4">Here you can <strong>join</strong> room or <strong>create</strong> one by yourself</h1>
+    
+    <div style="padding-top: 7%">
+        @using (Html.BeginForm("JoinRoom", "ContentConsumption", new { id="joinRoomForm" }))
+        {
+            <div>
+                @Html.TextBoxFor(x => x.RoomToken, new {id="roomToken",placeholder = "Enter room code"})
+                <input type="button" value="Join" onclick="joinRoom()" style="width: 100px; height: 40px;"/>
+                <span style="padding-left: 3%; padding-right: 3%; font-size: 30px">or</span>
+                <input type="button" value="Create own" onclick="createRoom()" style="width: 150px; height: 40px;"/>
+                <div style="padding-top: 3%"><span style="font-size: 30px">or simply explore available public rooms</span></div>
+            </div>
+        }
+    </div>
+    <h1></h1>
+    
 </div>
+
+@await Html.PartialAsync("ModalDialog")
+
+<script type="text/javascript">
+    const joinRoom = function() {       
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("JoinRoom", "ContentConsumption")',
+            data: $('#roomToken'),
+            success: function(res) {
+                window.location.href = res.redirectToUrl;
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                const error = JSON.parse(xhr.responseText);
+                showModal("Something went wrong", error.message)
+            }
+        });
+    };
+    
+    const createRoom = function() {   
+        window.location.href = '@Url.Action("CreateRoom", "ContentConsumption")';
+    }
+</script>

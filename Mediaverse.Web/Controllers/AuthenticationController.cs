@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Mediaverse.Application.Authentication.Commands.SignIn;
+using Mediaverse.Application.Authentication.Commands.SignOut;
 using Mediaverse.Application.Authentication.Commands.SignUp;
 using Mediaverse.Application.Authentication.Commands.SignUpAnonymous;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Mediaverse.Web.Models;
 
 namespace Mediaverse.Web.Controllers
@@ -16,16 +15,9 @@ namespace Mediaverse.Web.Controllers
     public class AuthenticationController : Controller
     {
         private readonly IMediator _mediator;
-        
-        private readonly ILogger<HomeController> _logger;
-
-        public AuthenticationController(
-            IMediator mediator,
-            ILogger<HomeController> logger)
+        public AuthenticationController(IMediator mediator)
         {
             _mediator = mediator;
-            
-            _logger = logger;
         }
 
         [HttpGet]
@@ -37,15 +29,18 @@ namespace Mediaverse.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> SignIn(SignInCommand signIn)
         {
-            var user = await _mediator.Send(signIn);
-            
-            return Json(new
+            try
             {
-                redirectToUrl = @Url.Action(
-                    "Index",
-                    "ContentConsumption",
-                    new { viewerId = user.Id})
-            });
+                await _mediator.Send(signIn);
+                return Json(new
+                {
+                    redirectToUrl = @Url.Action("Index", "ContentConsumption")
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { message = exception.Message});
+            }
         }
         
         [HttpGet]
@@ -57,30 +52,46 @@ namespace Mediaverse.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> SignUp(SignUpCommand command)
         {
-            var user = await _mediator.Send(command);
-            
-            return Json(new
+            try
             {
-                redirectToUrl = @Url.Action(
-                    "Index",
-                    "ContentConsumption",
-                    new { viewerId = user.Id})
-            });
+                await _mediator.Send(command);
+                return Json(new
+                {
+                    redirectToUrl = @Url.Action("Index", "ContentConsumption")
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { message = exception.Message});
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignUpAnonymous()
+        public async Task<ActionResult> SignUpAnonymous()
         {
-            var command = new SignUpAnonymousCommand();
-            var user = await _mediator.Send(command);
-
-            return Json(new
+            try
             {
-                redirectToUrl = @Url.Action(
-                    "Index",
-                    "ContentConsumption",
-                    new { viewerId = user.Id})
-            });
+                var command = new SignUpAnonymousCommand();
+                await _mediator.Send(command);
+
+                return Json(new
+                {
+                    redirectToUrl = @Url.Action("Index", "ContentConsumption")
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { message = exception.Message});
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SignOut(CancellationToken cancellationToken)
+        {
+            var command = new SignOutCommand();
+            await _mediator.Send(command, cancellationToken);
+            
+            return RedirectToAction("Index", "Home");
         }
         
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

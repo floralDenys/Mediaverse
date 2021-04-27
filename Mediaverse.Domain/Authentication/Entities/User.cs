@@ -1,88 +1,49 @@
 ﻿using System;
 using Mediaverse.Domain.Authentication.Enums;
 using Mediaverse.Domain.Common;
+using Microsoft.AspNetCore.Identity;
 
 namespace Mediaverse.Domain.Authentication.Entities
 {
-    public class User
+    public class User : IdentityUser<Guid>
     {
-        public Guid Id { get; }
-
-        private string _nickname;
-        public string Nickname
-        {
-            get => _nickname;
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                {
-                    throw new InformativeException("Nickname could not be null or empty");
-                }
-
-                _nickname = value;
-            }
-        }
-
-        private string _password;
-        public string Password
-        {
-            get => _password;
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                {
-                    throw new InformativeException("Password could not be null or empty");
-                }
-
-                _password = value;
-            }
-        }
-        
         public UserType Type { get; }
-
-        private DateTime _lastActive;
-        public DateTime LastActive
+        
+        private string _userName;
+        public override string UserName
         {
-            get => _lastActive;
+            get => _userName;
             set
             {
-                if (value == default)
+                if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException("Given last active time is invalid");
+                    throw new InformativeException("User name could not be blank");
                 }
-
-                _lastActive = value;
+        
+                _userName = value;
             }
         }
 
         private string _email;
-        public string Email
+        public override string Email
         {
             get => _email;
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new InformativeException("Email could not be null or empty");
+                    throw new InformativeException("Email could not be blank");
                 }
-
+        
                 _email = value;
             }
         }
 
-        public User(Guid id, UserType type)
+        public User(UserType type)
         {
             try
             {
-                if (id == default)
-                {
-                    throw new ArgumentException("Given ID is invalid");
-                }
-
-                Id = id;
                 Type = type;
-
-                _lastActive = DateTime.Now;
             }
             catch (InformativeException)
             {

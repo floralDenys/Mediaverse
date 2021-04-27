@@ -54,7 +54,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
 
             CreateMap<User, Viewer>()
                 .ConstructUsing(src => new Viewer(
-                    new UserProfile(src.Id, src.Nickname, src.Type == UserType.Member)));
+                    new UserProfile(src.Id, src.UserName, src.Type == UserType.Member)));
         }
     }
 }

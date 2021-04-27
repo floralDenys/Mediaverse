@@ -11,6 +11,8 @@
     <input type="button" value="Stay Anonymous" onclick="createAnonymousRoom()" />
 </div>
 
+@await Html.PartialAsync("ModalDialog")
+
 <script type="text/javascript">
     const createAnonymousRoom = function() {
         $.ajax({
@@ -18,6 +20,10 @@
             url: '@Url.Action("SignUpAnonymous", "Authentication")',
             success: function(res) {
                 window.location.href = res.redirectToUrl;
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                const error = JSON.parse(xhr.responseText);
+                showModal("Sign In attempt failed", error.message)
             }
         });
     };

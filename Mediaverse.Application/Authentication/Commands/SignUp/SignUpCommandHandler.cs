@@ -1,33 +1,33 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.Authentication.Common.Dtos;
-using Mediaverse.Application.Common.Services;
 using Mediaverse.Domain.Authentication.Entities;
 using Mediaverse.Domain.Authentication.Enums;
-using Mediaverse.Domain.Authentication.Repositories;
 using Mediaverse.Domain.Common;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.Authentication.Commands.SignUp
 {
     public class SignUpCommandHandler : IRequestHandler<SignUpCommand, UserDto>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IIdentifierProvider _identifierProvider;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly ILogger<SignUpCommandHandler> _logger;
         private readonly IMapper _mapper;
 
         public SignUpCommandHandler(
-            IUserRepository userRepository,
-            IIdentifierProvider identifierProvider,
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
             ILogger<SignUpCommandHandler> logger,
             IMapper mapper)
         {
-            _userRepository = userRepository;
-            _identifierProvider = identifierProvider;
+            _userManager = userManager;
+            _signInManager = signInManager;
             _logger = logger;
             _mapper = mapper;
         }
@@ -36,26 +36,36 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
         {
             try
             {
-                var user = await _userRepository.GetUserByEmailAsync(request.Email, cancellationToken);
-                if (user != null)
+                if (string.IsNullOrEmpty(request.Email)
+                    || string.IsNullOrEmpty(request.Login)
+                    || string.IsNullOrEmpty(request.Password)
+                    || string.IsNullOrEmpty(request.PasswordConfirmation))
                 {
-                    throw new ArgumentException("User with given email exists already");
+                    throw new InformativeException("Please provide valid email, login and " +
+                                                   "password with confirmation");
                 }
-
+                
                 if (request.Password != request.PasswordConfirmation)
                 {
-                    throw new InvalidOperationException("Password and Confirmation does not match");
+                    throw new InformativeException("Password and Confirmation does not match");
                 }
 
-                Guid userId = _identifierProvider.GenerateGuid();
-                user = new User(userId, UserType.Member)
+                var user = new User(UserType.Member)
                 {
-                    Nickname = request.Login,
+                    UserName = request.Login,
                     Email = request.Email,
-                    Password = request.Password
                 };
 
-                await _userRepository.AddUserAsync(user, cancellationToken);
+                var result = await _userManager.CreateAsync(user, request.Password);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                }
+                else
+                {
+                    var errorMessages = result.Errors.Select(e => e.Description);
+                    throw new InformativeException(string.Join("\n", errorMessages));
+                }
 
                 return _mapper.Map<UserDto>(user);
             }

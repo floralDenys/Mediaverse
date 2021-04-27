@@ -14,6 +14,7 @@ using Mediaverse.Application.JointContentConsumption.Queries.GetAvailablePlaylis
 using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist;
 using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist.Dtos;
 using Mediaverse.Application.JointContentConsumption.Queries.GetRoom;
+using Mediaverse.Infrastructure.Authentication.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mediaverse.Web.Controllers
@@ -28,16 +29,25 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(Guid viewerId)
+        public IActionResult Index()
         {
-            return View(viewerId);
+            return View();
         }
         
         [HttpGet]
-        public async Task<IActionResult> CreateRoom(Guid viewerId)
+        public async Task<IActionResult> CreateRoom()
         {
+            var viewerId = User.GetCurrentUserId();
+            
             var query = new GetAvailablePlaylistsQuery {HostId = viewerId};
             var availablePlaylists = await _mediator.Send(query);
+            
+            // adding default option
+            availablePlaylists.Add(new SelectablePlaylistDto
+            {
+                Id = default,
+                Name = "Create temporary"
+            });
             
             var command = new CreateRoomCommand {HostId = viewerId, AvailablePlaylists = availablePlaylists};
             return View(command);
@@ -46,15 +56,22 @@ namespace Mediaverse.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateRoom(CreateRoomCommand command, CancellationToken cancellationToken)
         {
-            var room = await _mediator.Send(command, cancellationToken);
-            
-            return Json(new
+            try
             {
-                redirectToUrl = @Url.Action(
-                    "Room",
-                    "ContentConsumption",
-                    new { roomId = room.Id})
-            });
+                var room = await _mediator.Send(command, cancellationToken);
+
+                return Json(new
+                {
+                    redirectToUrl = @Url.Action(
+                        "Room",
+                        "ContentConsumption",
+                        new {roomId = room.Id})
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new {message = exception.Message});
+            }
         }
 
         [HttpPost]
@@ -64,18 +81,29 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> JoinRoom(Guid guestId, string roomToken, CancellationToken cancellationToken)
+        public async Task<ActionResult> JoinRoom(string roomToken, CancellationToken cancellationToken)
         {
-            var command = new JoinRoomCommand {ViewerId = guestId, RoomToken = roomToken};
-            var room = await _mediator.Send(command, cancellationToken);
-            
-            return Json(new
+            try
             {
-                redirectToUrl = @Url.Action(
-                    "Room",
-                    "ContentConsumption",
-                    new {roomId = room.Id})
-            });
+                var command = new JoinRoomCommand
+                {
+                    ViewerId = User.GetCurrentUserId(),
+                    RoomToken = roomToken
+                };
+                var room = await _mediator.Send(command, cancellationToken);
+
+                return Json(new
+                {
+                    redirectToUrl = @Url.Action(
+                        "Room",
+                        "ContentConsumption",
+                        new {roomId = room.Id})
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new {message = exception.Message});
+            }
         }
 
         [HttpPost]

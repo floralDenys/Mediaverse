@@ -114,7 +114,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
                 playlistDto.Id,
                 playlistDto.Name,
                 new Viewer(
-                    new UserProfile(owner.Id, owner.Nickname, owner.Type == UserType.Member)),
+                    new UserProfile(owner.Id, owner.UserName, owner.Type == UserType.Member)),
                 playlistItems,
                 playlistDto.CurrentlyPlayingContentIndex);
         }

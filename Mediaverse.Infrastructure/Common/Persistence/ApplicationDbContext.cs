@@ -1,16 +1,17 @@
-﻿using Mediaverse.Domain.Authentication.Entities;
-using Mediaverse.Domain.JointContentConsumption.Entities;
+﻿using System;
+using Mediaverse.Domain.Authentication.Entities;
 using Mediaverse.Infrastructure.ContentSearch.Repositories.Dtos;
 using Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
 namespace Mediaverse.Infrastructure.Common.Persistence
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
-        public DbSet<User> Users { get; set; }
         public DbSet<RoomDto> Rooms { get; set; }
         public DbSet<PlaylistDto> Playlists { get; set; }
         public DbSet<ContentDto> CachedContent { get; set; }
@@ -35,6 +36,8 @@ namespace Mediaverse.Infrastructure.Common.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+            
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
             modelBuilder.Entity<User>().HasKey(u => u.Id);
