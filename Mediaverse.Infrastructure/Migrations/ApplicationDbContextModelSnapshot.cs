@@ -179,7 +179,6 @@ namespace Mediaverse.Infrastructure.Migrations
             modelBuilder.Entity("Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos.RoomDto", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ActivePlaylistId")
