@@ -132,7 +132,6 @@ namespace Mediaverse.Infrastructure.Migrations
             modelBuilder.Entity("Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos.PlaylistDto", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("CurrentlyPlayingContentIndex")

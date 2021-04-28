@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mediaverse.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210428110310_CompleteReorganizedDbStructure")]
+    [Migration("20210428110755_CompleteReorganizedDbStructure")]
     partial class CompleteReorganizedDbStructure
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -134,7 +134,6 @@ namespace Mediaverse.Infrastructure.Migrations
             modelBuilder.Entity("Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos.PlaylistDto", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("CurrentlyPlayingContentIndex")
