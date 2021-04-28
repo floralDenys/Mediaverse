@@ -11,6 +11,15 @@
 }
 
 <div style="width: 300px; padding: 5px">
-    <div><strong>@Truncate(Model.Title)</strong></div>
-    <div>@Truncate(Model.Description)</div>
+    <div style="display: inline-block">
+        <div><strong>@Truncate(Model.Title)</strong></div>
+        <div>@Truncate(Model.Description)</div>
+    </div>
+    <div style="display: inline-block; align-self: flex-end">
+        <button type="button" class="close" aria-label="Remove" 
+                onclick="removeFromPlaylist(
+                    '@Model.ContentId.ExternalId',
+                    '@Model.ContentId.ContentSource',
+                    '@Model.ContentId.ContentType')">&times;</button>
+    </div>
 </div>

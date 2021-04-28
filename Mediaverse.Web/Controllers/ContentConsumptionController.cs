@@ -107,8 +107,9 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpPost]
-        public async Task LeaveRoom(LeaveRoomCommand command, CancellationToken cancellationToken)
+        public async Task LeaveRoom(Guid roomId, CancellationToken cancellationToken)
         {
+            var command = new LeaveRoomCommand {RoomId = roomId, ViewerId = User.GetCurrentUserId()};
             await _mediator.Send(command, cancellationToken);
         }
 
@@ -117,8 +118,31 @@ namespace Mediaverse.Web.Controllers
             AddContentToPlaylistCommand command,
             CancellationToken cancellationToken)
         {
-            var playlist = await _mediator.Send(command, cancellationToken);
-            return RedirectToAction("Playlist", new {playlistId = playlist.Id});
+            try
+            {
+                var playlist = await _mediator.Send(command, cancellationToken);
+                return RedirectToAction("Playlist", new {playlistId = playlist.Id});
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new {message = exception.Message});
+            }
+        }
+        
+        [HttpPost]
+        public async Task<ActionResult> RemoveContentFromPlaylist(
+            RemoveContentFromPlaylistCommand command,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                var playlist = await _mediator.Send(command, cancellationToken);
+                return RedirectToAction("Playlist", new {playlistId = playlist.Id});
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new {message = exception.Message});
+            }
         }
 
         [HttpGet]
@@ -136,21 +160,19 @@ namespace Mediaverse.Web.Controllers
             var playlist = await _mediator.Send(query, cancellationToken);
             return PartialView(playlist);
         }
-        
-        [HttpPost]
-        public async Task<PlaylistDto> RemoveContentFromPlaylist(
-            RemoveContentFromPlaylistCommand command,
-            CancellationToken cancellationToken)
-        {
-            var playlist = await _mediator.Send(command, cancellationToken);
-            return playlist;
-        }
 
         [HttpPost]
         public async Task<ActionResult> SwitchContent(SwitchContentCommand command, CancellationToken cancellationToken)
         {
-            var content = await _mediator.Send(command, cancellationToken);
-            return PartialView("ContentPlayer", content);
+            try
+            {
+                var content = await _mediator.Send(command, cancellationToken);
+                return PartialView("ContentPlayer", content);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new {message = exception.Message});
+            }
         }
     }
 }

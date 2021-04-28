@@ -82,7 +82,8 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
                         ExternalId = pi.ContentId.ExternalId,
                         ContentSource = pi.ContentId.ContentSource,
                         ContentType = pi.ContentId.ContentType,
-                        PlaylistItemIndex = pi.PlaylistItemIndex
+                        PlaylistItemIndex = pi.PlaylistItemIndex,
+                        PlaylistId = playlistDto.Id
                     }));
             
             playlistDto.PlaylistItems.RemoveAll(pid => 

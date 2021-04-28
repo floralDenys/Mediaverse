@@ -1,10 +1,16 @@
 ﻿@using Mediaverse.Domain.ContentSearch.Enums
 @model Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.GetRelevantContentQuery;
 
-<div class="text-center contentSearchLine" id="searchLine">
-    @Html.DropDownListFor(x => x.SelectedSource, new SelectList(Enum.GetNames(typeof(MediaContentSource))), new {@class = "selectBox"})
-    @Html.TextBoxFor(x => x.QueryString, new {type="search", size = "80px", height = "50px", placeholder = "What are looking for?"})
-    <input type="button" value="Find" onclick="search()" style="width: 200px; height: 40px;"/>
+<div class="search-line" id="searchLine">
+    <div style="display: inline-block; padding-right: 20px">
+        @Html.DropDownListFor(x => x.SelectedSource, new SelectList(Enum.GetNames(typeof(MediaContentSource))), new {@class = "selectBox"})
+    </div>
+    <div style="display: inline-block; ">
+        @Html.TextBoxFor(x => x.QueryString, new {type = "search", size = "74%", height = "50px", placeholder = "What are you looking for?"})
+    </div>
+    <div style="display: inline-block; padding-left: 20px; width: 21%">
+        <input type="button" value="Search" onclick="search()" style="width: 100%; height: 40px;"/>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -14,7 +20,7 @@
             url: '@Url.Action("SearchForContent", "ContentSearch")?source='
                                                 + $('#SelectedSource').val() + '&queryString=' + $('#QueryString').val(),
             success: function(res) {
-                $('#searchResults').replaceWith(res);
+                $('#search-results').replaceWith(res);
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 alert(xhr.message);

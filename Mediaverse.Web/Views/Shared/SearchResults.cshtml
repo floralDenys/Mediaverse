@@ -1,8 +1,19 @@
 ﻿@model Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos.SearchResultDto
 
-<div id="searchResults" class="contentSearchResults grid">
+<div class="search-result-text">
     @if (Model.Previews != null && Model.Previews.Any())
     {
+        <h1 class="display-4">Here what have found:</h1>
+    }
+    else if (Model.Previews != null)
+    {
+        <h1 class="display-4">We could not find content for your request</h1>
+    }
+</div>
+<div id="search-results" class="search-results grid">
+    @if (Model.Previews != null && Model.Previews.Any())
+    {
+        
         foreach (var preview in Model.Previews)
         {
             @Html.Partial("Preview", preview)

@@ -10,5 +10,6 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos
         public MediaContentType ContentType { get; set; }
         public int PlaylistItemIndex { get; set; }
         public PlaylistDto Playlist { get; set; }
+        public Guid PlaylistId { get; set; }
     }
 }

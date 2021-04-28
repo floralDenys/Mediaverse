@@ -102,7 +102,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
                     new ViewerDto
                     {
                         Id = v.Profile.Id,
-                        Room = roomDto
+                        RoomId = roomDto.Id
                     });
             roomDto.Viewers.AddRange(addedViewers);
             

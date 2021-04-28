@@ -7,12 +7,12 @@
     ViewData["Title"] = Model.Name;
 }
 
-<div class="text-center">
-    <h1 class="display-5">@Model.Name</h1>
+<h1 class="display-4" style="display: inline-block; padding-left: 7%"><strong>@Model.Name</strong></h1>
+<div style="padding-top: 2%; padding-left:7%">
     <div class="room">
         @await Html.PartialAsync("ContentSearchLine", new GetRelevantContentQuery())
     
-        @await Html.PartialAsync("ContentPlayer", new ContentDto())
+        @await Html.PartialAsync("ContentPlayer", Model.CurrentlyPlayingContent)
 
         <div id="playlistContainer"></div>
         <script>
@@ -25,7 +25,26 @@
     </div>
 </div>
 
+@await Html.PartialAsync("ModalDialog")
+
 <script type="text/javascript">
+    window.addEventListener('beforeunload', function (e) {
+        leaveRoom();
+    });
+
+    const leaveRoom = function(){
+        // $.ajax({
+        //     type: "POST",
+        //     url: '@Url.Action("LeaveRoom", "ContentConsumption")',
+        //     data: '@Model.Id',
+        //     error: function(xhr, ajaxOptions, thrownError) {
+        //         const error = JSON.parse(xhr.responseText);
+        //         showModal(" attempt failed", error.message)
+        //     }
+        // });
+    }
+     
+
     const addToPlaylist = function(
         externalId,
         contentSource,
@@ -50,27 +69,59 @@
                 $('#playlist').replaceWith(res);
             },
             error: function(xhr, ajaxOptions, thrownError) {
-                alert(xhr.message);
+                const error = JSON.parse(xhr.responseText);
+                showModal("Operation attempt failed", error.message)
             }
         });
     };
     
-        const switchContent = function(direction) {  
+    const removeFromPlaylist = function(
+            externalId,
+            contentSource,
+            contentType) {
+            
+            let contentId = {
+                ExternalId: externalId,
+                ContentSource: contentSource,
+                contentType: contentType
+            }
+            
             let command = {
-                RoomId: '@Model.Id',
-                Direction: direction
+                ContentId: contentId,
+                CurrentRoomId: '@Model.Id'
             }
             
             $.ajax({
                 type: "POST",
-                url: '@Url.Action("SwitchContent", "ContentConsumption")',
+                url: '@Url.Action("RemoveContentFromPlaylist", "ContentConsumption")',
                 data: command,
                 success: function(res) {
-                    $('#contentPlayer').replaceWith(res);
+                    $('#playlist').replaceWith(res);
                 },
                 error: function(xhr, ajaxOptions, thrownError) {
-                    alert(xhr.message);
+                    const error = JSON.parse(xhr.responseText);
+                    showModal("Operation attempt failed", error.message)
                 }
             });
         };
+    
+    const switchContent = function(direction) {  
+        let command = {
+            RoomId: '@Model.Id',
+            Direction: direction
+        }
+        
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SwitchContent", "ContentConsumption")',
+            data: command,
+            success: function(res) {
+                $('#contentPlayer').replaceWith(res);
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                const error = JSON.parse(xhr.responseText);
+                showModal("Operation attempt failed", error.message)
+            }
+        });
+    };
 </script>

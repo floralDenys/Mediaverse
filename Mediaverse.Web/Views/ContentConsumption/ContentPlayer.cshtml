@@ -1,8 +1,63 @@
 ﻿@model Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos.ContentDto
 
-<div id="contentPlayer" class="content">
-    @if (Model.Player != null)
-    {
-        @Html.Raw(Model.Player.Html)
-    }
+<div id="contentPlayer">
+    <div class="content-player" style="height: 400px">
+        @if (Model != null)
+        {
+            <div id="iframeContainer"></div>
+@*              <div id="iframeContainer" style="width: 100%; height: 100%"> *@
+@*                  @Html.Raw(Model.Player.Html) *@
+@*              </div> *@
+        }
+        else
+        {
+            <img width="100%" height="100%" src="/Resources/Images/NoContentToPlayImage.png" style="border-radius: 5px"/>
+        }
+    </div>
+
+    <div class="content-name">
+        @if (Model != null)
+        {
+            <h2>Currently playing: @Model.Title</h2>
+        }
+    </div>
+
+    @* <script src="https://www.youtube.com/iframe_api"></script> *@
+
+    <script type="text/javascript">
+        $(document).ready(function(){           
+            // let playerIframe = $('#iframeContainer').children()[0];
+            // $(playerIframe).css('width', '100%'); 
+            // $(playerIframe).css('height', '100%');
+            // $(playerIframe).attr('id', 'playerIframe');
+            // $(playerIframe).attr('src', $(playerIframe).attr('src') + '?enablejsapi=1');
+            
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            
+            // createPlayer();
+        });
+
+        function onYouTubeIframeAPIReady(){
+            createPlayer();
+        }
+        
+        var player;
+        function createPlayer() {
+          player = new YT.Player('iframeContainer', {
+                width: '100%',
+                height: '100%',
+                videoId: '@Model.Id.ExternalId',
+                events: {
+                  'onReady': onPlayerReady
+                }
+          });
+        }
+
+        function onPlayerReady() {
+            player.playVideo();
+        }
+    </script>
 </div>

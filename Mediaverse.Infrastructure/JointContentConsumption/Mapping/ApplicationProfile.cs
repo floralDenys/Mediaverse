@@ -19,6 +19,11 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
                     x.ExternalId,
                     x.ContentSource,
                     x.ContentType));
+            
+            CreateMap<ContentId, ContentIdDto>()    
+                .ForMember(dst => dst.ExternalId, opt => opt.MapFrom(src => src.ExternalId))
+                .ForMember(dst => dst.ContentSource, opt => opt.MapFrom(src => src.ContentSource))
+                .ForMember(dst => dst.ContentType, opt => opt.MapFrom(src => src.ContentType));
 
             CreateMap<Playlist, PlaylistDto>()
                 .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
@@ -32,7 +37,8 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
                 .ForMember(dest => dest.Title, o => o.MapFrom(src => src.Title))
                 .ForMember(dest => dest.Description, o => o.MapFrom(src => src.Description));
 
-            CreateMap<Content, ContentDto>();
+            CreateMap<Content, ContentDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
             CreateMap<ContentPlayer, ContentPlayerDto>();
 
             CreateMap<Room, RoomDto>();

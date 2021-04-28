@@ -30,7 +30,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public Viewer Owner { get; }
         public bool IsTemporary { get; set; }
         
-        public int? CurrentlyPlayingContentIndex { get; private set; }
+        public int? CurrentlyPlayingContentIndex { get; set; }
         
         public Playlist(
             Guid id,
@@ -77,11 +77,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
 
             int playlistItemIndex = (_items.LastOrDefault()?.PlaylistItemIndex ?? 0) + 1;
             _items.Add(new PlaylistItem(contentId, playlistItemIndex));
-
-            if (_items.Count == 1)
-            {
-                CurrentlyPlayingContentIndex = 1;
-            }
         }
         
         public void Remove(ContentId contentId)
@@ -98,11 +93,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             {
                 throw new InvalidOperationException("Something went wrong");
             }
-
-            if (!_items.Any())
-            {
-                CurrentlyPlayingContentIndex = null;
-            }
         }
 
         public ContentId PlayNextContent()
@@ -113,7 +103,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
 
             var nextPlaylistItem = _items
-                .FirstOrDefault(i => i.PlaylistItemIndex > CurrentlyPlayingContentIndex);
+                .FirstOrDefault(i => i.PlaylistItemIndex > (CurrentlyPlayingContentIndex ?? 0));
             
             if (nextPlaylistItem == null)
             {
@@ -133,7 +123,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
 
             var previousPlaylistItem =
-                _items.LastOrDefault(i => i.PlaylistItemIndex < CurrentlyPlayingContentIndex); 
+                _items.LastOrDefault(i => i.PlaylistItemIndex < (CurrentlyPlayingContentIndex ?? 0)); 
             
             if (previousPlaylistItem == null)
             {
@@ -144,7 +134,12 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             
             return previousPlaylistItem.ContentId;
         }
-        
+
+        public ContentId Current =>
+            _items.FirstOrDefault(i => i.PlaylistItemIndex 
+                                       == CurrentlyPlayingContentIndex.GetValueOrDefault())
+                ?.ContentId;
+
         private bool Contains(ContentId contentId) => _items
             .Select(x => x.ContentId)
             .Contains(contentId);

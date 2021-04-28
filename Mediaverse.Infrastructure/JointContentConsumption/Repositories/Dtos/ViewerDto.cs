@@ -6,5 +6,6 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos
     {
         public Guid Id { get; set; }
         public RoomDto Room { get; set; }
+        public Guid RoomId { get; set; }
     }
 }

@@ -1,15 +1,23 @@
 ﻿@using Mediaverse.Domain.JointContentConsumption.Enums
 @model Mediaverse.Application.JointContentConsumption.Common.Dtos.PlaylistDto
 
-<div id="playlist" style="width: 350px; height: 500px; text-align: left; background-color: #bedfea" class="playlist">
+<div id="playlist" style="width: 350px; height: 400px; text-align: left; background-color: #bedfea;" align="right" class="playlist">
     <div style="height: 25px">
         Active playlist:
         <strong>@Model.Name</strong>
     </div>
     <hr size="3" style="margin: 10px"/>
     <div class="text-center">
-        <input style="width: 150px" type="button" value="<- Previous" onclick="switchContent('@SwitchContentDirection.Previous')"/>
-        <input style="width: 150px" type="button" value="Next ->" onclick="switchContent('@SwitchContentDirection.Next')"/>
+        @if (Model.Items != null && Model.Items.Any())
+        {
+            <input style="width: 150px" type="button" value="<- Previous" onclick="switchContent('@SwitchContentDirection.Previous')"/>
+            <input style="width: 150px" type="button" value="Next ->" onclick="switchContent('@SwitchContentDirection.Next')"/>
+        }
+        else
+        {
+            <input disabled="disabled" style="width: 150px" type="button" value="<- Previous" onclick="switchContent('@SwitchContentDirection.Previous')"/>
+            <input disabled="disabled" style="width: 150px" type="button" value="Next ->" onclick="switchContent('@SwitchContentDirection.Next')"/>
+        }
     </div>
     <hr size="3" style="margin: 10px"/>
     <ul>

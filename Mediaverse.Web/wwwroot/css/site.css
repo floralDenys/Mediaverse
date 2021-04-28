@@ -35,6 +35,7 @@ a {
 
 input {
   border-radius: 5px;
+  border-width: 1px;
   padding: 5px 10px;
 }
 
@@ -55,7 +56,7 @@ input {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fit, 190px);
 }
 
 .gridItem {
@@ -64,7 +65,6 @@ input {
 }
 
 .playlist {
-  border: 2px solid black;
   border-radius: 5px;
   padding: 10px;
   grid-column: mid-col-start / head-col-end;
@@ -75,7 +75,7 @@ input {
   overflow:hidden;
   overflow-y:scroll;
   list-style-type: none;
-  height: 78%;
+  height: 72%;
   padding: 0;
 }
 
@@ -84,28 +84,24 @@ input {
   border-radius: 5px;
 }
 
-.room {
-  display: grid;
-  grid-gap: 15px;
-  width: 100%;
-  grid-template-columns: [head-col-start] 600px [mid-col-start] 350px [head-col-end];
-  grid-template-rows: [head-row-start] auto [head-row-end] auto [mid-row-end] auto [footer-row-end];
-}
-
-.contentSearchLine {
-  grid-column: head-col-start / head-col-end;
-  grid-row: head-row-start / head-row-end;
-}
-
-.content {
-  grid-column: head-col-start / mid-col-start;
-  grid-row: head-row-end / mid-row-end;
-}
-
-.contentSearchResults {
-  grid-column: head-col-start / head-col-end;
-  grid-row: content-row-end / footer-row-end;
-}
+ .room {
+   display: grid;
+   grid-template-columns: 550px auto;
+   grid-template-rows: auto auto auto auto auto;
+   gap: 20px 20px;
+   grid-template-areas:
+    "search-line search-line"
+    "content-player playlist"
+    "content-name content-name"
+    "search-result-text search-result-text"
+    "search-results search-results";
+ }
+.search-line { grid-area: search-line; }
+.content-player { grid-area: content-player; }
+.playlist { grid-area: playlist; }
+.content-name { grid-area: content-name; }
+.search-result-text { grid-area: search-result-text; }
+.search-results { grid-area: search-results; }
 
 /* Sticky footer styles
 -------------------------------------------------- */

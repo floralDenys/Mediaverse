@@ -47,10 +47,17 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
                 if (request.PlaylistId == default)
                 {
                     Guid generatedPlaylistId = _identifierProvider.GenerateGuid();
-                    var playlist = new Playlist(generatedPlaylistId, "Temporary", host) {IsTemporary = true};
+                    var playlist = new Playlist(generatedPlaylistId, "Temporary", host)  {IsTemporary = true};
                     
                     await _playlistRepository.AddAsync(playlist, cancellationToken);
                     request.PlaylistId = generatedPlaylistId;
+                }
+                else
+                {
+                    // reloading the playlist
+                    var playlist = await _playlistRepository.GetAsync(request.PlaylistId, cancellationToken);
+                    playlist.CurrentlyPlayingContentIndex = null;
+                    await _playlistRepository.UpdateAsync(playlist, cancellationToken);
                 }
                 
                 Guid generatedRoomId = _identifierProvider.GenerateGuid();

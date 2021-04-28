@@ -10,10 +10,12 @@
     }
 }
 
-<div class="card gridItem" style="width: 150px">
-    <div><img src="@Model.Thumbnail.Url" alt=""/></div>
-    <div><strong>@Truncate(Model.Title)</strong></div>
-    <div>@Truncate(Model.Description)</div>
-    <input type="button" value="+" style="width: 30px; height: 20px;"
-           onclick="addToPlaylist('@Model.ContentId.ExternalId', '@Model.ContentId.ContentSource', '@Model.ContentId.ContentType')"/>
+<div class="text-center card gridItem" style="width: 150px">
+    <div style="padding-top: 10px; padding-bottom: 10px">
+        <div><img src="@Model.Thumbnail.Url" alt=""/></div>
+        <div><strong>@Truncate(Model.Title)</strong></div>
+        <div>@Truncate(Model.Description)</div>
+        <input type="button" value="+" style="width: 40px; height: 40px;"
+               onclick="addToPlaylist('@Model.ContentId.ExternalId', '@Model.ContentId.ContentSource', '@Model.ContentId.ContentType')"/>
+    </div>
 </div>

@@ -15,7 +15,7 @@ namespace Mediaverse.Infrastructure.ContentSearch.Repositories.YouTube
         private const string SearchParts = "id,snippet";
         private const string RetrieveByIdParts = "id,snippet,player";
         private const string SearchType = "video";
-        private const int MaxSearchResultQuantity = 1;
+        private const int MaxSearchResultQuantity = 20;
 
         public YouTubeRepository(
             YouTubeService youTubeService,
