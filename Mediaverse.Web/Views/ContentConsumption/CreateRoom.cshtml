@@ -5,12 +5,12 @@
 }
 
 <div class="container-centered">
-    <div class="card" style="width: 500px; height: 600px; padding-top: 20%;">
+    <div class="card" style="width: 500px; height: 625px; padding-top: 20%;">
         <div class="container-centered text-center">
             @using (Html.BeginForm("CreateRoom", "ContentConsumption", FormMethod.Post, new {id="createRoomForm"}))
             {
                 @Html.HiddenFor(x => x.HostId)
-                <h1 class="display-3 text-center">Create room</h1>
+                <h1 class="display-3 text-center">Create a room</h1>
                 <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
                     <div style="text-align: left">
                         How the room should be called?
@@ -21,7 +21,7 @@
                 </div>
                 <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
                     <div style="text-align: left">
-                        Prvide description (optional)
+                        Provide some description (optional)
                     </div>
                     <div>
                         @Html.TextBoxFor(x => x.Description, new {required="required", style = "font-size: 18px; width: 250px; height: 40px;"})
@@ -37,22 +37,24 @@
                 </div>
                 <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
                     <div style="text-align: left">
-                        What is the type of the room?
+                        Select playlist
                     </div>
                     <div>
                         @Html.DropDownListFor(
                             x => x.PlaylistId,
-                            new SelectList(Model.AvailablePlaylists, "Id", "Name", ""), 
+                            new SelectList(Model.AvailablePlaylists, "Id", "Name", "Create temporary"), 
                             new {@class="selectBox", style="width: 250px"})
                     </div>
                 </div>
-                <div style="padding-top: 10px;">
+                <div style="padding-top: 20px;">
                     <input type="button" value="Confirm" onclick="createRoom()" style="width: 250px; height: 40px;"/>
                 </div>
             }
         </div>
     </div>
 </div>
+
+@await Html.PartialAsync("ModalDialog")
 
 <script type="text/javascript">
     const createRoom = function() {
@@ -66,7 +68,8 @@
                 window.location.href = res.redirectToUrl;
             },
             error: function(xhr, ajaxOptions, thrownError) {
-                alert(xhr.message);
+                const error = JSON.parse(xhr.responseText);
+                showModal("Something went wrong", error.message)
             }
         });
     };

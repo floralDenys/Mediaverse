@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.ComponentModel.DataAnnotations;
+using MediatR;
 using Mediaverse.Application.Authentication.Common.Dtos;
 
 namespace Mediaverse.Application.Authentication.Commands.SignUp

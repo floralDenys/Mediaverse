@@ -1,9 +1,11 @@
+using System;
 using System.Reflection;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using MediatR;
 using Mediaverse.Application.Authentication.Services;
 using Mediaverse.Application.Common.Services;
+using Mediaverse.Domain.Authentication.Entities;
 using Mediaverse.Domain.Authentication.Repositories;
 using Mediaverse.Domain.ContentSearch.Services;
 using Mediaverse.Domain.ContentSearch.Services.Implementation;
@@ -16,6 +18,7 @@ using Mediaverse.Infrastructure.ContentSearch.Repositories.YouTube;
 using Mediaverse.Infrastructure.JointContentConsumption.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -43,7 +46,15 @@ namespace Mediaverse.Web
             services.AddAutoMapper(Assembly.Load("Mediaverse.Application"));
             services.AddAutoMapper(Assembly.Load("Mediaverse.Infrastructure"));
             services.AddLogging();
-
+            
+            services.AddIdentity<User, IdentityRole<Guid>>(
+                    options =>
+                    {
+                        options.Password.RequireNonAlphanumeric = false;
+                        options.Password.RequireUppercase = false;
+                        options.Password.RequiredUniqueChars = 3;
+                    }).AddEntityFrameworkStores<ApplicationDbContext>();
+            
             services.AddDbContext<ApplicationDbContext>();
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(IIdentifierProvider), typeof(DefaultIdentifierProvider));
@@ -84,7 +95,8 @@ namespace Mediaverse.Web
             app.UseStaticFiles();
 
             app.UseRouting();
-            
+
+            app.UseAuthentication();
             app.UseAuthorization();
             
             app.UseEndpoints(endpoints =>

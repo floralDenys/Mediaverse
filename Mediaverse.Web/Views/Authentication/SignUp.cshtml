@@ -53,6 +53,8 @@
     </div>
 </div>
 
+@await Html.PartialAsync("ModalDialog")
+
 <script type="text/javascript">
     $(function(){
         $("#showPassword").on("change", function() {
@@ -75,7 +77,8 @@
                 window.location.href = res.redirectToUrl;
             },
             error: function(xhr, ajaxOptions, thrownError) {
-                alert(xhr.message);
+                var error = JSON.parse(xhr.responseText);
+                showModal("Sign Up attempt failed", error.message);
             }
         });
     };

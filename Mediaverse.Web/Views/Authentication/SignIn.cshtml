@@ -3,12 +3,13 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="container-centered">
+<div id="signIn" class="container-centered">
     <div class="card" style="width: 500px; height: 400px; padding-top: 15%;">
         <div class="container-centered text-center">
             @using (Html.BeginForm("SignIn", "Authentication", FormMethod.Post, new {id="signInForm"}))
             {
                 <h1 class="display-3 text-center">Sign In</h1>
+                @Html.ValidationSummary()
                 <div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
                     <div style="text-align: left">
                         Login or email
@@ -37,6 +38,8 @@
     </div>
 </div>
 
+@await Html.PartialAsync("ModalDialog")
+
 <script type="text/javascript">
     $(function(){
         $("#showPassword").on("change", function() {
@@ -59,7 +62,8 @@
                 window.location.href = res.redirectToUrl;
             },
             error: function(xhr, ajaxOptions, thrownError) {
-                alert(xhr.message);
+                const error = JSON.parse(xhr.responseText);
+                showModal("Sign In attempt failed", error.message)
             }
         });
     };

@@ -1,52 +1,64 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using MediatR;
-using Mediaverse.Application.Authentication.Common.Dtos;
 using Mediaverse.Application.Authentication.Services;
-using Mediaverse.Domain.Authentication.Repositories;
+using Mediaverse.Domain.Authentication.Entities;
 using Mediaverse.Domain.Common;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.Authentication.Commands.SignIn
 {
-    public class SignInCommandHandler : IRequestHandler<SignInCommand, UserDto>
+    public class SignInCommandHandler : IRequestHandler<SignInCommand>
     {
-        private readonly IUserRepository _userRepository;
-
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
+        
         private readonly IEmailService _emailService;
         private readonly ILogger<SignInCommandHandler> _logger;
-        private readonly IMapper _mapper;
 
         public SignInCommandHandler(
-            IUserRepository userRepository,
+            SignInManager<User> signInManager,
+            UserManager<User> userManager,
             IEmailService emailService,
-            ILogger<SignInCommandHandler> logger,
-            IMapper mapper)
+            ILogger<SignInCommandHandler> logger)
         {
-            _userRepository = userRepository;
+            _signInManager = signInManager;
+            _userManager = userManager;
             _emailService = emailService;
             _logger = logger;
-            _mapper = mapper;
         }
         
-        public async Task<UserDto> Handle(SignInCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(SignInCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var user = _emailService.IsValidEmail(request.LoginOrEmail)
-                    ? await _userRepository.GetUserByEmailAsync(request.LoginOrEmail, cancellationToken)
-                    : await _userRepository.GetUserByLoginAsync(request.LoginOrEmail, cancellationToken);
-
-                _ = user ?? throw new ArgumentException("User with given email could not be found");
-
-                if (user.Password != request.Password)
+                if (string.IsNullOrEmpty(request.LoginOrEmail)
+                    || string.IsNullOrEmpty(request.Password))
                 {
-                    throw new ArgumentException("Given password is incorrect");
+                    throw new InformativeException("Please provide valid login/email and password");
+                }
+                
+                string login = request.LoginOrEmail;
+                if (_emailService.IsValidEmail(request.LoginOrEmail))
+                {
+                    var user = await _userManager.FindByEmailAsync(request.LoginOrEmail);
+                    login = user?.UserName ?? login;
                 }
 
-                return _mapper.Map<UserDto>(user);
+                var result = await _signInManager.PasswordSignInAsync(
+                    login,
+                    request.Password,
+                    isPersistent: false,
+                    lockoutOnFailure: false);
+
+                if (!result.Succeeded)
+                {
+                    throw new InformativeException("Email or password is incorrect");
+                }
+                
+                return Unit.Value;
             }
             catch (InformativeException exception)
             {
@@ -56,7 +68,7 @@ namespace Mediaverse.Application.Authentication.Commands.SignIn
             catch (Exception exception)
             {
                 _logger.LogError(exception, $"Could not sign in {request.LoginOrEmail}");
-                throw new InformativeException("Email or Password is invalid. Please retry");
+                throw new InformativeException("Something went wrong. Please retry");
             }
         }
     }
