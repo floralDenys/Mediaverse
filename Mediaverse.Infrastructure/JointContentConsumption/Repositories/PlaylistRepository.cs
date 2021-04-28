@@ -41,7 +41,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         {
             var playlistDto = _applicationDbContext.Playlists
                 .Include(p => p.PlaylistItems)
-                .FirstOrDefault(p => p.Id == playlistId);
+                .First(p => p.Id == playlistId);
             var owner = await _userRepository.GetUserAsync(playlistDto.OwnerId, cancellationToken);
 
             return GetPlaylist(playlistDto, owner);
