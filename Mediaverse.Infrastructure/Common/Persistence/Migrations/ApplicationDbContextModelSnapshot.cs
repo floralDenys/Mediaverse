@@ -211,7 +211,6 @@ namespace Mediaverse.Infrastructure.Migrations
             modelBuilder.Entity("Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos.ViewerDto", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("RoomId")

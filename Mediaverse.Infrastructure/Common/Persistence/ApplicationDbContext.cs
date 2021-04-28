@@ -56,6 +56,8 @@ namespace Mediaverse.Infrastructure.Common.Persistence
                 .WithMany(r => r.Viewers);
             modelBuilder.Entity<ViewerDto>().ToTable("RoomViewers")
                 .HasKey(v => new {v.Id});
+            modelBuilder.Entity<ViewerDto>().Property(v => v.Id)
+                .ValueGeneratedNever();
 
             modelBuilder.Entity<PlaylistDto>().ToTable("Playlists");
             modelBuilder.Entity<PlaylistDto>().HasKey(p => p.Id);

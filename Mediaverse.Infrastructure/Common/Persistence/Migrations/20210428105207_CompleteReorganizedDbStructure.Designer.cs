@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Mediaverse.Infrastructure.Common.Persistence.Migrations
+namespace Mediaverse.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210428062425_FixRoomViewers")]
-    partial class FixRoomViewers
+    [Migration("20210428105207_CompleteReorganizedDbStructure")]
+    partial class CompleteReorganizedDbStructure
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -213,7 +213,6 @@ namespace Mediaverse.Infrastructure.Common.Persistence.Migrations
             modelBuilder.Entity("Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos.ViewerDto", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("RoomId")
