@@ -2,8 +2,9 @@
 
 <div id="contentPlayer">
     <div class="content-player" style="height: 400px">
-        @if (Model != null)
+        @if (Model.Player != null)
         {
+            <img width="100%" height="100%" src="/Resources/Images/NoContentToPlayImage.png" style="border-radius: 5px"/>
             <div id="iframeContainer"></div>
         }
         else
@@ -13,16 +14,14 @@
     </div>
 
     <div class="content-name">
-        @if (Model != null)
+        @if (Model.Player != null)
         {
             <h2>Currently playing: @Model.Title</h2>
         }
     </div>
     
-    @if (Model != null)
+    @if (Model.Player != null)
     {
-@*         <script src="https://www.youtube.com/iframe_api"></script> *@
-
         <script type="text/javascript">   
             var player;
         

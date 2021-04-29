@@ -43,7 +43,7 @@ namespace Mediaverse.Application.JointContentConsumption.Queries.GetRoom
                     ?? throw new ArgumentException("Room could not be found");
 
                 Content content = null;
-                if (room.ActivePlaylistId.HasValue)
+                if (room.IsPlaylistSelected)
                 {
                     var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId.Value, cancellationToken);
                     if (activePlaylist.CurrentlyPlayingContentIndex.HasValue)

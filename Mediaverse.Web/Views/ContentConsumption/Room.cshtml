@@ -13,7 +13,12 @@
     <div class="room">
         @await Html.PartialAsync("ContentSearchLine", new GetRelevantContentQuery())
     
-        @await Html.PartialAsync("ContentPlayer", Model.CurrentlyPlayingContent)
+        <div id="contentPlayerContainer"></div>
+        <script>
+            $.get('@Url.Action("CurrentlyPlayingContent", "ContentConsumption")', {roomId: '@Model.Id'}, function(content){
+                    $("#contentPlayerContainer").html(content);
+                });
+        </script>
 
         <div id="playlistContainer"></div>
         <script>

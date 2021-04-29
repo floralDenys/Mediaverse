@@ -55,6 +55,20 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
             CreateMap<User, Viewer>()
                 .ConstructUsing(src => new Viewer(
                     new UserProfile(src.Id, src.UserName, src.Type == UserType.Member)));
+
+            CreateMap<CurrentContentDto, CurrentContent>()
+                .ConstructUsing(src => new CurrentContent(
+                    new ContentId(
+                        src.ExternalId,
+                        src.Source,
+                        src.Type),
+                    src.PlayingState,
+                    src.PlayingTime,
+                    src.LastUpdatedPlayingTime))
+                .ReverseMap()
+                .ForMember(dst => dst.ExternalId, opt => opt.MapFrom(src => src.ContentId.ExternalId))
+                .ForMember(dst => dst.Source, opt => opt.MapFrom(src => src.ContentId.ContentSource))
+                .ForMember(dst => dst.Type, opt => opt.MapFrom(src => src.ContentId.ContentType));
         }
     }
 }

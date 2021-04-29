@@ -42,6 +42,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public Guid? ActivePlaylistId { get; private set; }
         public bool IsPlaylistSelected => ActivePlaylistId.HasValue;
         
+        public CurrentContent CurrentContent { get; set; }
+        
         public IReadOnlyList<Viewer> Viewers => (IReadOnlyList<Viewer>)_viewers;
         public int MaxViewersQuantity
         {
@@ -95,7 +97,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             Invitation invitation,
             int maxViewersQuantity,
             Guid? activePlaylistId,
-            IList<Viewer> viewers) : base(id)
+            IList<Viewer> viewers,
+            CurrentContent currentContent) : base(id)
         {
             Name = name;
             Description = description;
@@ -105,6 +108,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             MaxViewersQuantity = maxViewersQuantity;
             ActivePlaylistId = activePlaylistId;
             _viewers = viewers ?? new List<Viewer>();
+            CurrentContent = currentContent;
         }
 
         public void UpdateSelectedPlaylist(Playlist playlist)

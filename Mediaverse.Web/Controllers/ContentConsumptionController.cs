@@ -12,6 +12,7 @@ using Mediaverse.Application.JointContentConsumption.Commands.LeaveRoom;
 using Mediaverse.Application.JointContentConsumption.Commands.RemoveContentFromPlaylist;
 using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent;
 using Mediaverse.Application.JointContentConsumption.Queries.GetAvailablePlaylists;
+using Mediaverse.Application.JointContentConsumption.Queries.GetCurrentlyPlayingContent;
 using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist;
 using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist.Dtos;
 using Mediaverse.Application.JointContentConsumption.Queries.GetRoom;
@@ -198,13 +199,13 @@ namespace Mediaverse.Web.Controllers
             return PartialView(playlist);
         }
         
-        // [HttpGet]
-        // public async Task<ActionResult> CurrentlyPlayingContent(Guid roomId, CancellationToken cancellationToken)
-        // {
-        //     var query = new GetPlaylistQuery {RoomId = playlistId};
-        //     var playlist = await _mediator.Send(query, cancellationToken);
-        //     return PartialView(playlist);
-        // }
+        [HttpGet]
+        public async Task<ActionResult> CurrentlyPlayingContent(Guid roomId, CancellationToken cancellationToken)
+        {
+            var query = new GetCurrentlyPlayingContentQuery {RoomId = roomId}; 
+            var roomDto = await _mediator.Send(query, cancellationToken);
+            return PartialView("ContentPlayer", roomDto);
+        }
 
         [HttpPost]
         public async Task<ActionResult> SwitchContent(SwitchContentCommand command, CancellationToken cancellationToken)
