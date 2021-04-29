@@ -15,5 +15,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos
         public Guid? ActivePlaylistId { get; set; }
         public int MaxViewersQuantity { get; set; }
         public List<ViewerDto> Viewers { get; set; }
+        
+        public CurrentContentDto CurrentContent { get; set; }
     }
 }
