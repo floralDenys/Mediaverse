@@ -1,0 +1,45 @@
+﻿@model string
+
+@await Html.PartialAsync("ModalDialog")
+
+@Html.Hidden("RoomToken", @Model, new {id="roomToken"})
+
+<script type="text/javascript">    
+    $(document).ready(function() {
+        redirect('@User.Identity.IsAuthenticated');
+    });
+    
+    function redirect (isAuthenticated) {
+        if (isAuthenticated === "True") {
+            joinRoom();
+        }             
+        else {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SignUpAnonymous", "Authentication")',
+                success: function(res) {
+                    joinRoom();
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    const error = JSON.parse(xhr.responseText);
+                    showModal("Operation attempt failed", error.message)
+                }
+            });
+        }
+        
+        function joinRoom() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("JoinRoom", "ContentConsumption")',
+                data: $('#roomToken'),
+                success: function(res) {
+                    window.location.href = res.redirectToUrl;
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    const error = JSON.parse(xhr.responseText);
+                    showModal("Something went wrong", error.message)
+                }
+            });
+        }
+    }
+</script>

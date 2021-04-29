@@ -1,6 +1,5 @@
 ﻿@using Mediaverse.Application.ContentSearch.Queries.GetRelevantContent
 @using Mediaverse.Application.ContentSearch.Queries.GetRelevantContent.Dtos
-@using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos
 @using Mediaverse.Application.JointContentConsumption.Common.Dtos
 @model RoomDto;
 @{
@@ -8,6 +7,8 @@
 }
 
 <h1 class="display-4" style="display: inline-block; padding-left: 7%"><strong>@Model.Name</strong></h1>
+<label style="padding-left: 10%">Join code: @Model.Token</label>
+<input type="button" value="Copy link to clipboard" onclick="copyToClipboard('@Url.ActionLink("JoinRoomByLink")?roomToken=@Model.Token')">
 <div style="padding-top: 2%; padding-left:7%">
     <div class="room">
         @await Html.PartialAsync("ContentSearchLine", new GetRelevantContentQuery())
@@ -28,9 +29,20 @@
 @await Html.PartialAsync("ModalDialog")
 
 <script type="text/javascript">
-    window.addEventListener('beforeunload', function (e) {
-        leaveRoom();
-    });
+    const copyToClipboard = function(text) {
+        const temporaryElement = document.createElement('input');
+        document.body.appendChild(temporaryElement);
+        
+        temporaryElement.value = text;
+        temporaryElement.select();
+        
+        document.execCommand('copy');
+        document.body.removeChild(temporaryElement);
+    }
+
+    // window.addEventListener('beforeunload', function (e) {
+    //     leaveRoom();
+    // });
 
     const leaveRoom = function(){
         // $.ajax({

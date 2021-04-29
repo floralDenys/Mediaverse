@@ -24,8 +24,12 @@ namespace Mediaverse.Infrastructure.Authentication.Services
             _identifierProvider = identifierProvider;
         }
 
-        public string GenerateAnonymousName() 
-            => $"anonymous_{_nameParts[new Random().Next(0, _nameParts.Count - 1)]}";
+        public string GenerateAnonymousName()
+        {
+            var random = new Random();
+            return $"anonymous_{_nameParts[random.Next(0, _nameParts.Count - 1)]}_" + random.Next(100, 999).ToString();
+            
+        }
 
         public string GenerateAnonymousPassword()
             => _identifierProvider.GenerateToken(

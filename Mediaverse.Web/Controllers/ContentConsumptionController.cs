@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -9,12 +10,12 @@ using Mediaverse.Application.JointContentConsumption.Commands.JoinRoom;
 using Mediaverse.Application.JointContentConsumption.Commands.LeaveRoom;
 using Mediaverse.Application.JointContentConsumption.Commands.RemoveContentFromPlaylist;
 using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent;
-using Mediaverse.Application.JointContentConsumption.Common.Dtos;
 using Mediaverse.Application.JointContentConsumption.Queries.GetAvailablePlaylists;
 using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist;
 using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist.Dtos;
 using Mediaverse.Application.JointContentConsumption.Queries.GetRoom;
 using Mediaverse.Infrastructure.Authentication.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mediaverse.Web.Controllers
@@ -80,6 +81,13 @@ namespace Mediaverse.Web.Controllers
             await _mediator.Send(command, cancellationToken);
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult JoinRoomByLink(string roomToken)
+        {
+            return View("JoinRoomByLink", roomToken);
+        }
+        
         [HttpPost]
         public async Task<ActionResult> JoinRoom(string roomToken, CancellationToken cancellationToken)
         {

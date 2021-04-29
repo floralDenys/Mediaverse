@@ -67,7 +67,7 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SignUpAnonymous()
+        public async Task<ActionResult> SignUpAnonymous(string redirectUrl)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace Mediaverse.Web.Controllers
 
                 return Json(new
                 {
-                    redirectToUrl = @Url.Action("Index", "ContentConsumption")
+                    redirectToUrl = redirectUrl
                 });
             }
             catch (Exception exception)

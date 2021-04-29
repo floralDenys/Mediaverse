@@ -41,7 +41,8 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
             CreateMap<ContentPlayer, ContentPlayerDto>();
 
-            CreateMap<Room, RoomDto>();
+            CreateMap<Room, RoomDto>()
+                .ForMember(dst => dst.Token, opt => opt.MapFrom(src => src.Invitation.Token));
         }
     }
 }

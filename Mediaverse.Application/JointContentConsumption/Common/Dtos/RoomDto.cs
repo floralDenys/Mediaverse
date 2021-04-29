@@ -10,5 +10,6 @@ namespace Mediaverse.Application.JointContentConsumption.Common.Dtos
         public string Description { get; set; }
         public Guid ActivePlaylistId { get; set; }
         public ContentDto CurrentlyPlayingContent { get; set; }
+        public string Token { get; set; }
     }
 }

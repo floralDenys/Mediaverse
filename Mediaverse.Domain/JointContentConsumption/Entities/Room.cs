@@ -112,7 +112,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             _ = playlist ?? throw new ArgumentNullException(nameof(playlist));
             if (!playlist.Owner.Equals(Host))
             {
-                throw new InformativeException($"Playlist {playlist} does not belong to host {Host}");
+                throw new InformativeException($"Playlist {playlist} does not belong toT host {Host}");
             }
 
             ActivePlaylistId = playlist.Id;
