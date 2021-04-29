@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Lib.AspNetCore.ServerSentEvents;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Commands.AddContentToPlaylist;
+using Mediaverse.Application.JointContentConsumption.Commands.ChangeContentPlayerState;
 using Mediaverse.Application.JointContentConsumption.Commands.CloseRoom;
 using Mediaverse.Application.JointContentConsumption.Commands.CreateRoom;
 using Mediaverse.Application.JointContentConsumption.Commands.JoinRoom;
@@ -24,10 +25,14 @@ namespace Mediaverse.Web.Controllers
     public class ContentConsumptionController : Controller
     {
         private readonly IMediator _mediator;
-
-        public ContentConsumptionController(IMediator mediator)
+        private readonly IServerSentEventsService _service;
+        
+        public ContentConsumptionController(
+            IMediator mediator,
+            IServerSentEventsService sentEventsService)
         {
             _mediator = mediator;
+            _service = sentEventsService;
         }
 
         [HttpGet]
@@ -152,6 +157,14 @@ namespace Mediaverse.Web.Controllers
             {
                 return BadRequest(new {message = exception.Message});
             }
+        }
+
+        [HttpPost]
+        public async Task ChangeContentPlayerState(ChangeContentPlayerStateCommand command)
+        {
+            await _mediator.Send(command);
+
+            await _service.SendEventAsync(command.State);
         }
 
         [HttpGet]
