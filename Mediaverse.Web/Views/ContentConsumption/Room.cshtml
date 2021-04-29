@@ -17,7 +17,7 @@
 
         <div id="playlistContainer"></div>
         <script>
-            $.get('@Url.Action("Playlist", "ContentConsumption")', {playlistId: '@Model.ActivePlaylistId'}, function(content){
+            $.get('@Url.Action("Playlist", "ContentConsumption")', {roomId: '@Model.Id'}, function(content){
                     $("#playlistContainer").html(content);
                 });
         </script>
@@ -39,6 +39,42 @@
         document.execCommand('copy');
         document.body.removeChild(temporaryElement);
     }
+    
+        $(document).ready(function() {
+            var source = new EventSource("/default-sse-endpoint");       
+            source.onmessage = function (event) {
+                if (event.data === "playing") {
+                    startPlayback();
+                }
+                else if (event.data === "paused") {
+                    pausePlayback();
+                }
+                else if (event.data === "switched_content") {
+                    refreshCurrentlyPlayingContent();
+                }
+                else if (event.data === "playlist_updated") {
+                    refreshPlaylist();
+                }
+            }
+        });
+    
+        function refreshCurrentlyPlayingContent() {
+            
+        }
+        
+        function refreshPlaylist() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("Playlist", "ContentConsumption")?roomId=@Model.Id',
+                success: function(res) {
+                    $('#playlist').replaceWith(res);
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    const error = JSON.parse(xhr.responseText);
+                    showModal("Operation attempt failed", error.message)
+                }
+            });
+        }
 
     // window.addEventListener('beforeunload', function (e) {
     //     leaveRoom();
@@ -77,9 +113,6 @@
             type: "POST",
             url: '@Url.Action("AddContentToPlaylist", "ContentConsumption")',
             data: command,
-            success: function(res) {
-                $('#playlist').replaceWith(res);
-            },
             error: function(xhr, ajaxOptions, thrownError) {
                 const error = JSON.parse(xhr.responseText);
                 showModal("Operation attempt failed", error.message)
@@ -107,9 +140,6 @@
                 type: "POST",
                 url: '@Url.Action("RemoveContentFromPlaylist", "ContentConsumption")',
                 data: command,
-                success: function(res) {
-                    $('#playlist').replaceWith(res);
-                },
                 error: function(xhr, ajaxOptions, thrownError) {
                     const error = JSON.parse(xhr.responseText);
                     showModal("Operation attempt failed", error.message)
@@ -138,11 +168,11 @@
     };
     
     function onContentPlaybackStarted(currentPlaybackTime) {
-        changeContentPlayerState("Playing", currentPlaybackTime);               
+        changeContentPlayerState("playing", currentPlaybackTime);               
     }
     
     function onContentPlaybackPaused(currentPlaybackTime) {
-        changeContentPlayerState("Paused", currentPlaybackTime);         
+        changeContentPlayerState("paused", currentPlaybackTime);         
     }
     
     const changeContentPlayerState = function (contentPlayerState){
@@ -162,16 +192,4 @@
             }
         });
     }
-    
-    $(document).ready(function() {
-            var source = new EventSource("/default-sse-endpoint");       
-            source.onmessage = function (event) {
-                if (event.data === "Playing") {
-                    startPlayback();
-                }
-                else if (event.data === "Paused") {
-                    pausePlayback();
-                }
-            }
-    })
 </script>

@@ -134,8 +134,11 @@ namespace Mediaverse.Web.Controllers
         {
             try
             {
-                var playlist = await _mediator.Send(command, cancellationToken);
-                return RedirectToAction("Playlist", new {playlistId = playlist.Id});
+                await _mediator.Send(command, cancellationToken);
+                
+                await _service.SendEventAsync("playlist_updated", cancellationToken);
+
+                return Ok();
             }
             catch (Exception exception)
             {
@@ -150,8 +153,11 @@ namespace Mediaverse.Web.Controllers
         {
             try
             {
-                var playlist = await _mediator.Send(command, cancellationToken);
-                return RedirectToAction("Playlist", new {playlistId = playlist.Id});
+                await _mediator.Send(command, cancellationToken);
+
+                await _service.SendEventAsync("playlist_updated", cancellationToken);
+                
+                return Ok();
             }
             catch (Exception exception)
             {
@@ -160,11 +166,20 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpPost]
-        public async Task ChangeContentPlayerState(ChangeContentPlayerStateCommand command)
+        public async Task<ActionResult> ChangeContentPlayerState(ChangeContentPlayerStateCommand command)
         {
-            await _mediator.Send(command);
+            try
+            {
+                await _mediator.Send(command);
+                
+                await _service.SendEventAsync(command.State);
 
-            await _service.SendEventAsync(command.State);
+                return Ok();
+            }
+            catch (Exception exception)
+            { 
+                return BadRequest(new {message = exception.Message});
+            }
         }
 
         [HttpGet]
@@ -176,12 +191,20 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Playlist(Guid playlistId, CancellationToken cancellationToken)
+        public async Task<ActionResult> Playlist(Guid roomId, CancellationToken cancellationToken)
         {
-            var query = new GetPlaylistQuery {PlaylistId = playlistId};
+            var query = new GetPlaylistQuery {RoomId = roomId};
             var playlist = await _mediator.Send(query, cancellationToken);
             return PartialView(playlist);
         }
+        
+        // [HttpGet]
+        // public async Task<ActionResult> CurrentlyPlayingContent(Guid roomId, CancellationToken cancellationToken)
+        // {
+        //     var query = new GetPlaylistQuery {RoomId = playlistId};
+        //     var playlist = await _mediator.Send(query, cancellationToken);
+        //     return PartialView(playlist);
+        // }
 
         [HttpPost]
         public async Task<ActionResult> SwitchContent(SwitchContentCommand command, CancellationToken cancellationToken)
@@ -189,6 +212,8 @@ namespace Mediaverse.Web.Controllers
             try
             {
                 var content = await _mediator.Send(command, cancellationToken);
+                
+                
                 return PartialView("ContentPlayer", content);
             }
             catch (Exception exception)

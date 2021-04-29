@@ -6,6 +6,6 @@ namespace Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist
 {
     public class GetPlaylistQuery : IRequest<PlaylistDto>
     {
-        public Guid PlaylistId { get; set; }
+        public Guid RoomId { get; set; }
     }
 }
