@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mediaverse.Web.Controllers
 {
+    [Authorize]
     public class ContentConsumptionController : Controller
     {
         private readonly IMediator _mediator;

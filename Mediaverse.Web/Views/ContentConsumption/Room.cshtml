@@ -7,7 +7,7 @@
 }
 
 <h1 class="display-4" style="display: inline-block; padding-left: 7%"><strong>@Model.Name</strong></h1>
-<label style="padding-left: 10%">Join code: @Model.Token</label>
+<label style="padding-left: 12%; padding-right: 2%; font-size: 18px"><strong>Join code</strong>: <u>@Model.Token</u></label>
 <input type="button" value="Copy link to clipboard" onclick="copyToClipboard('@Url.ActionLink("JoinRoomByLink")?roomToken=@Model.Token')">
 <div style="padding-top: 2%; padding-left:7%">
     <div class="room">
