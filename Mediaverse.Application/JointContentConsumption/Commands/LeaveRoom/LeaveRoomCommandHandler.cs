@@ -40,6 +40,15 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.LeaveRoom
 
                 room.Leave(viewer);
 
+                if (room.IsVacated())
+                {
+                    await _roomRepository.DeleteAsync(room.Id, cancellationToken);
+                }
+                else
+                {
+                    await _roomRepository.UpdateAsync(room, cancellationToken);
+                }
+                
                 return Unit.Value;
             }
             catch (InformativeException exception)

@@ -143,7 +143,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public void Leave(Viewer viewer)
         {
             _ = viewer ?? throw new ArgumentNullException(nameof(viewer));
-            if (!_viewers.Contains(viewer))
+            if (!_viewers.Contains(viewer) && !viewer.Equals(Host))
             {
                 throw new InformativeException("Viewer is not in the room");
             }
@@ -159,17 +159,27 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 _viewers.Remove(viewer);
             }
         }
+
+        public bool IsVacated() => _viewers.Count == 0 && Host == null;
         
         private bool IsSpotAvailable => _viewers.Count < _maxViewersQuantity;
 
         private void SelectNewHost()
         {
             var random = new Random();
-            
-            int newHostIndex = random.Next(0, _viewers.Count - 1);
-            Host = _viewers[newHostIndex];
-            
-            _viewers.Remove(Host);
+
+            if (_viewers.Count > 0)
+            {
+                int newHostIndex =
+                    random.Next(0, _viewers.Count - 1);
+                Host = _viewers[newHostIndex];
+
+                _viewers.Remove(Host);
+            }
+            else
+            {
+                Host = null;
+            }
         }
     }
 }

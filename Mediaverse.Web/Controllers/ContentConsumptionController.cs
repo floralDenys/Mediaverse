@@ -122,10 +122,10 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpPost]
-        public async Task LeaveRoom(Guid roomId, CancellationToken cancellationToken)
+        public async Task LeaveRoom(Guid roomId)
         {
             var command = new LeaveRoomCommand {RoomId = roomId, ViewerId = User.GetCurrentUserId()};
-            await _mediator.Send(command, cancellationToken);
+            await _mediator.Send(command, CancellationToken.None);
         }
 
         [HttpPost]

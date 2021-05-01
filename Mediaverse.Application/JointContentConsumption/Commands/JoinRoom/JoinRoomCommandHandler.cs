@@ -37,7 +37,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.JoinRoom
                              ?? throw new ArgumentException("Viewer could not be found");
 
                 var room = await _roomRepository.GetAsync(request.RoomToken, cancellationToken)
-                           ?? throw new ArgumentException("Room could not be found");
+                           ?? throw new InformativeException("Room could not be found");
 
                 room.Join(viewer);
 

@@ -40,7 +40,7 @@ namespace Mediaverse.Application.JointContentConsumption.Queries.GetRoom
             try
             {
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
-                    ?? throw new ArgumentException("Room could not be found");
+                    ?? throw new InformativeException("Room could not be found");
                 
                 return _mapper.Map<RoomDto>(room);
             }

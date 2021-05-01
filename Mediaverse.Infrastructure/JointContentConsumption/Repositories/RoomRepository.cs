@@ -103,12 +103,12 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public Task DeleteAsync(Guid roomId, CancellationToken cancellationToken)
+        public async Task DeleteAsync(Guid roomId, CancellationToken cancellationToken)
         {
-            var roomDto = _applicationDbContext.Rooms.FindAsync(roomId);
+            var roomDto = await _applicationDbContext.Rooms.FindAsync(roomId);
             _applicationDbContext.Remove(roomDto);
 
-            return _applicationDbContext.SaveChangesAsync(cancellationToken);
+            await _applicationDbContext.SaveChangesAsync(cancellationToken);
         }
 
         private async Task<Room> ConvertRoomAsync(RoomDto roomDto, CancellationToken cancellationToken)
