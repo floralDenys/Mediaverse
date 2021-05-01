@@ -64,7 +64,17 @@
         });
     
         function refreshCurrentlyPlayingContent() {
-            
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CurrentlyPlayingContent", "ContentConsumption")?roomId=@Model.Id',
+                success: function(res) {
+                    $('#contentPlayerContainer').html(res);
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    const error = JSON.parse(xhr.responseText);
+                    showModal("Operation attempt failed", error.message)
+                }
+            });
         }
         
         function refreshPlaylist() {
@@ -81,20 +91,20 @@
             });
         }
 
-    // window.addEventListener('beforeunload', function (e) {
-    //     leaveRoom();
-    // });
+    window.addEventListener('beforeunload', function (e) {
+        leaveRoom();
+    });
 
     const leaveRoom = function(){
-        // $.ajax({
-        //     type: "POST",
-        //     url: '@Url.Action("LeaveRoom", "ContentConsumption")',
-        //     data: '@Model.Id',
-        //     error: function(xhr, ajaxOptions, thrownError) {
-        //         const error = JSON.parse(xhr.responseText);
-        //         showModal(" attempt failed", error.message)
-        //     }
-        // });
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("LeaveRoom", "ContentConsumption")',
+            data: '@Model.Id',
+            error: function(xhr, ajaxOptions, thrownError) {
+                const error = JSON.parse(xhr.responseText);
+                showModal(" attempt failed", error.message)
+            }
+        });
     }
      
 
@@ -180,17 +190,17 @@
         changeContentPlayerState("paused", currentPlaybackTime);         
     }
     
-    const changeContentPlayerState = function (contentPlayerState){
+    const changeContentPlayerState = function (contentPlayerState, currentPlaybackTime){
+        const command = {
+                RoomId: '@Model.Id',
+                State: contentPlayerState,
+                CurrentPlaybackTimeInSeconds: currentPlaybackTime
+            };
+        
         $.ajax({
             type: "POST",
             url: '@Url.Action("ChangeContentPlayerState", "ContentConsumption")',
-            data: {
-                RoomId: '@Model.Id',
-                State: contentPlayerState
-            },
-            success: function(res) {
-               
-            },
+            data: command,
             error: function(xhr, ajaxOptions, thrownError) {
                 const error = JSON.parse(xhr.responseText);
                 showModal("Operation attempt failed", error.message)

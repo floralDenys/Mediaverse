@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Mediaverse.Domain.Common;
+using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Microsoft.Extensions.Logging;
 
@@ -25,12 +27,33 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeContentP
         {
             try
             {
+                var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
+                    ?? throw new InformativeException("Could not find the room");
+
+                room.CurrentContent.PlayerState = ConvertFromString(request.State);
+                room.CurrentContent.PlayingTime = (long)request.CurrentPlaybackTimeInSeconds;
+                room.CurrentContent.LastUpdatedPlayingTime = DateTime.Now;
+
+                await _roomRepository.UpdateAsync(room, cancellationToken);
+
                 return Unit.Value;
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception.ToString());
                 throw;
+            }
+        }
+
+        private ContentPlayerState ConvertFromString(string state)
+        {
+            if (state == "playing")
+            {
+                return ContentPlayerState.Playing;
+            }
+            else
+            {
+                return ContentPlayerState.Paused;
             }
         }
     }

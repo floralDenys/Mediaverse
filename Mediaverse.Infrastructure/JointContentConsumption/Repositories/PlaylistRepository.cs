@@ -69,7 +69,6 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         {
             var playlistDto = _applicationDbContext.Playlists.Find(playlist.Id);
             playlistDto.IsTemporary = playlist.IsTemporary;
-            playlistDto.CurrentlyPlayingContentIndex = playlist.CurrentlyPlayingContentIndex;
             playlistDto.PlaylistItems.AddRange(playlist
                 .Where(pi => !playlistDto.PlaylistItems
                     .Any(pid => 
@@ -116,8 +115,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
                 playlistDto.Name,
                 new Viewer(
                     new UserProfile(owner.Id, owner.UserName, owner.Type == UserType.Member)),
-                playlistItems,
-                playlistDto.CurrentlyPlayingContentIndex);
+                playlistItems);
         }
 
         private async Task<PlaylistItem> GetPlaylistItem(PlaylistItemDto playlistItemDto)

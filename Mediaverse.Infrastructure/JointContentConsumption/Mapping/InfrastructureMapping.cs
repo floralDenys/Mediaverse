@@ -30,8 +30,6 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
                 .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dst => dst.OwnerId, opt => opt.MapFrom(src => src.Owner.Profile.Id))
                 .ForMember(dst => dst.IsTemporary, opt => opt.MapFrom(src => src.IsTemporary))
-                .ForMember(dst => dst.CurrentlyPlayingContentIndex,
-                    opt => opt.MapFrom(src => src.CurrentlyPlayingContentIndex))
                 .ForMember(dst => dst.PlaylistItems, opt => opt.MapFrom(src => src.ToList()));
 
             CreateMap<PlaylistItem, PlaylistItemDto>()
@@ -62,7 +60,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
                         src.ExternalId,
                         src.Source,
                         src.Type),
-                    src.PlayingState,
+                    src.PlayerState,
                     src.PlayingTime,
                     src.LastUpdatedPlayingTime))
                 .ReverseMap()

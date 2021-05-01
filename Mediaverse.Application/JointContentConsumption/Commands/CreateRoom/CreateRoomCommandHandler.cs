@@ -52,14 +52,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
                     await _playlistRepository.AddAsync(playlist, cancellationToken);
                     request.PlaylistId = generatedPlaylistId;
                 }
-                else
-                {
-                    // reloading the playlist
-                    var playlist = await _playlistRepository.GetAsync(request.PlaylistId, cancellationToken);
-                    playlist.CurrentlyPlayingContentIndex = null;
-                    await _playlistRepository.UpdateAsync(playlist, cancellationToken);
-                }
-                
+
                 Guid generatedRoomId = _identifierProvider.GenerateGuid();
                 string invitationToken = _identifierProvider.GenerateToken(generatedRoomId);
 

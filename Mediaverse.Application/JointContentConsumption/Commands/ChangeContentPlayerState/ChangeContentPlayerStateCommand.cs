@@ -7,6 +7,6 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeContentP
     {
         public Guid RoomId { get; set; }
         public string State { get; set; }
-        public long CurrentPlaybackTimeInSeconds { get; set; }
+        public double CurrentPlaybackTimeInSeconds { get; set; }
     }
 }

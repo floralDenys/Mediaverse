@@ -6,6 +6,6 @@
         public long Height { get; set; }
         public string Html { get; set; }
         public string State { get; set; }
-        public long PlayingTime { get; set; }
+        public double PlayingTime { get; set; }
     }
 }

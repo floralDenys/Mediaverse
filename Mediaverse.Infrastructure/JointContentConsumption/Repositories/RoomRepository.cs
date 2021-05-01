@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +33,10 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
 
         public async Task<Room> GetAsync(Guid roomId, CancellationToken cancellationToken)
         {
-            var roomDto = await _applicationDbContext.Rooms.FindAsync(roomId);
+            var roomDto = await _applicationDbContext.Rooms
+                .Include(r => r.Viewers)
+                .Include(r => r.CurrentContent)
+                .FirstOrDefaultAsync(r => r.Id == roomId, cancellationToken);
 
             return await ConvertRoomAsync(roomDto, cancellationToken);
         }
@@ -41,6 +45,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
         {
             var roomDto = _applicationDbContext.Rooms
                 .Include(r => r.Viewers)
+                .Include(r => r.CurrentContent)
                 .First(r => r.Token.Equals(roomToken));
             
             return await ConvertRoomAsync(roomDto, cancellationToken);
@@ -57,7 +62,9 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
 
         public async Task UpdateAsync(Room room, CancellationToken cancellationToken)
         {
-            var roomDto = await _applicationDbContext.Rooms.FindAsync(room.Id);
+            var roomDto = await _applicationDbContext.Rooms
+                .Include(rd => rd.Viewers)
+                .FirstOrDefaultAsync(rd => rd.Id == room.Id, cancellationToken);
             
             roomDto.Name = room.Name;
             roomDto.Description = room.Description;
@@ -65,12 +72,12 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
             roomDto.ActivePlaylistId = room.ActivePlaylistId;
             roomDto.MaxViewersQuantity = room.MaxViewersQuantity;
 
-            if (room.CurrentContent != null 
+            if (room.CurrentContent != null && roomDto.CurrentContent != null
                 && room.CurrentContent.ContentId.ExternalId == roomDto.CurrentContent.ExternalId
                 && room.CurrentContent.ContentId.ContentSource == roomDto.CurrentContent.Source
                 && room.CurrentContent.ContentId.ContentType == roomDto.CurrentContent.Type)
             {
-                roomDto.CurrentContent.PlayingState = room.CurrentContent.PlayerState;
+                roomDto.CurrentContent.PlayerState = room.CurrentContent.PlayerState;
                 roomDto.CurrentContent.PlayingTime = room.CurrentContent.PlayingTime;
                 roomDto.CurrentContent.LastUpdatedPlayingTime = room.CurrentContent.LastUpdatedPlayingTime;
             }

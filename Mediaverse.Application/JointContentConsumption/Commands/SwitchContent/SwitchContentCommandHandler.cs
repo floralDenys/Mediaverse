@@ -7,33 +7,28 @@ using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos
 using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
+using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
 {
-    public class SwitchContentCommandHandler : IRequestHandler<SwitchContentCommand, ContentDto>
+    public class SwitchContentCommandHandler : IRequestHandler<SwitchContentCommand>
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IPlaylistRepository _playlistRepository;
-        private readonly IContentRepository _contentRepository;
         private readonly ILogger<SwitchContentCommandHandler> _logger;
-        private readonly IMapper _mapper;
 
         public SwitchContentCommandHandler(
             IRoomRepository roomRepository,
             IPlaylistRepository playlistRepository,
-            IContentRepository contentRepository,
-            ILogger<SwitchContentCommandHandler> logger,
-            IMapper mapper)
+            ILogger<SwitchContentCommandHandler> logger)
         {
             _roomRepository = roomRepository;
             _playlistRepository = playlistRepository;
-            _contentRepository = contentRepository;
             _logger = logger;
-            _mapper = mapper;
         }
 
-        public async Task<ContentDto> Handle(SwitchContentCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(SwitchContentCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -45,13 +40,18 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
                                                                       $"does not exist");
 
                 var contentId = request.Direction == SwitchContentDirection.Next
-                    ? playlist.PlayNextContent()
-                    : playlist.PlayPreviousContent();
+                    ? playlist.GetNextContent(room.CurrentContent?.ContentId)
+                    : playlist.GetPreviousContent(room.CurrentContent?.ContentId);
 
-                await _playlistRepository.UpdateAsync(playlist, cancellationToken);
-                
-                var content = await _contentRepository.GetAsync(contentId, cancellationToken);
-                return _mapper.Map<ContentDto>(content);
+                room.CurrentContent = new CurrentContent(
+                    contentId,
+                    ContentPlayerState.Paused,
+                    playingTime: 0,
+                    lastUpdatedPlayingTime: DateTime.Now);
+
+                await _roomRepository.UpdateAsync(room, cancellationToken);
+
+                return Unit.Value;
             }
             catch (InformativeException exception)
             {

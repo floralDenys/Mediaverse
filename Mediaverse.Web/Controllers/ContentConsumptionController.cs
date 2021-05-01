@@ -165,6 +165,23 @@ namespace Mediaverse.Web.Controllers
                 return BadRequest(new {message = exception.Message});
             }
         }
+        
+        [HttpPost]
+        public async Task<ActionResult> SwitchContent(SwitchContentCommand command, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _mediator.Send(command, cancellationToken);
+                
+                await _service.SendEventAsync("switched_content", cancellationToken);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new {message = exception.Message});
+            }
+        }
 
         [HttpPost]
         public async Task<ActionResult> ChangeContentPlayerState(ChangeContentPlayerStateCommand command)
@@ -205,22 +222,6 @@ namespace Mediaverse.Web.Controllers
             var query = new GetCurrentlyPlayingContentQuery {RoomId = roomId}; 
             var roomDto = await _mediator.Send(query, cancellationToken);
             return PartialView("ContentPlayer", roomDto);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> SwitchContent(SwitchContentCommand command, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var content = await _mediator.Send(command, cancellationToken);
-                
-                
-                return PartialView("ContentPlayer", content);
-            }
-            catch (Exception exception)
-            {
-                return BadRequest(new {message = exception.Message});
-            }
         }
     }
 }

@@ -7,9 +7,9 @@ namespace Mediaverse.Domain.JointContentConsumption.ValueObjects
     {
         public ContentId ContentId { get; }
         public ContentPlayerState PlayerState { get; set; }
-        private long _playingTime;
+        private double _playingTime;
 
-        public long PlayingTime
+        public double PlayingTime
         {
             get => _playingTime
                    + (PlayerState == ContentPlayerState.Playing 
@@ -22,7 +22,7 @@ namespace Mediaverse.Domain.JointContentConsumption.ValueObjects
         public CurrentContent(
             ContentId contentId,
             ContentPlayerState playerState,
-            long playingTime,
+            double playingTime,
             DateTime lastUpdatedPlayingTime)
         {
             ContentId = contentId;

@@ -12,8 +12,8 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos
         public MediaContentSource Source { get; set; }
         public MediaContentType Type { get; set; }
         
-        public ContentPlayerState PlayingState { get; set; }
-        public long PlayingTime { get; set; }
+        public ContentPlayerState PlayerState { get; set; }
+        public double PlayingTime { get; set; }
         public DateTime LastUpdatedPlayingTime { get; set; }
     }
 }
