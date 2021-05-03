@@ -24,7 +24,8 @@
                     window.location.href = res.redirectToUrl;
                 },
                 error: function(xhr, ajaxOptions, thrownError) {
-                    alert(xhr.message);
+                    const error = JSON.parse(xhr.responseText);
+                    showModal("Sign In attempt failed", error.message)
                 }
             });
         };

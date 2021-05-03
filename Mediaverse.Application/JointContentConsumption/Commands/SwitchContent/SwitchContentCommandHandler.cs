@@ -42,7 +42,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
                                                                       $"does not exist");
 
                 ContentId contentId;
-                if (playlist.Contains(room.CurrentContent.ContentId))
+                if (playlist.Contains(room.CurrentContent?.ContentId))
                 {
                     contentId = request.Direction == SwitchContentDirection.Next
                         ? playlist.GetNextContent(room.CurrentContent?.ContentId)

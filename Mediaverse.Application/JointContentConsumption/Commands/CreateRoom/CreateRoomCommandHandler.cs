@@ -66,7 +66,11 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
                     request.Type,
                     new Invitation(invitationToken),
                     request.PlaylistId,
-                    request.Description);
+                    request.Description)
+                {
+                    MaxViewersQuantity = request.MaxViewersQuantity
+                };
+                    
 
                 await _roomRepository.AddAsync(room, cancellationToken);
 
