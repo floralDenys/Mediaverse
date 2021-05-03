@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Mediaverse.Domain.JointContentConsumption.Entities;
+using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
 using Mediaverse.Infrastructure.Common.Persistence;
@@ -29,6 +30,16 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories
             _applicationDbContext = applicationDbContext;
             _viewerRepository = viewerRepository;
             _mapper = mapper;
+        }
+
+        public IEnumerable<Room> GetRooms(RoomType type, CancellationToken cancellationToken)
+        {
+            var rooms = _applicationDbContext.Rooms
+                .Include(r => r.Viewers)
+                .Where(r => r.Type == type).ToList();
+            return rooms.Select(r => ConvertRoomAsync(r, cancellationToken))
+                .Select(t => t.Result)
+                .ToList();
         }
 
         public async Task<Room> GetAsync(Guid roomId, CancellationToken cancellationToken)

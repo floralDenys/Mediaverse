@@ -15,6 +15,7 @@ using Mediaverse.Application.JointContentConsumption.Queries.GetAvailablePlaylis
 using Mediaverse.Application.JointContentConsumption.Queries.GetCurrentlyPlayingContent;
 using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist;
 using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist.Dtos;
+using Mediaverse.Application.JointContentConsumption.Queries.GetPublicRooms;
 using Mediaverse.Application.JointContentConsumption.Queries.GetRoom;
 using Mediaverse.Infrastructure.Authentication.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -222,6 +223,14 @@ namespace Mediaverse.Web.Controllers
             var query = new GetCurrentlyPlayingContentQuery {RoomId = roomId}; 
             var roomDto = await _mediator.Send(query, cancellationToken);
             return PartialView("ContentPlayer", roomDto);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetPublicRooms(CancellationToken cancellationToken)
+        {
+            var query = new GetPublicRoomsQuery();
+            var rooms = await _mediator.Send(query, cancellationToken);
+            return PartialView("PublicRooms", rooms);
         }
     }
 }

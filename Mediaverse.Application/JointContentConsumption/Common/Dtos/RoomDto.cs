@@ -11,5 +11,7 @@ namespace Mediaverse.Application.JointContentConsumption.Common.Dtos
         public Guid ActivePlaylistId { get; set; }
         public ContentIdDto ContentId { get; set; }
         public string Token { get; set; }
+        public int MaxViewersQuantity { get; set; }
+        public int CurrentViewersQuantity { get; set; }
     }
 }

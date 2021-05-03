@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Mediaverse.Application.JointContentConsumption.Common.Dtos.RoomDto>
+
+<div class="text-center">
+    <ul style="text-align: center; list-style: none inside;">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var publicRoom in Model)
+            {
+                <li>
+                    @await Html.PartialAsync("PublicRoom", publicRoom)
+                </li>
+            }
+        }
+    </ul>
+</div>
+
+<script type="text/javascript">
+    const joinPublicRoom = function(token) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("JoinRoom", "ContentConsumption")',
+                data: { roomToken: token },
+                success: function(res) {
+                    window.location.href = res.redirectToUrl;
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(xhr.message);
+                }
+            });
+        };
+</script>
