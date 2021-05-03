@@ -58,7 +58,7 @@ namespace Mediaverse.Web.Controllers
             availablePlaylists.Add(new SelectablePlaylistDto
             {
                 Id = default,
-                Name = "Create temporary"
+                Name = "Create new"
             });
             
             var command = new CreateRoomCommand {HostId = viewerId, AvailablePlaylists = availablePlaylists};

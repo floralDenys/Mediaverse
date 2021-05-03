@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Mediaverse.Domain.JointContentConsumption.Entities;
 using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
@@ -41,7 +42,7 @@ namespace Mediaverse.Domain.Tests.JointContentConsumption
 
         [Theory]
         [MemberData(nameof(GoodRoomsData))]
-        public void Room_update_selected_playlist_success(
+        public void Room_update_selected_playlist(
             string roomName,
             Viewer host,
             RoomType type,
@@ -65,6 +66,98 @@ namespace Mediaverse.Domain.Tests.JointContentConsumption
             Assert.Equal(playlist.Id, room.ActivePlaylistId);
         }
 
+        [Theory]
+        [MemberData(nameof(GoodRoomsData))]
+        public void Room_join(
+            string roomName,
+            Viewer host,
+            RoomType type,
+            Invitation invitation)
+        {
+            var actualViewer = new Viewer(
+                new UserProfile(
+                    id: Guid.NewGuid(),
+                    name: "someusername",
+                    isMember: false));
+            
+            var room = new Room(
+                Guid.NewGuid(),
+                roomName,
+                host,
+                type,
+                invitation,
+                Guid.NewGuid());
+            
+            room.Join(actualViewer);
+            
+            Assert.False(room.IsVacated());
+            Assert.NotEmpty(room.Viewers);
+            Assert.Equal(actualViewer, room.Viewers.First());
+            Assert.NotEqual(actualViewer, room.Host);
+        }
+        
+        [Theory]
+        [MemberData(nameof(GoodRoomsData))]
+        public void Room_leave(
+            string roomName,
+            Viewer host,
+            RoomType type,
+            Invitation invitation)
+        {
+            var viewer = new Viewer(
+                new UserProfile(
+                    id: Guid.NewGuid(),
+                    name: "someusername",
+                    isMember: false));
+            
+            var room = new Room(
+                Guid.NewGuid(),
+                roomName,
+                host,
+                type,
+                invitation,
+                Guid.NewGuid());
+            
+            room.Join(viewer);
+            room.Leave(host);
+            
+            Assert.False(room.IsVacated());
+            Assert.Empty(room.Viewers);
+            Assert.Equal(viewer, room.Host);
+            
+            room.Leave(viewer);
+            
+            Assert.True(room.IsVacated());
+            Assert.Empty(room.Viewers);
+            Assert.Null(room.Host);
+        }
+        
+        [Theory]
+        [MemberData(nameof(GoodRoomsData))]
+        public void Room_play_content(
+            string roomName,
+            Viewer host,
+            RoomType type,
+            Invitation invitation)
+        {
+            var actualContentId = new ContentId(
+                "someExternalId",
+                MediaContentSource.YouTube,
+                MediaContentType.Video);
+            
+            var room = new Room(
+                Guid.NewGuid(),
+                roomName,
+                host,
+                type,
+                invitation,
+                Guid.NewGuid());
+            
+            room.PlayContent(actualContentId);
+            
+            Assert.Equal(actualContentId, room.CurrentContent.ContentId);
+        }
+        
         public static IEnumerable<object []> GoodRoomsData()
         {
             yield return new object[]
