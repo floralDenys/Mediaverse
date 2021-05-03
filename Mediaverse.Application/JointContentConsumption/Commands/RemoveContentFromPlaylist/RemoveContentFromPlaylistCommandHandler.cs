@@ -48,10 +48,9 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.RemoveContentF
 
                 var contentId = _mapper.Map<ContentId>(request.ContentId);
 
-                if (room.CurrentContent.ContentId.Equals(contentId))
+                if (contentId.Equals(room.CurrentContent?.ContentId))
                 {
-                    throw new InformativeException("Could not remove currently playing content. " +
-                                                   "Please change playing content and retry");
+                    throw new InformativeException("Could not remove currently playing content.");
                 }
                 
                 activePlaylist.Remove(contentId);
