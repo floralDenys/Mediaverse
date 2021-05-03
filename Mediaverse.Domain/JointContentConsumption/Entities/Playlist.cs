@@ -146,7 +146,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             return previousPlaylistItem.ContentId;
         }
 
-        private bool Contains(ContentId contentId) => _items
+        public bool Contains(ContentId contentId) => _items
             .Select(x => x.ContentId)
             .Contains(contentId);
     }

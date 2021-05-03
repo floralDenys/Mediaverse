@@ -11,6 +11,7 @@ using Mediaverse.Application.JointContentConsumption.Commands.CreateRoom;
 using Mediaverse.Application.JointContentConsumption.Commands.DeletePlaylist;
 using Mediaverse.Application.JointContentConsumption.Commands.JoinRoom;
 using Mediaverse.Application.JointContentConsumption.Commands.LeaveRoom;
+using Mediaverse.Application.JointContentConsumption.Commands.PlaySpecificContent;
 using Mediaverse.Application.JointContentConsumption.Commands.RemoveContentFromPlaylist;
 using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent;
 using Mediaverse.Application.JointContentConsumption.Queries.GetAvailablePlaylists;
@@ -186,6 +187,23 @@ namespace Mediaverse.Web.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult> PlaySpecificContent(PlaySpecificContentCommand command, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _mediator.Send(command, cancellationToken);
+                
+                await _service.SendEventAsync("switched_content", cancellationToken);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new {message = exception.Message});
+            }
+        }
+        
         [HttpPost]
         public async Task<ActionResult> ChangeContentPlayerState(ChangeContentPlayerStateCommand command)
         {

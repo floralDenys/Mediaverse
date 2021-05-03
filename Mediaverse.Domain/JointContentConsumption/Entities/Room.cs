@@ -161,6 +161,17 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         }
 
         public bool IsVacated() => _viewers.Count == 0 && Host == null;
+
+        public void PlayContent(ContentId contentId)
+        {
+            _ = contentId ?? throw new ArgumentNullException(nameof(contentId));
+            
+            CurrentContent = new CurrentContent(
+                contentId,
+                ContentPlayerState.Paused,
+                playingTime: 0,
+                lastUpdatedPlayingTime: DateTime.Now);
+        }
         
         private bool IsSpotAvailable => _viewers.Count < _maxViewersQuantity;
 

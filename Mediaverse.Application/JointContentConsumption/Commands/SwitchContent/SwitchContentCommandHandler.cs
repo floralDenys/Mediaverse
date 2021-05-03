@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -40,9 +41,17 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
                                ?? throw new InvalidOperationException($"Playlist {room.ActivePlaylistId.ToString()} " +
                                                                       $"does not exist");
 
-                var contentId = request.Direction == SwitchContentDirection.Next
-                    ? playlist.GetNextContent(room.CurrentContent?.ContentId)
-                    : playlist.GetPreviousContent(room.CurrentContent?.ContentId);
+                ContentId contentId;
+                if (playlist.Contains(room.CurrentContent.ContentId))
+                {
+                    contentId = request.Direction == SwitchContentDirection.Next
+                        ? playlist.GetNextContent(room.CurrentContent?.ContentId)
+                        : playlist.GetPreviousContent(room.CurrentContent?.ContentId);
+                }
+                else
+                {
+                    contentId = playlist.FirstOrDefault()?.ContentId;
+                }
 
                 room.CurrentContent = new CurrentContent(
                     contentId,

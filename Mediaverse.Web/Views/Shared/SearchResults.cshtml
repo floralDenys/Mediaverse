@@ -3,7 +3,7 @@
 <div class="search-result-text">
     @if (Model.Previews != null && Model.Previews.Any())
     {
-        <h1 class="display-4">Here what have found:</h1>
+        <h1 class="display-4">Here what we have found:</h1>
     }
     else if (Model.Previews != null)
     {
@@ -20,3 +20,28 @@
         }
     }
 </div>
+
+<script type="text/javascript">
+    function playSpecificContent(externalContentId, contentSource, contentType) {
+        let contentId = {
+            ExternalId: externalContentId,
+            ContentSource: contentSource,
+            contentType: contentType
+        }
+        
+        let command = {
+            ContentId: contentId,
+            RoomId: $('#RoomId').val()
+        }
+        
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("PlaySpecificContent", "ContentConsumption")',
+            data: command,
+            error: function(xhr, ajaxOptions, thrownError) {
+                const error = JSON.parse(xhr.responseText);
+                showModal("Operation attempt failed", error.message)
+            }
+        });
+    }
+</script>
