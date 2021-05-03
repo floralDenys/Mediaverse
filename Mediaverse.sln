@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mediaverse.Application", "M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mediaverse.Web", "Mediaverse.Web\Mediaverse.Web.csproj", "{73D80158-3D2F-4A34-97B3-32606874695C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mediaverse.Domain.Tests", "Mediaverse.Domain.Tests\Mediaverse.Domain.Tests.csproj", "{A8A0B1B8-2F42-4760-BFFF-5D73F498641F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{73D80158-3D2F-4A34-97B3-32606874695C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73D80158-3D2F-4A34-97B3-32606874695C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73D80158-3D2F-4A34-97B3-32606874695C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8A0B1B8-2F42-4760-BFFF-5D73F498641F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8A0B1B8-2F42-4760-BFFF-5D73F498641F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8A0B1B8-2F42-4760-BFFF-5D73F498641F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8A0B1B8-2F42-4760-BFFF-5D73F498641F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
