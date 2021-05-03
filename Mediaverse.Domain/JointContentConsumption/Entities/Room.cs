@@ -37,7 +37,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public Viewer Host { get; private set; }
 
         private IList<Viewer> _viewers;
-        private int _maxViewersQuantity = int.MaxValue;
+        private int _maxViewersQuantity = 20;
         
         public Guid? ActivePlaylistId { get; private set; }
         public bool IsPlaylistSelected => ActivePlaylistId.HasValue;
