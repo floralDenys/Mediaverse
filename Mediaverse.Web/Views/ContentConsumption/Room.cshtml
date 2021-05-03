@@ -8,7 +8,7 @@
 
 @Html.Hidden("RoomId", Model.Id)
 <h1 class="display-4" style="display: inline-block; padding-left: 7%"><strong>@Model.Name</strong></h1>
-<input type="button" value="Close" onclick="copyToClipboard('@Url.ActionLink("JoinRoomByLink")?roomToken=@Model.Token')">
+<input type="button" value="Close" onclick="closeRoom()">
 <label style="padding-left: 12%; padding-right: 2%; font-size: 18px"><strong>Join code</strong>: <u>@Model.Token</u></label>
 <input type="button" value="Copy link to clipboard" onclick="copyToClipboard('@Url.ActionLink("JoinRoomByLink")?roomToken=@Model.Token')">
 <div style="padding-top: 2%; padding-left:7%">
@@ -209,4 +209,19 @@
             }
         });
     }
+    
+    const closeRoom = function (){           
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("CloseRoom", "ContentConsumption")',
+                data: { roomId: '@Model.Id' },
+                success: function(res) {
+                    window.location.href = res.redirectToUrl;
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    const error = JSON.parse(xhr.responseText);
+                    showModal("Operation attempt failed", error.message)
+                }
+            });
+        }
 </script>

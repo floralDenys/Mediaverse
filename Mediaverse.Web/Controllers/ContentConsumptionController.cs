@@ -87,9 +87,22 @@ namespace Mediaverse.Web.Controllers
         }
 
         [HttpPost]
-        public async Task CloseRoom(CloseRoomCommand command, CancellationToken cancellationToken)
+        public async Task<ActionResult> CloseRoom(Guid roomId, CancellationToken cancellationToken)
         {
-            await _mediator.Send(command, cancellationToken);
+            try
+            {
+                var command = new CloseRoomCommand {RoomId = roomId, MemberId = User.GetCurrentUserId()};
+                await _mediator.Send(command, cancellationToken);
+
+                return Json(new
+                {
+                    redirectToUrl = @Url.Action("Index", "ContentConsumption")
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new {message = exception.Message});
+            }
         }
 
         [AllowAnonymous]
