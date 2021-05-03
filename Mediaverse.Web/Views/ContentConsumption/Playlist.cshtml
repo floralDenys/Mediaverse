@@ -4,9 +4,13 @@
 <div id="playlist" style="width: 350px; height: 400px; text-align: left; background-color: #bedfea;" align="right" class="playlist">
     <div style="height: 25px">
         Active playlist:
-        <strong>@Model.Name</strong>
+        @Html.DropDownList(
+            "SelectedPlaylist",
+            new SelectList(Model.AvailablePlaylists, "Id", "Name", Model.Id), 
+            new {@class="selectBox", style="width: 120px"})
+        <input style="width: 80px" type="button" value="Delete" onclick="deletePlaylist()"/>
     </div>
-    <hr size="3" style="margin: 10px"/>
+    <hr size="3" style="margin: 20px 10px 10px;"/>
     <div class="text-center">
         @if (Model.Items != null && Model.Items.Any())
         {
@@ -32,3 +36,29 @@
         }
     </ul>
 </div>
+
+<script>
+    $('#SelectedPlaylist').on('change', function() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ChangeActivePlaylist", "ContentConsumption")',
+            data: { RoomId: $('#RoomId').val(), PlaylistId: $('#SelectedPlaylist').val() },
+            error: function(xhr, ajaxOptions, thrownError) {
+                const error = JSON.parse(xhr.responseText);
+                showModal("Something went wrong", error.message)
+            }
+        });
+    });
+    
+    function deletePlaylist(){
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("DeletePlaylist", "ContentConsumption")',
+            data: { roomId: $('#RoomId').val() },
+            error: function(xhr, ajaxOptions, thrownError) {
+                const error = JSON.parse(xhr.responseText);
+                showModal("Something went wrong", error.message)
+            }
+        });
+    }
+</script>

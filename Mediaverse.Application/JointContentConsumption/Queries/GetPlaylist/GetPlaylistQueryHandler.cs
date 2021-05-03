@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
+using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist.Dtos;
 using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Microsoft.Extensions.Logging;
@@ -42,8 +44,12 @@ namespace Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist
                 }
                 
                 var playlist = await _playlistRepository.GetAsync(room.ActivePlaylistId.Value, cancellationToken);
-                
-                return _mapper.Map<PlaylistDto>(playlist);
+                var availablePlaylists = await _playlistRepository.GetAllByViewerAsync(
+                    room.Host.Profile.Id, cancellationToken);
+
+                var dto = _mapper.Map<PlaylistDto>(playlist);
+                dto.AvailablePlaylists = _mapper.Map<IList<SelectablePlaylistDto>>(availablePlaylists);
+                return dto;
             }
             catch (Exception exception)
             {

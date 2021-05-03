@@ -8,6 +8,6 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.DeletePlaylist
     public class DeletePlaylistCommand : IRequest<IList<PlaylistDto>>
     {
         public Guid MemberId { get; set; }
-        public Guid PlaylistId { get; set; }
+        public Guid RoomId { get; set; }
     }
 }

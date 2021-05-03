@@ -2,18 +2,30 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-5">Welcome to Mediaverse</h1>
-    @Html.ActionLink("Sign In", "SignIn", "Authentication")
-    or 
-    @Html.ActionLink("Sign Up", "SignUp", "Authentication")
-    or simply
-    <input type="button" value="Stay Anonymous" onclick="createAnonymousRoom()" />
+<div class="text-center container-centered">
+    <h1 class="display-4" style="padding-top: 3%">Welcome to Mediaverse</h1>
+    <div style="padding: 20px">
+        <input type="button" value="Sign In" onclick="signIn()" style="width: 100px; height: 40px;" />
+        <span style="padding-left: 3%; padding-right: 3%; font-size: 25px">or</span>
+        <input type="button" value="Sign Up" onclick="signUp()" style="width: 100px; height: 40px;" />
+    </div>
+    <div>
+        <span style="padding-left: 3%; padding-right: 3%; font-size: 25px">or simply</span>
+        <input type="button" value="Stay Anonymous" onclick="createAnonymousRoom()" style="width: 150px; height: 40px;"/>
+    </div>
 </div>
 
 @await Html.PartialAsync("ModalDialog")
 
 <script type="text/javascript">
+    const signIn = function() {
+        window.location.href = '@Url.Action("SignIn", "Authentication")';
+    };
+
+    const signUp = function() {
+        window.location.href = '@Url.Action("SignUp", "Authentication")';
+    };
+
     const createAnonymousRoom = function() {
         $.ajax({
             type: "POST",
