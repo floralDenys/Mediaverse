@@ -23,5 +23,7 @@
 /Mediaverse.ConsoleApp/bin/
 /Mediaverse.Web/obj/
 /Mediaverse.Web/bin/
+/Mediaverse.Tests/obj/
+/Mediaverse.Tests/bin/
 /.vs/
 /obj/
