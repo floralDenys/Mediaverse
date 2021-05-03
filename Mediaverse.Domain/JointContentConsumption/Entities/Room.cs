@@ -37,10 +37,12 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public Viewer Host { get; private set; }
 
         private IList<Viewer> _viewers;
-        private int _maxViewersQuantity = int.MaxValue;
+        private int _maxViewersQuantity = 20;
         
         public Guid? ActivePlaylistId { get; private set; }
         public bool IsPlaylistSelected => ActivePlaylistId.HasValue;
+        
+        public CurrentContent CurrentContent { get; set; }
         
         public IReadOnlyList<Viewer> Viewers => (IReadOnlyList<Viewer>)_viewers;
         public int MaxViewersQuantity
@@ -95,7 +97,8 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             Invitation invitation,
             int maxViewersQuantity,
             Guid? activePlaylistId,
-            IList<Viewer> viewers) : base(id)
+            IList<Viewer> viewers,
+            CurrentContent currentContent) : base(id)
         {
             Name = name;
             Description = description;
@@ -105,6 +108,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             MaxViewersQuantity = maxViewersQuantity;
             ActivePlaylistId = activePlaylistId;
             _viewers = viewers ?? new List<Viewer>();
+            CurrentContent = currentContent;
         }
 
         public void UpdateSelectedPlaylist(Playlist playlist)
@@ -139,7 +143,7 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public void Leave(Viewer viewer)
         {
             _ = viewer ?? throw new ArgumentNullException(nameof(viewer));
-            if (!_viewers.Contains(viewer))
+            if (!_viewers.Contains(viewer) && !viewer.Equals(Host))
             {
                 throw new InformativeException("Viewer is not in the room");
             }
@@ -155,17 +159,27 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 _viewers.Remove(viewer);
             }
         }
+
+        public bool IsVacated() => _viewers.Count == 0 && Host == null;
         
         private bool IsSpotAvailable => _viewers.Count < _maxViewersQuantity;
 
         private void SelectNewHost()
         {
             var random = new Random();
-            
-            int newHostIndex = random.Next(0, _viewers.Count - 1);
-            Host = _viewers[newHostIndex];
-            
-            _viewers.Remove(Host);
+
+            if (_viewers.Count > 0)
+            {
+                int newHostIndex =
+                    random.Next(0, _viewers.Count - 1);
+                Host = _viewers[newHostIndex];
+
+                _viewers.Remove(Host);
+            }
+            else
+            {
+                Host = null;
+            }
         }
     }
 }

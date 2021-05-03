@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -8,7 +7,6 @@ using Mediaverse.Application.Authentication.Commands.SignOut;
 using Mediaverse.Application.Authentication.Commands.SignUp;
 using Mediaverse.Application.Authentication.Commands.SignUpAnonymous;
 using Microsoft.AspNetCore.Mvc;
-using Mediaverse.Web.Models;
 
 namespace Mediaverse.Web.Controllers
 {
@@ -92,12 +90,6 @@ namespace Mediaverse.Web.Controllers
             await _mediator.Send(command, cancellationToken);
             
             return RedirectToAction("Index", "Home");
-        }
-        
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
     }
 }

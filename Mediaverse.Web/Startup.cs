@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
+using Lib.AspNetCore.ServerSentEvents;
 using MediatR;
 using Mediaverse.Application.Authentication.Services;
 using Mediaverse.Application.Common.Services;
@@ -46,6 +47,11 @@ namespace Mediaverse.Web
             services.AddAutoMapper(Assembly.Load("Mediaverse.Application"));
             services.AddAutoMapper(Assembly.Load("Mediaverse.Infrastructure"));
             services.AddLogging();
+
+            services.AddServerSentEvents(options =>
+            {
+                options.KeepaliveMode = ServerSentEventsKeepaliveMode.Always;
+            });
             
             services.AddIdentity<User, IdentityRole<Guid>>(
                     options =>
@@ -101,6 +107,8 @@ namespace Mediaverse.Web
             
             app.UseEndpoints(endpoints =>
             {
+                app.MapServerSentEvents("/default-sse-endpoint");
+                
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

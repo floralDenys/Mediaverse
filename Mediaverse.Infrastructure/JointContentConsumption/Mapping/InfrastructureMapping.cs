@@ -30,8 +30,6 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
                 .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dst => dst.OwnerId, opt => opt.MapFrom(src => src.Owner.Profile.Id))
                 .ForMember(dst => dst.IsTemporary, opt => opt.MapFrom(src => src.IsTemporary))
-                .ForMember(dst => dst.CurrentlyPlayingContentIndex,
-                    opt => opt.MapFrom(src => src.CurrentlyPlayingContentIndex))
                 .ForMember(dst => dst.PlaylistItems, opt => opt.MapFrom(src => src.ToList()));
 
             CreateMap<PlaylistItem, PlaylistItemDto>()
@@ -55,6 +53,20 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
             CreateMap<User, Viewer>()
                 .ConstructUsing(src => new Viewer(
                     new UserProfile(src.Id, src.UserName, src.Type == UserType.Member)));
+
+            CreateMap<CurrentContentDto, CurrentContent>()
+                .ConstructUsing(src => new CurrentContent(
+                    new ContentId(
+                        src.ExternalId,
+                        src.Source,
+                        src.Type),
+                    src.PlayerState,
+                    src.PlayingTime,
+                    src.LastUpdatedPlayingTime))
+                .ReverseMap()
+                .ForMember(dst => dst.ExternalId, opt => opt.MapFrom(src => src.ContentId.ExternalId))
+                .ForMember(dst => dst.Source, opt => opt.MapFrom(src => src.ContentId.ContentSource))
+                .ForMember(dst => dst.Type, opt => opt.MapFrom(src => src.ContentId.ContentType));
         }
     }
 }

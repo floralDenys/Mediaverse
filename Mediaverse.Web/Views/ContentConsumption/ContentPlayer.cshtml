@@ -2,7 +2,7 @@
 
 <div id="contentPlayer">
     <div class="content-player" style="height: 400px">
-        @if (Model != null)
+        @if (Model.Player != null)
         {
             <div id="iframeContainer"></div>
         }
@@ -13,51 +13,64 @@
     </div>
 
     <div class="content-name">
-        @if (Model != null)
+        @if (Model.Player != null)
         {
             <h2>Currently playing: @Model.Title</h2>
         }
     </div>
     
-    @if (Model != null)
+    @if (Model.Player != null)
     {
-@*         <script src="https://www.youtube.com/iframe_api"></script> *@
-
         <script type="text/javascript">   
-            var player;
-        
-            $(document).ready(function(){                      
-                var tag = document.createElement('script');
-                tag.src = "https://www.youtube.com/iframe_api";
-                var firstScriptTag = document.getElementsByTagName('script')[0];
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-                
-                // if (player == null) {
-                //     createPlayer();
-                // }
-            });
+            var player;            
+            function createPlayer() {
+                window.YT.ready(function() {
+                    player = new YT.Player('iframeContainer', {
+                        width: '100%',
+                        height: '100%',
+                        videoId: '@Model.Id.ExternalId',
+                        events: {
+                          'onStateChange': onPlayerStateChange,
+                          'onReady': onPlayerReady
+                        }
+                    });
+                })   
+            }
     
-            window.onYouTubeIframeAPIReady = function(){
-                if (player == null){
-                    createPlayer();
+            $(document).ready(function() {
+              $.getScript("https://www.youtube.com/iframe_api", function() {
+                createPlayer();
+              });
+            });
+            
+            function onPlayerStateChange(event) {
+                // video is playing
+                if (event.data === YT.PlayerState.PLAYING) {
+                    onContentPlaybackStarted(player.getCurrentTime());
+                }
+                // video is paused
+                else if (event.data === YT.PlayerState.PAUSED) {
+                    onContentPlaybackPaused(player.getCurrentTime());
+                }
+            }  
+            
+            function onPlayerReady(event) {
+                player.seekTo(@Model.Player.PlayingTime, true)
+                if ('@Model.Player.State' === "Playing") {
+                    startPlayback();
+                }
+            }    
+            
+            function startPlayback() {
+                if (player.state !== YT.PlayerState.PLAYING){
+                    player.playVideo();
                 }
             }
             
-            function createPlayer() {
-                window.YT.ready(function() {
-                        player = new YT.Player('iframeContainer', {
-                          width: '100%',
-                          height: '100%',
-                          videoId: '@Model.Id.ExternalId',
-                          events: {
-                            'onReady': onPlayerReady
-                          }
-                    });             
-                })
-            }
-            
-            function onPlayerReady(event) {              
-                event.target.playVideo();
+            function pausePlayback() {
+                if (player.state !== YT.PlayerState.PAUSED){
+                    player.pauseVideo();
+                }
             }
         </script>
     }

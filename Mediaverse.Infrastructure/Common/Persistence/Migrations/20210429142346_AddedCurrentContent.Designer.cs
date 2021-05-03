@@ -4,14 +4,16 @@ using Mediaverse.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Mediaverse.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210429142346_AddedCurrentContent")]
+    partial class AddedCurrentContent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,11 +142,11 @@ namespace Mediaverse.Infrastructure.Migrations
                     b.Property<DateTime>("LastUpdatedPlayingTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("PlayerState")
+                    b.Property<int>("PlayingState")
                         .HasColumnType("int");
 
-                    b.Property<double>("PlayingTime")
-                        .HasColumnType("float");
+                    b.Property<long>("PlayingTime")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Source")
                         .HasColumnType("int");
@@ -161,6 +163,9 @@ namespace Mediaverse.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("CurrentlyPlayingContentIndex")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsTemporary")
                         .HasColumnType("bit");

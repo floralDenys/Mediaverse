@@ -10,7 +10,6 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Repositories.Dtos
         public string Name { get; set; }
         public Guid OwnerId { get; set; }
         public bool IsTemporary { get; set; }
-        public int? CurrentlyPlayingContentIndex { get; set; }
         public List<PlaylistItemDto> PlaylistItems { get; set; } 
     }
 }

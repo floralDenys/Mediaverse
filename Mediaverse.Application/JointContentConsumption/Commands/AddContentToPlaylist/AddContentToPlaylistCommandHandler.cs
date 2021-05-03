@@ -15,17 +15,20 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.AddContentToPl
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IPlaylistRepository _playlistRepository;
+        private readonly IContentRepository _contentRepository;
         private readonly ILogger<AddContentToPlaylistCommandHandler> _logger;
         private readonly IMapper _mapper;
 
         public AddContentToPlaylistCommandHandler(
             IRoomRepository roomRepository,
             IPlaylistRepository playlistRepository,
+            IContentRepository contentRepository,
             ILogger<AddContentToPlaylistCommandHandler> logger,
             IMapper mapper)
         {
             _roomRepository = roomRepository;
             _playlistRepository = playlistRepository;
+            _contentRepository = contentRepository;
             _logger = logger;
             _mapper = mapper;
         }
@@ -43,6 +46,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.AddContentToPl
                                                                       $"could not be found");
 
                 var contentId = _mapper.Map<ContentId>(request.ContentId);
+                await _contentRepository.GetAsync(contentId, cancellationToken);
+
                 playlist.Add(contentId);
                 await _playlistRepository.UpdateAsync(playlist, cancellationToken);
 

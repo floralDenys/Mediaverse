@@ -44,6 +44,13 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.RemoveContentF
                                          $"could not be found");
 
                 var contentId = _mapper.Map<ContentId>(request.ContentId);
+
+                if (room.CurrentContent.ContentId.Equals(contentId))
+                {
+                    throw new InformativeException("Could not remove currently playing content. " +
+                                                   "Please change playing content and retry");
+                }
+                
                 activePlaylist.Remove(contentId);
                 await _playlistRepository.UpdateAsync(activePlaylist, cancellationToken);
 

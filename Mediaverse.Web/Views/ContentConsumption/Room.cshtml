@@ -7,21 +7,26 @@
 }
 
 <h1 class="display-4" style="display: inline-block; padding-left: 7%"><strong>@Model.Name</strong></h1>
-<label style="padding-left: 10%">Join code: @Model.Token</label>
+<label style="padding-left: 12%; padding-right: 2%; font-size: 18px"><strong>Join code</strong>: <u>@Model.Token</u></label>
 <input type="button" value="Copy link to clipboard" onclick="copyToClipboard('@Url.ActionLink("JoinRoomByLink")?roomToken=@Model.Token')">
 <div style="padding-top: 2%; padding-left:7%">
     <div class="room">
         @await Html.PartialAsync("ContentSearchLine", new GetRelevantContentQuery())
-    
-        @await Html.PartialAsync("ContentPlayer", Model.CurrentlyPlayingContent)
+
+        <div id="contentPlayerContainer"></div>
+        <script>
+            $.get('@Url.Action("CurrentlyPlayingContent", "ContentConsumption")', {roomId: '@Model.Id'}, function(content){
+                    $("#contentPlayerContainer").html(content);
+                });
+        </script>
 
         <div id="playlistContainer"></div>
         <script>
-            $.get('@Url.Action("Playlist", "ContentConsumption")', {playlistId: '@Model.ActivePlaylistId'}, function(content){
+            $.get('@Url.Action("Playlist", "ContentConsumption")', {roomId: '@Model.Id'}, function(content){
                     $("#playlistContainer").html(content);
                 });
         </script>
-    
+
         @await Html.PartialAsync("SearchResults", new SearchResultDto())
     </div>
 </div>
@@ -39,21 +44,67 @@
         document.execCommand('copy');
         document.body.removeChild(temporaryElement);
     }
+    
+        $(document).ready(function() {
+            var source = new EventSource("/default-sse-endpoint");       
+            source.onmessage = function (event) {
+                if (event.data === "playing") {
+                    startPlayback();
+                }
+                else if (event.data === "paused") {
+                    pausePlayback();
+                }
+                else if (event.data === "switched_content") {
+                    refreshCurrentlyPlayingContent();
+                }
+                else if (event.data === "playlist_updated") {
+                    refreshPlaylist();
+                }
+            }
+        });
+    
+        function refreshCurrentlyPlayingContent() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CurrentlyPlayingContent", "ContentConsumption")?roomId=@Model.Id',
+                success: function(res) {
+                    $('#contentPlayerContainer').html(res);
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    const error = JSON.parse(xhr.responseText);
+                    showModal("Operation attempt failed", error.message)
+                }
+            });
+        }
+        
+        function refreshPlaylist() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("Playlist", "ContentConsumption")?roomId=@Model.Id',
+                success: function(res) {
+                    $('#playlist').replaceWith(res);
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    const error = JSON.parse(xhr.responseText);
+                    showModal("Operation attempt failed", error.message)
+                }
+            });
+        }
 
-    // window.addEventListener('beforeunload', function (e) {
-    //     leaveRoom();
-    // });
+    window.addEventListener('beforeunload', function (e) {
+        leaveRoom();
+    });
 
     const leaveRoom = function(){
-        // $.ajax({
-        //     type: "POST",
-        //     url: '@Url.Action("LeaveRoom", "ContentConsumption")',
-        //     data: '@Model.Id',
-        //     error: function(xhr, ajaxOptions, thrownError) {
-        //         const error = JSON.parse(xhr.responseText);
-        //         showModal(" attempt failed", error.message)
-        //     }
-        // });
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("LeaveRoom", "ContentConsumption")',
+            data: { roomId: '@Model.Id' },
+            error: function(xhr, ajaxOptions, thrownError) {
+                const error = JSON.parse(xhr.responseText);
+                showModal(" attempt failed", error.message)
+            }
+        });
     }
      
 
@@ -77,9 +128,6 @@
             type: "POST",
             url: '@Url.Action("AddContentToPlaylist", "ContentConsumption")',
             data: command,
-            success: function(res) {
-                $('#playlist').replaceWith(res);
-            },
             error: function(xhr, ajaxOptions, thrownError) {
                 const error = JSON.parse(xhr.responseText);
                 showModal("Operation attempt failed", error.message)
@@ -107,9 +155,6 @@
                 type: "POST",
                 url: '@Url.Action("RemoveContentFromPlaylist", "ContentConsumption")',
                 data: command,
-                success: function(res) {
-                    $('#playlist').replaceWith(res);
-                },
                 error: function(xhr, ajaxOptions, thrownError) {
                     const error = JSON.parse(xhr.responseText);
                     showModal("Operation attempt failed", error.message)
@@ -136,4 +181,30 @@
             }
         });
     };
+    
+    function onContentPlaybackStarted(currentPlaybackTime) {
+        changeContentPlayerState("playing", currentPlaybackTime);               
+    }
+    
+    function onContentPlaybackPaused(currentPlaybackTime) {
+        changeContentPlayerState("paused", currentPlaybackTime);         
+    }
+    
+    const changeContentPlayerState = function (contentPlayerState, currentPlaybackTime){
+        const command = {
+                RoomId: '@Model.Id',
+                State: contentPlayerState,
+                CurrentPlaybackTimeInSeconds: currentPlaybackTime
+            };
+        
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ChangeContentPlayerState", "ContentConsumption")',
+            data: command,
+            error: function(xhr, ajaxOptions, thrownError) {
+                const error = JSON.parse(xhr.responseText);
+                showModal("Operation attempt failed", error.message)
+            }
+        });
+    }
 </script>

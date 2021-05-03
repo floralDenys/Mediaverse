@@ -40,23 +40,9 @@ namespace Mediaverse.Application.JointContentConsumption.Queries.GetRoom
             try
             {
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
-                    ?? throw new ArgumentException("Room could not be found");
-
-                Content content = null;
-                if (room.ActivePlaylistId.HasValue)
-                {
-                    var activePlaylist = await _playlistRepository.GetAsync(room.ActivePlaylistId.Value, cancellationToken);
-                    if (activePlaylist.CurrentlyPlayingContentIndex.HasValue)
-                    {
-                        var currentlyPlayingContentId = activePlaylist.Current;
-                        content = await _contentRepository.GetAsync(currentlyPlayingContentId, cancellationToken);
-                    }
-                }
-
-                var dto = _mapper.Map<RoomDto>(room);
-                dto.CurrentlyPlayingContent = _mapper.Map<ContentDto>(content);
+                    ?? throw new InformativeException("Room could not be found");
                 
-                return dto;
+                return _mapper.Map<RoomDto>(room);
             }
             catch (Exception exception)
             {

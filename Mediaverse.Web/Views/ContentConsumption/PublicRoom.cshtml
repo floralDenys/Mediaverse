@@ -1,25 +1,14 @@
 ﻿@model Mediaverse.Application.JointContentConsumption.Common.Dtos.RoomDto
 
-<div class="card gridItem" style="width: 150px" onclick="joinRoom()">
-    @Html.HiddenFor(x => x.Id)
-    @Html.LabelFor(x => x.Name)
-    @Html.LabelFor(x => x.Description)
+<div class="card" onclick="joinPublicRoom('@(Model.Token)')" style="width: 400px; height: 100px; float: none; display: inline-block;">
+    <div style="padding-top: 10px"><strong>Room:</strong> @Model.Name</div>
+    @if (!string.IsNullOrEmpty(Model.Description))
+    {
+        <div><strong>Description:</strong> @Model.Description</div>
+    }
+    else
+    {
+        <div>No description provided</div>
+    }
+    <div><strong>Viewers:</strong> @Model.CurrentViewersQuantity / @Model.MaxViewersQuantity</div>
 </div>
-
-<script type="text/javascript">
-    const joinRoom = function() {
-            var data = $("#signUpForm").serialize();
-            
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("SignUp", "Authentication")',
-                data: data,
-                success: function(res) {
-                    window.location.href = res.redirectToUrl;
-                },
-                error: function(xhr, ajaxOptions, thrownError) {
-                    alert(xhr.message);
-                }
-            });
-        };
-</script>

@@ -71,7 +71,7 @@ input {
   grid-row: head-row-end / mid-row-end;
 }
 
-.playlist ul {
+ul {
   overflow:hidden;
   overflow-y:scroll;
   list-style-type: none;
@@ -79,7 +79,7 @@ input {
   padding: 0;
 }
 
-.playlist ul li {
+ul li {
   padding: 5px 0;
   border-radius: 5px;
 }

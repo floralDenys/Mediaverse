@@ -30,8 +30,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
         public Viewer Owner { get; }
         public bool IsTemporary { get; set; }
         
-        public int? CurrentlyPlayingContentIndex { get; set; }
-        
         public Playlist(
             Guid id,
             string name,
@@ -49,8 +47,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
                 {
                     // sort items by their playlist indexes 
                     _items = _items.OrderBy(x => x.PlaylistItemIndex).ToList();
-
-                    CurrentlyPlayingContentIndex = currentlyPlayingContentIndex;
                 }
             }
             catch (InformativeException)
@@ -95,50 +91,60 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             }
         }
 
-        public ContentId PlayNextContent()
+        public ContentId GetNextContent(ContentId contentId)
         {
             if (!_items.Any())
             {
                 throw new InformativeException("Playlist is empty");
             }
 
+            PlaylistItem playlistItem = null;
+            if (contentId != null)
+            {
+                playlistItem = _items.FirstOrDefault(i => i.ContentId.Equals(contentId)) 
+                               ?? throw new InvalidOperationException(
+                                   "Specified content does not belong to the playlist");
+            }
+
             var nextPlaylistItem = _items
-                .FirstOrDefault(i => i.PlaylistItemIndex > (CurrentlyPlayingContentIndex ?? 0));
+                .FirstOrDefault(i => 
+                    i.PlaylistItemIndex > (playlistItem?.PlaylistItemIndex ?? 0));
             
             if (nextPlaylistItem == null)
             {
                 throw new InformativeException("The end of the playlist is reached already");
             }
 
-            CurrentlyPlayingContentIndex = nextPlaylistItem.PlaylistItemIndex;
-            
             return nextPlaylistItem.ContentId;
         }
 
-        public ContentId PlayPreviousContent()
+        public ContentId GetPreviousContent(ContentId contentId)
         {
             if (!_items.Any())
             {
                 throw new InformativeException("Playlist is empty");
             }
 
+            PlaylistItem playlistItem = null;
+            if (contentId != null)
+            {
+                playlistItem = _items.FirstOrDefault(i => i.ContentId.Equals(contentId))
+                               ?? throw new InvalidOperationException(
+                                   "Specified content does not belong to the playlist");
+            }
+
             var previousPlaylistItem =
-                _items.LastOrDefault(i => i.PlaylistItemIndex < (CurrentlyPlayingContentIndex ?? 0)); 
-            
+                _items.LastOrDefault(i =>
+                    i.PlaylistItemIndex < (playlistItem?.PlaylistItemIndex ?? 0));
+
             if (previousPlaylistItem == null)
             {
                 throw new InformativeException("The start of the playlist is reached already");
             }
 
-            CurrentlyPlayingContentIndex = previousPlaylistItem.PlaylistItemIndex;
-            
+
             return previousPlaylistItem.ContentId;
         }
-
-        public ContentId Current =>
-            _items.FirstOrDefault(i => i.PlaylistItemIndex 
-                                       == CurrentlyPlayingContentIndex.GetValueOrDefault())
-                ?.ContentId;
 
         private bool Contains(ContentId contentId) => _items
             .Select(x => x.ContentId)

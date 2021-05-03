@@ -23,7 +23,8 @@
                 $('#search-results').replaceWith(res);
             },
             error: function(xhr, ajaxOptions, thrownError) {
-                alert(xhr.message);
+                const error = JSON.parse(xhr.responseText);
+                showModal("Operation attempt failed", error.message)
             }
         });
     };
