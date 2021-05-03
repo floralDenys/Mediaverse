@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.Common.Services;
@@ -41,6 +42,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
         {
             try
             {
+                using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                
                 var host = await _viewerRepository.GetAsync(request.HostId, cancellationToken)
                            ?? throw new ArgumentException($"Host {request.HostId.ToString()} could not be found");
 
@@ -67,6 +70,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CreateRoom
 
                 await _roomRepository.AddAsync(room, cancellationToken);
 
+                transaction.Complete();
+                
                 return _mapper.Map<RoomDto>(room);
             }
             catch (InformativeException exception)

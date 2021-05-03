@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using MediatR;
 using Mediaverse.Application.Authentication.Services;
 using Mediaverse.Domain.Authentication.Entities;
@@ -34,6 +35,8 @@ namespace Mediaverse.Application.Authentication.Commands.SignIn
         {
             try
             {
+                using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                
                 if (string.IsNullOrEmpty(request.LoginOrEmail)
                     || string.IsNullOrEmpty(request.Password))
                 {
@@ -57,6 +60,8 @@ namespace Mediaverse.Application.Authentication.Commands.SignIn
                 {
                     throw new InformativeException("Email or password is incorrect");
                 }
+                
+                transaction.Complete();
                 
                 return Unit.Value;
             }

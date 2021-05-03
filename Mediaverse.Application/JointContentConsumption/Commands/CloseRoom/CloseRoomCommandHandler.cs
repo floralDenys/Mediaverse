@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using MediatR;
 using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
@@ -28,6 +29,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CloseRoom
         {
             try
             {
+                using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                            ?? throw new ArgumentException("Room could not be found");
 
@@ -49,6 +52,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.CloseRoom
 
                 await _roomRepository.DeleteAsync(room.Id, cancellationToken);
 
+                transaction.Complete();
+                
                 return Unit.Value;
             }
             catch (InformativeException exception)

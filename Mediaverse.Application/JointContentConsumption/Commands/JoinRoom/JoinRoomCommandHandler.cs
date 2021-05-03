@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
@@ -33,6 +34,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.JoinRoom
         {
             try
             {
+                using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                
                 var viewer = await _viewerRepository.GetAsync(request.ViewerId, cancellationToken)
                              ?? throw new ArgumentException("Viewer could not be found");
 
@@ -43,6 +46,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.JoinRoom
 
                 await _roomRepository.UpdateAsync(room, cancellationToken);
 
+                transaction.Complete();
+                
                 return _mapper.Map<RoomDto>(room);
             }
             catch (InformativeException exception)

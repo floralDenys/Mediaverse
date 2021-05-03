@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using MediatR;
 using Mediaverse.Domain.Authentication.Entities;
 using Mediaverse.Domain.Common;
@@ -26,7 +27,11 @@ namespace Mediaverse.Application.Authentication.Commands.SignOut
         {
             try
             {
+                using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                
                 await _signInManager.SignOutAsync();
+                
+                transaction.Complete();
                 
                 return Unit.Value;
             }

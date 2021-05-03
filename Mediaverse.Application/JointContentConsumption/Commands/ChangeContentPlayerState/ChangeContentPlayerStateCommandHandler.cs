@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using MediatR;
 using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Enums;
@@ -27,6 +28,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeContentP
         {
             try
             {
+                using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                     ?? throw new InformativeException("Could not find the room");
 
@@ -36,6 +39,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeContentP
 
                 await _roomRepository.UpdateAsync(room, cancellationToken);
 
+                transaction.Complete();
+                
                 return Unit.Value;
             }
             catch (Exception exception)

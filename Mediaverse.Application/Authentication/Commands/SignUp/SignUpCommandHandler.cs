@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.Authentication.Common.Dtos;
@@ -36,6 +37,8 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
         {
             try
             {
+                using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                
                 if (string.IsNullOrEmpty(request.Email)
                     || string.IsNullOrEmpty(request.Login)
                     || string.IsNullOrEmpty(request.Password)
@@ -67,6 +70,8 @@ namespace Mediaverse.Application.Authentication.Commands.SignUp
                     throw new InformativeException(string.Join("\n", errorMessages));
                 }
 
+                transaction.Complete();
+                
                 return _mapper.Map<UserDto>(user);
             }
             catch (InformativeException exception)

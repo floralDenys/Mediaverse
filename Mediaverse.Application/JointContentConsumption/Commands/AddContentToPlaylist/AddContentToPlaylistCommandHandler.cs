@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
@@ -37,13 +38,16 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.AddContentToPl
         {
             try
             {
+                using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                
                 var room = await _roomRepository.GetAsync(request.CurrentRoomId, cancellationToken)
                            ?? throw new ArgumentException(
                                $"Room {request.CurrentRoomId.ToString()} could not be found");
 
                 var playlist = await _playlistRepository.GetAsync(room.ActivePlaylistId.Value, cancellationToken)
-                               ?? throw new InvalidOperationException($"Playlist {room.ActivePlaylistId.ToString()} " +
-                                                                      $"could not be found");
+                               ?? throw new InvalidOperationException(
+                                   $"Playlist {room.ActivePlaylistId.ToString()} " +
+                                   $"could not be found");
 
                 var contentId = _mapper.Map<ContentId>(request.ContentId);
                 await _contentRepository.GetAsync(contentId, cancellationToken);
@@ -51,6 +55,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.AddContentToPl
                 playlist.Add(contentId);
                 await _playlistRepository.UpdateAsync(playlist, cancellationToken);
 
+                transaction.Complete();
+                    
                 return _mapper.Map<PlaylistDto>(playlist);
             }
             catch (InformativeException exception)

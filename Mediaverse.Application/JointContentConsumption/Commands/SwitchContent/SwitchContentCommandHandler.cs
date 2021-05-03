@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
+using System.Transactions;
 using MediatR;
-using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos;
 using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
@@ -32,6 +31,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
         {
             try
             {
+                using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                            ?? throw new InvalidOperationException($"Room {request.RoomId.ToString()} does not exist");
 
@@ -51,6 +52,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
 
                 await _roomRepository.UpdateAsync(room, cancellationToken);
 
+                transaction.Complete();
+                
                 return Unit.Value;
             }
             catch (InformativeException exception)

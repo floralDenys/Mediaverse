@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.Authentication.Common.Dtos;
@@ -42,6 +43,8 @@ namespace Mediaverse.Application.Authentication.Commands.SignUpAnonymous
         {
             try
             {
+                using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                
                 string generatedPassword = _nameGenerator.GenerateAnonymousPassword();
                 var user = new User(UserType.Anonymous) {UserName = _nameGenerator.GenerateAnonymousName()};
 
@@ -55,6 +58,8 @@ namespace Mediaverse.Application.Authentication.Commands.SignUpAnonymous
                     var errorMessages = result.Errors.Select(e => e.Description);
                     throw new InvalidOperationException(string.Join("\n", errorMessages));
                 }
+                
+                transaction.Complete();
                 
                 return Unit.Value;
             }

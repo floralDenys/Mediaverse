@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using AutoMapper;
 using MediatR;
 using Mediaverse.Application.Common.Services;
@@ -43,6 +44,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.DeletePlaylist
         {
             try
             {
+                using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                
                 var room = await _roomRepository.GetAsync(request.RoomId, cancellationToken)
                            ?? throw new ArgumentException("Room could not be found");
                 
@@ -75,6 +78,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.DeletePlaylist
                 }
 
                 await _roomRepository.UpdateAsync(room, cancellationToken);
+                
+                transaction.Complete();
                 
                 return _mapper.Map<IList<PlaylistDto>>(remainingPlaylists);
             }
