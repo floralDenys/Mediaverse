@@ -134,7 +134,6 @@ namespace Mediaverse.Domain.JointContentConsumption.Entities
             if (_viewers.Contains(viewer))
             {
                 return;
-                // throw new InformativeException("Viewer has joined the room already");
             }
             
             _viewers.Add(viewer);
