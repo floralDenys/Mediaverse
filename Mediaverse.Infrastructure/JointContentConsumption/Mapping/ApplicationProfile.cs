@@ -1,10 +1,14 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent.Dtos;
 using Mediaverse.Application.JointContentConsumption.Common.Dtos;
 using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist.Dtos;
 using Mediaverse.Domain.JointContentConsumption.Entities;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
+using PlaylistDto = Mediaverse.Application.JointContentConsumption.Common.Dtos.PlaylistDto;
+using PlaylistItemDto = Mediaverse.Application.JointContentConsumption.Common.Dtos.PlaylistItemDto;
+using RoomDto = Mediaverse.Application.JointContentConsumption.Common.Dtos.RoomDto;
 
 namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
 {
@@ -45,6 +49,9 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
                 .ForMember(dst => dst.Token, opt => opt.MapFrom(src => src.Invitation.Token))
                 .ForMember(dst => dst.MaxViewersQuantity, opt => opt.MapFrom(src => src.MaxViewersQuantity))
                 .ForMember(dst => dst.CurrentViewersQuantity, opt => opt.MapFrom(src => src.Viewers.Count));
+
+            CreateMap<IEnumerable<Viewer>, AffectedViewers>()
+                .ForMember(dst => dst.ViewerIds, opt => opt.MapFrom(src => src.Select(v => v.Profile.Id)));
         }
     }
 }

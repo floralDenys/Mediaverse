@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using AutoMapper;
 using MediatR;
+using Mediaverse.Application.JointContentConsumption.Common.Dtos;
 using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
@@ -10,21 +13,25 @@ using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeContentPlayerState
 {
-    public class PlayContentCommandHandler : IRequestHandler<ChangeContentPlayerStateCommand>
+    public class PlayContentCommandHandler : IRequestHandler<ChangeContentPlayerStateCommand, AffectedViewers>
     {
         private readonly IRoomRepository _roomRepository;
         
         private readonly ILogger<PlayContentCommandHandler> _logger;
 
+        private readonly IMapper _mapper;
+
         public PlayContentCommandHandler(
             IRoomRepository roomRepository,
-            ILogger<PlayContentCommandHandler> logger)
+            ILogger<PlayContentCommandHandler> logger,
+            IMapper mapper)
         {
             _roomRepository = roomRepository;
             _logger = logger;
+            _mapper = mapper;
         }
         
-        public async Task<Unit> Handle(ChangeContentPlayerStateCommand request, CancellationToken cancellationToken)
+        public async Task<AffectedViewers> Handle(ChangeContentPlayerStateCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -40,8 +47,11 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeContentP
                 await _roomRepository.UpdateAsync(room, cancellationToken);
 
                 transaction.Complete();
+
+                var affectedViewers = room.Viewers.ToList();
+                affectedViewers.Add(room.Host);
                 
-                return Unit.Value;
+                return _mapper.Map<AffectedViewers>(affectedViewers);
             }
             catch (Exception exception)
             {

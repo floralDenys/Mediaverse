@@ -3,7 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using AutoMapper;
 using MediatR;
+using Mediaverse.Application.JointContentConsumption.Common.Dtos;
 using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Enums;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
@@ -12,23 +14,26 @@ using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
 {
-    public class SwitchContentCommandHandler : IRequestHandler<SwitchContentCommand>
+    public class SwitchContentCommandHandler : IRequestHandler<SwitchContentCommand, AffectedViewers>
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IPlaylistRepository _playlistRepository;
         private readonly ILogger<SwitchContentCommandHandler> _logger;
+        private readonly IMapper _mapper;
 
         public SwitchContentCommandHandler(
             IRoomRepository roomRepository,
             IPlaylistRepository playlistRepository,
-            ILogger<SwitchContentCommandHandler> logger)
+            ILogger<SwitchContentCommandHandler> logger,
+            IMapper mapper)
         {
             _roomRepository = roomRepository;
             _playlistRepository = playlistRepository;
             _logger = logger;
+            _mapper = mapper;
         }
 
-        public async Task<Unit> Handle(SwitchContentCommand request, CancellationToken cancellationToken)
+        public async Task<AffectedViewers> Handle(SwitchContentCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -62,8 +67,11 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
                 await _roomRepository.UpdateAsync(room, cancellationToken);
 
                 transaction.Complete();
+
+                var affectedViewers = room.Viewers.ToList();
+                affectedViewers.Add(room.Host);
                 
-                return Unit.Value;
+                return _mapper.Map<AffectedViewers>(affectedViewers);
             }
             catch (InformativeException exception)
             {

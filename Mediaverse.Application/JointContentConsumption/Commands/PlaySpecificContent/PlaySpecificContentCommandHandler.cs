@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using AutoMapper;
 using MediatR;
+using Mediaverse.Application.JointContentConsumption.Common.Dtos;
 using Mediaverse.Domain.Common;
 using Mediaverse.Domain.JointContentConsumption.Repositories;
 using Mediaverse.Domain.JointContentConsumption.ValueObjects;
@@ -11,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.PlaySpecificContent
 {
-    public class PlaySpecificContentCommandHandler : IRequestHandler<PlaySpecificContentCommand>
+    public class PlaySpecificContentCommandHandler : IRequestHandler<PlaySpecificContentCommand, AffectedViewers>
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IContentRepository _contentRepository;
@@ -30,7 +32,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.PlaySpecificCo
             _mapper = mapper;
         }
         
-        public async Task<Unit> Handle(PlaySpecificContentCommand request, CancellationToken cancellationToken)
+        public async Task<AffectedViewers> Handle(PlaySpecificContentCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -48,8 +50,11 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.PlaySpecificCo
                 await _roomRepository.UpdateAsync(room, cancellationToken);
                 
                 transaction.Complete();
+
+                var affectedViewers = room.Viewers.ToList();
+                affectedViewers.Add(room.Host);
                 
-                return Unit.Value;
+                return _mapper.Map<AffectedViewers>(affectedViewers);
             }
             catch (InformativeException exception)
             {
