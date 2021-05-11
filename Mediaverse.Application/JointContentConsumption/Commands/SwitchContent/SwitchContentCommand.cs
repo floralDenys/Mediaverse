@@ -5,7 +5,7 @@ using Mediaverse.Domain.JointContentConsumption.Enums;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
 {
-    public class SwitchContentCommand : IRequest<AffectedViewers>
+    public class SwitchContentCommand : IRequest<AffectedViewersDto>
     {
         public Guid RoomId { get; set; }
         public SwitchContentDirection Direction { get; set; }

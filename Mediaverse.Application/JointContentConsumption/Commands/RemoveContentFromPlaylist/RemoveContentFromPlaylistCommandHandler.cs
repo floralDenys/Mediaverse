@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.RemoveContentFromPlaylist
 {
-    public class RemoveContentFromPlaylistCommandHandler : IRequestHandler<RemoveContentFromPlaylistCommand, AffectedViewers>
+    public class RemoveContentFromPlaylistCommandHandler : IRequestHandler<RemoveContentFromPlaylistCommand, AffectedViewersDto>
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IPlaylistRepository _playlistRepository;
@@ -32,7 +32,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.RemoveContentF
             _mapper = mapper;
         }
 
-        public async Task<AffectedViewers> Handle(RemoveContentFromPlaylistCommand request, CancellationToken cancellationToken)
+        public async Task<AffectedViewersDto> Handle(RemoveContentFromPlaylistCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.RemoveContentF
                 var affectedUsers = room.Viewers.ToList();
                 affectedUsers.Add(room.Host);
                 
-                return _mapper.Map<AffectedViewers>(affectedUsers);
+                return _mapper.Map<AffectedViewersDto>(affectedUsers);
             }
             catch (InformativeException exception)
             {

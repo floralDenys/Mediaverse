@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Mediaverse.Application.JointContentConsumption.Common.Dtos
 {
-    public class AffectedViewers
+    public class AffectedViewersDto
     {
         public IEnumerable<Guid> ViewerIds { get; set; }
     }

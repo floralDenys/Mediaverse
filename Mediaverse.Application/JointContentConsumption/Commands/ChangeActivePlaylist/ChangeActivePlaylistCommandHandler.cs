@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeActivePlaylist
 {
-    public class ChangeActivePlaylistCommandHandler : IRequestHandler<ChangeActivePlaylistCommand, AffectedViewers>
+    public class ChangeActivePlaylistCommandHandler : IRequestHandler<ChangeActivePlaylistCommand, AffectedViewersDto>
     {
         private readonly IPlaylistRepository _playlistRepository;
         private readonly IRoomRepository _roomRepository;
@@ -31,7 +31,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeActivePl
             _mapper = mapper;
         }
         
-        public async Task<AffectedViewers> Handle(ChangeActivePlaylistCommand request, CancellationToken cancellationToken)
+        public async Task<AffectedViewersDto> Handle(ChangeActivePlaylistCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeActivePl
                 var affectedViewers = room.Viewers.ToList();
                 affectedViewers.Add(room.Host);
                 
-                return _mapper.Map<AffectedViewers>(affectedViewers);
+                return _mapper.Map<AffectedViewersDto>(affectedViewers);
             }
             catch (InformativeException exception)
             {

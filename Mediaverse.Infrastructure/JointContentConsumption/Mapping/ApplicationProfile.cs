@@ -50,7 +50,7 @@ namespace Mediaverse.Infrastructure.JointContentConsumption.Mapping
                 .ForMember(dst => dst.MaxViewersQuantity, opt => opt.MapFrom(src => src.MaxViewersQuantity))
                 .ForMember(dst => dst.CurrentViewersQuantity, opt => opt.MapFrom(src => src.Viewers.Count));
 
-            CreateMap<IEnumerable<Viewer>, AffectedViewers>()
+            CreateMap<IEnumerable<Viewer>, AffectedViewersDto>()
                 .ForMember(dst => dst.ViewerIds, opt => opt.MapFrom(src => src.Select(v => v.Profile.Id)));
         }
     }

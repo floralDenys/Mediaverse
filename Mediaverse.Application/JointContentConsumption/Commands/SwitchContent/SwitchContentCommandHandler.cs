@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
 {
-    public class SwitchContentCommandHandler : IRequestHandler<SwitchContentCommand, AffectedViewers>
+    public class SwitchContentCommandHandler : IRequestHandler<SwitchContentCommand, AffectedViewersDto>
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IPlaylistRepository _playlistRepository;
@@ -33,7 +33,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
             _mapper = mapper;
         }
 
-        public async Task<AffectedViewers> Handle(SwitchContentCommand request, CancellationToken cancellationToken)
+        public async Task<AffectedViewersDto> Handle(SwitchContentCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.SwitchContent
                 var affectedViewers = room.Viewers.ToList();
                 affectedViewers.Add(room.Host);
                 
-                return _mapper.Map<AffectedViewers>(affectedViewers);
+                return _mapper.Map<AffectedViewersDto>(affectedViewers);
             }
             catch (InformativeException exception)
             {

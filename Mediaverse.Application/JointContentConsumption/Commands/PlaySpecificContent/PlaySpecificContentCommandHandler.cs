@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.PlaySpecificContent
 {
-    public class PlaySpecificContentCommandHandler : IRequestHandler<PlaySpecificContentCommand, AffectedViewers>
+    public class PlaySpecificContentCommandHandler : IRequestHandler<PlaySpecificContentCommand, AffectedViewersDto>
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IContentRepository _contentRepository;
@@ -32,7 +32,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.PlaySpecificCo
             _mapper = mapper;
         }
         
-        public async Task<AffectedViewers> Handle(PlaySpecificContentCommand request, CancellationToken cancellationToken)
+        public async Task<AffectedViewersDto> Handle(PlaySpecificContentCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.PlaySpecificCo
                 var affectedViewers = room.Viewers.ToList();
                 affectedViewers.Add(room.Host);
                 
-                return _mapper.Map<AffectedViewers>(affectedViewers);
+                return _mapper.Map<AffectedViewersDto>(affectedViewers);
             }
             catch (InformativeException exception)
             {

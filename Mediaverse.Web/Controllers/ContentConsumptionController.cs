@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.AspNetCore.ServerSentEvents;
@@ -14,6 +15,7 @@ using Mediaverse.Application.JointContentConsumption.Commands.LeaveRoom;
 using Mediaverse.Application.JointContentConsumption.Commands.PlaySpecificContent;
 using Mediaverse.Application.JointContentConsumption.Commands.RemoveContentFromPlaylist;
 using Mediaverse.Application.JointContentConsumption.Commands.SwitchContent;
+using Mediaverse.Application.JointContentConsumption.Common.Dtos;
 using Mediaverse.Application.JointContentConsumption.Queries.GetAvailablePlaylists;
 using Mediaverse.Application.JointContentConsumption.Queries.GetCurrentlyPlayingContent;
 using Mediaverse.Application.JointContentConsumption.Queries.GetPlaylist;
@@ -152,9 +154,12 @@ namespace Mediaverse.Web.Controllers
         {
             try
             {
-                await _mediator.Send(command, cancellationToken);
+                var affectedViewers = await _mediator.Send(command, cancellationToken);
                 
-                await _service.SendEventAsync("playlist_updated", cancellationToken);
+                await _service.SendEventAsync(
+                    "playlist_updated",
+                    GetClientPredicate(affectedViewers),
+                    cancellationToken);
 
                 return Ok();
             }
@@ -171,9 +176,12 @@ namespace Mediaverse.Web.Controllers
         {
             try
             {
-                await _mediator.Send(command, cancellationToken);
+                var affectedViewers = await _mediator.Send(command, cancellationToken);
 
-                await _service.SendEventAsync("playlist_updated", cancellationToken);
+                await _service.SendEventAsync(
+                    "playlist_updated",
+                    GetClientPredicate(affectedViewers),
+                    cancellationToken);
                 
                 return Ok();
             }
@@ -188,9 +196,12 @@ namespace Mediaverse.Web.Controllers
         {
             try
             {
-                await _mediator.Send(command, cancellationToken);
+                var affectedViewers = await _mediator.Send(command, cancellationToken);
                 
-                await _service.SendEventAsync("switched_content", cancellationToken);
+                await _service.SendEventAsync(
+                    "switched_content",
+                    GetClientPredicate(affectedViewers),
+                    cancellationToken);
 
                 return Ok();
             }
@@ -205,9 +216,12 @@ namespace Mediaverse.Web.Controllers
         {
             try
             {
-                await _mediator.Send(command, cancellationToken);
+                var affectedViewers = await _mediator.Send(command, cancellationToken);
                 
-                await _service.SendEventAsync("switched_content", cancellationToken);
+                await _service.SendEventAsync(
+                    "switched_content",
+                    GetClientPredicate(affectedViewers),
+                    cancellationToken);
 
                 return Ok();
             }
@@ -218,13 +232,18 @@ namespace Mediaverse.Web.Controllers
         }
         
         [HttpPost]
-        public async Task<ActionResult> ChangeContentPlayerState(ChangeContentPlayerStateCommand command)
+        public async Task<ActionResult> ChangeContentPlayerState(
+            ChangeContentPlayerStateCommand command, 
+            CancellationToken cancellationToken)
         {
             try
             {
-                await _mediator.Send(command);
+                var affectedViewers = await _mediator.Send(command, cancellationToken);
                 
-                await _service.SendEventAsync(command.State);
+                await _service.SendEventAsync(
+                    command.State,
+                    GetClientPredicate(affectedViewers),
+                    cancellationToken);
 
                 return Ok();
             }
@@ -239,9 +258,12 @@ namespace Mediaverse.Web.Controllers
         {
             try
             {
-                await _mediator.Send(command, cancellationToken);
+                var affectedViewers = await _mediator.Send(command, cancellationToken);
                 
-                await _service.SendEventAsync("playlist_updated", cancellationToken);
+                await _service.SendEventAsync(
+                    "playlist_updated",
+                    GetClientPredicate(affectedViewers),
+                    cancellationToken);
 
                 return Ok();
             }
@@ -257,9 +279,12 @@ namespace Mediaverse.Web.Controllers
             try
             {
                 var command = new DeletePlaylistCommand {MemberId = User.GetCurrentUserId(), RoomId = roomId};
-                await _mediator.Send(command, cancellationToken);
+                var affectedViewers = await _mediator.Send(command, cancellationToken);
                 
-                await _service.SendEventAsync("playlist_updated", cancellationToken);
+                await _service.SendEventAsync(
+                    "playlist_updated",
+                    GetClientPredicate(affectedViewers), 
+                    cancellationToken);
 
                 return Ok();
             }
@@ -300,5 +325,8 @@ namespace Mediaverse.Web.Controllers
             var rooms = await _mediator.Send(query, cancellationToken);
             return PartialView("PublicRooms", rooms);
         }
+
+        private Func<IServerSentEventsClient, bool> GetClientPredicate(AffectedViewersDto affectedViewersDto) =>
+            client => affectedViewersDto.ViewerIds.Contains(client.User.GetCurrentUserId());
     }
 }

@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeContentPlayerState
 {
-    public class PlayContentCommandHandler : IRequestHandler<ChangeContentPlayerStateCommand, AffectedViewers>
+    public class PlayContentCommandHandler : IRequestHandler<ChangeContentPlayerStateCommand, AffectedViewersDto>
     {
         private readonly IRoomRepository _roomRepository;
         
@@ -31,7 +31,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeContentP
             _mapper = mapper;
         }
         
-        public async Task<AffectedViewers> Handle(ChangeContentPlayerStateCommand request, CancellationToken cancellationToken)
+        public async Task<AffectedViewersDto> Handle(ChangeContentPlayerStateCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeContentP
                 var affectedViewers = room.Viewers.ToList();
                 affectedViewers.Add(room.Host);
                 
-                return _mapper.Map<AffectedViewers>(affectedViewers);
+                return _mapper.Map<AffectedViewersDto>(affectedViewers);
             }
             catch (Exception exception)
             {

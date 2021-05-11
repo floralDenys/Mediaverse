@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Mediaverse.Application.JointContentConsumption.Commands.AddContentToPlaylist
 {
-    public class AddContentToPlaylistCommandHandler : IRequestHandler<AddContentToPlaylistCommand, AffectedViewers>
+    public class AddContentToPlaylistCommandHandler : IRequestHandler<AddContentToPlaylistCommand, AffectedViewersDto>
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IPlaylistRepository _playlistRepository;
@@ -35,7 +35,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.AddContentToPl
             _mapper = mapper;
         }
         
-        public async Task<AffectedViewers> Handle(AddContentToPlaylistCommand request, CancellationToken cancellationToken)
+        public async Task<AffectedViewersDto> Handle(AddContentToPlaylistCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.AddContentToPl
                 var affectedViewers = room.Viewers.ToList();
                 affectedViewers.Add(room.Host);
                 
-                return _mapper.Map<AffectedViewers>(affectedViewers);
+                return _mapper.Map<AffectedViewersDto>(affectedViewers);
             }
             catch (InformativeException exception)
             {
