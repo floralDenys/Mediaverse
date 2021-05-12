@@ -28,7 +28,6 @@
                     player = new YT.Player('iframeContainer', {
                         width: '100%',
                         height: '100%',
-                        videoId: '@Model.Id.ExternalId',
                         events: {
                           'onStateChange': onPlayerStateChange,
                           'onReady': onPlayerReady
@@ -55,7 +54,7 @@
             }  
             
             function onPlayerReady(event) {
-                player.seekTo(@Model.Player.PlayingTime, true)
+                player.cueVideoById('@Model.Id.ExternalId', @Model.Player.PlayingTime);
                 if ('@Model.Player.State' === "Playing") {
                     startPlayback();
                 }
