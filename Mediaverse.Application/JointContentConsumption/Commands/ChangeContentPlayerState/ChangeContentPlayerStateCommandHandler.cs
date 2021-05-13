@@ -55,8 +55,8 @@ namespace Mediaverse.Application.JointContentConsumption.Commands.ChangeContentP
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception.ToString());
-                throw;
+                _logger.LogError(exception, $"Could not change player state in room {request.RoomId.ToString()}");
+                throw new InformativeException("Could not change player state. Please retry");
             }
         }
 
