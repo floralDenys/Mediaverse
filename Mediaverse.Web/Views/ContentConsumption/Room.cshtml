@@ -34,6 +34,7 @@
 </div>
 
 @await Html.PartialAsync("ModalDialog")
+@Html.Hidden("IsEventReaction", 0);
 
 <script type="text/javascript">
     const copyToClipboard = function(text) {
@@ -50,17 +51,22 @@
         $(document).ready(function() {
             var source = new EventSource("/default-sse-endpoint");       
             source.onmessage = function (event) {
-                if (event.data === "playing") {
-                    startPlayback();
-                }
-                else if (event.data === "paused") {
-                    pausePlayback();
-                }
-                else if (event.data === "switched_content") {
+                if (event.data === "switched_content") {
                     refreshCurrentlyPlayingContent();
                 }
                 else if (event.data === "playlist_updated") {
                     refreshPlaylist();
+                }
+                else {
+                    const message = JSON.parse(event.data);
+                    $("#IsEventReaction").attr('value', 1);
+                                       
+                    if (message.state === "playing") {
+                        startPlayback();
+                    }
+                    else if (message.state === "paused") {
+                        pausePlayback();
+                    }
                 }
             }
         });

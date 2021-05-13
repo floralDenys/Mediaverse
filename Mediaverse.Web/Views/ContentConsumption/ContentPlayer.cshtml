@@ -43,14 +43,24 @@
             });
             
             function onPlayerStateChange(event) {
-                // video is playing
-                if (event.data === YT.PlayerState.PLAYING) {
-                    onContentPlaybackStarted(player.getCurrentTime());
-                }
-                // video is paused
-                else if (event.data === YT.PlayerState.PAUSED) {
-                    onContentPlaybackPaused(player.getCurrentTime());
-                }
+                var isEventReaction = $("#IsEventReaction");
+                if (event.data === YT.PlayerState.PLAYING 
+                    || event.data === YT.PlayerState.PAUSED) {
+                        if (isEventReaction.val() == 1){
+                            isEventReaction.attr('value', 0);
+                        }
+                        else {
+                            // video is playing
+                            if (event.data === YT.PlayerState.PLAYING) {     
+                                onContentPlaybackStarted(player.getCurrentTime());
+                            }
+                            
+                            // video is paused
+                            else if (event.data === YT.PlayerState.PAUSED) {                                                    
+                                onContentPlaybackPaused(player.getCurrentTime());
+                            } 
+                        }
+                    }
             }  
             
             function onPlayerReady(event) {
@@ -61,14 +71,28 @@
             }    
             
             function startPlayback() {
-                if (player.state !== YT.PlayerState.PLAYING){
+                if (player.getPlayerState() !== YT.PlayerState.PLAYING){
                     player.playVideo();
+                }
+                else {
+                    $("#IsEventReaction").attr('value', 0);
                 }
             }
             
             function pausePlayback() {
-                if (player.state !== YT.PlayerState.PAUSED){
+                if (player.getPlayerState() !== YT.PlayerState.PAUSED){
                     player.pauseVideo();
+                }
+                else {
+                    $("#IsEventReaction").attr('value', 0);
+                }
+            }
+            
+            function seekToTime(time) {
+                alert(Math.abs(time - player.getCurrentTime()));
+                if (Math.abs(time - player.getCurrentTime()) > 2){
+                    alert("seek");
+                    player.seekTo(time, false);
                 }
             }
         </script>

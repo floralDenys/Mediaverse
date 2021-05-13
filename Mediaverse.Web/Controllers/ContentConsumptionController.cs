@@ -25,6 +25,7 @@ using Mediaverse.Application.JointContentConsumption.Queries.GetRoom;
 using Mediaverse.Infrastructure.Authentication.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Mediaverse.Web.Controllers
 {
@@ -239,9 +240,13 @@ namespace Mediaverse.Web.Controllers
             try
             {
                 var affectedViewers = await _mediator.Send(command, cancellationToken);
+
+                var messageObject = new 
+                    { state = command.State, currentTime = command.CurrentPlaybackTimeInSeconds };
+                string message = JsonConvert.SerializeObject(messageObject);
                 
                 await _service.SendEventAsync(
-                    command.State,
+                    message,
                     GetClientPredicate(affectedViewers),
                     cancellationToken);
 
