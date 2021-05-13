@@ -59,13 +59,12 @@
                 }
                 else {
                     const message = JSON.parse(event.data);
-                    $("#IsEventReaction").attr('value', 1);
                                        
                     if (message.state === "playing") {
-                        startPlayback();
+                        startPlayback(message.currentTime);
                     }
                     else if (message.state === "paused") {
-                        pausePlayback();
+                        pausePlayback(message.currentTime);
                     }
                 }
             }
@@ -115,7 +114,6 @@
         });
     }
      
-
     const addToPlaylist = function(
         externalId,
         contentSource,

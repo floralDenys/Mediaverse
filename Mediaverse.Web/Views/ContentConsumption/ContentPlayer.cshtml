@@ -43,9 +43,10 @@
             });
             
             function onPlayerStateChange(event) {
-                var isEventReaction = $("#IsEventReaction");
                 if (event.data === YT.PlayerState.PLAYING 
                     || event.data === YT.PlayerState.PAUSED) {
+                        var isEventReaction = $("#IsEventReaction");
+                        
                         if (isEventReaction.val() == 1){
                             isEventReaction.attr('value', 0);
                         }
@@ -66,33 +67,31 @@
             function onPlayerReady(event) {
                 player.cueVideoById('@Model.Id.ExternalId', @Model.Player.PlayingTime);
                 if ('@Model.Player.State' === "Playing") {
-                    startPlayback();
+                    startPlayback(@Model.Player.PlayingTime);
                 }
             }    
             
-            function startPlayback() {
+            function startPlayback(currentTime) {
                 if (player.getPlayerState() !== YT.PlayerState.PLAYING){
+                    seekToTime(currentTime);
+                    
+                    $("#IsEventReaction").attr('value', 1);
                     player.playVideo();
-                }
-                else {
-                    $("#IsEventReaction").attr('value', 0);
                 }
             }
             
-            function pausePlayback() {
+            function pausePlayback(currentTime) {
                 if (player.getPlayerState() !== YT.PlayerState.PAUSED){
+                    $("#IsEventReaction").attr('value', 1);
                     player.pauseVideo();
-                }
-                else {
-                    $("#IsEventReaction").attr('value', 0);
+                    seekToTime(currentTime);
                 }
             }
             
             function seekToTime(time) {
-                alert(Math.abs(time - player.getCurrentTime()));
-                if (Math.abs(time - player.getCurrentTime()) > 2){
-                    alert("seek");
-                    player.seekTo(time, false);
+                if (Math.abs(time - player.getCurrentTime()) > 2
+                    && player.getPlayerState() !== YT.PlayerState.CUED){
+                    player.seekTo(time, true);
                 }
             }
         </script>

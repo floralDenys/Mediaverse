@@ -13,7 +13,7 @@ namespace Mediaverse.Domain.JointContentConsumption.ValueObjects
         {
             get => _playingTime
                    + (PlayerState == ContentPlayerState.Playing 
-                   ? (LastUpdatedPlayingTime - DateTime.Now).Seconds
+                   ? (DateTime.Now - LastUpdatedPlayingTime).Seconds
                    : 0L);
             set => _playingTime = value;
         }
